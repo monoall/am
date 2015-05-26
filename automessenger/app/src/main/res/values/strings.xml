@@ -1,0 +1,19 @@
+<resources>
+
+    <string name="app_name">automessenger</string>
+
+    <string name="feed">Feed</string>
+    <string name="nearby">Nearby</string>
+    <string name="subscriptions">Subscriptions</string>
+    <string name="search">Search</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_add_post">Add Post</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="car_number">Car number</string>
+    <string name="description">Description</string>
+    <string name="add">ADD</string>
+
+</resources>
