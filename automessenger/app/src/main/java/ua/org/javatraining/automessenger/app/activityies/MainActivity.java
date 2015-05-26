@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.app;
+package ua.org.javatraining.automessenger.app.activityies;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
+import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
+import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
+import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
+    public Toolbar toolbar;
     DrawerLayout drawerLayout;
     RelativeLayout relativeLayout;
     ImageButton imageButton;
@@ -30,16 +35,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbarInit();
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white87));
-        toolbar.setNavigationIcon(R.drawable.ic_action);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
@@ -54,8 +53,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void toolbarInit(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white87));
+        toolbar.setNavigationIcon(R.drawable.ic_action);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+    }
+
     //Floating Action Button
     public void FABController(View view) {
+
         int id = view.getId();
         switch (id) {
             case R.id.fab_add:
@@ -115,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     private int getNavDrawWidth() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int result = (int) ((metrics.widthPixels < metrics.heightPixels ? metrics.widthPixels : metrics.heightPixels) - 56 * metrics.density);
-        return result;
+        return (int) ((metrics.widthPixels < metrics.heightPixels ? metrics.widthPixels : metrics.heightPixels) - 56 * metrics.density);
     }
+
 }

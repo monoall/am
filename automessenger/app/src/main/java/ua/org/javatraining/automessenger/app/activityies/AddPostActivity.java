@@ -1,9 +1,10 @@
-package ua.org.javatraining.automessenger.app;
+package ua.org.javatraining.automessenger.app.activityies;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.EditText;
+import ua.org.javatraining.automessenger.app.R;
 
 
 public class AddPostActivity extends AppCompatActivity {

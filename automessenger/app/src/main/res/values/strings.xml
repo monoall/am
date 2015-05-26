@@ -15,5 +15,6 @@
     <string name="car_number">Car number</string>
     <string name="description">Description</string>
     <string name="add">ADD</string>
+    <string name="title_activity_main_activity2">MainActivity2Activity</string>
 
 </resources>

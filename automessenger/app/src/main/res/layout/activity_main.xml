@@ -5,11 +5,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
-
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:background="@color/app_blue"
@@ -23,9 +21,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@+id/toolbar">
-
             </FrameLayout>
-
         <ImageButton
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -37,7 +33,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/fab"
                 android:onClick="FABController"/>
-
         <RelativeLayout
                 android:id="@+id/fab_pressed"
                 android:layout_alignParentBottom="true"
@@ -46,7 +41,6 @@
                 android:background="@color/white87"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
-
             <ImageButton
                     android:id="@+id/fab_camera"
                     android:layout_marginRight="24dp"
@@ -186,6 +180,5 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
         </LinearLayout>
-
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
