@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "ua.org.javatraining.automessenger.app"
-        minSdkVersion 9
+        minSdkVersion 14
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"

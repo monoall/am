@@ -1,11 +1,16 @@
 package ua.org.javatraining.automessenger.app.activityies;
 
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,6 +21,10 @@ import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout relativeLayout;
     ImageButton imageButton;
     int drawerWidth;
+    String photoPath;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -84,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 imageButton.setVisibility(View.VISIBLE);
                 relativeLayout.setVisibility(View.INVISIBLE);
                 //Work here
+                goCamera();
                 break;
             case R.id.fab_pen:
                 imageButton.setVisibility(View.VISIBLE);
@@ -128,6 +139,56 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         return (int) ((metrics.widthPixels < metrics.heightPixels ? metrics.widthPixels : metrics.heightPixels) - 56 * metrics.density);
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File storageDir = Environment.getExternalStorageDirectory();
+        File image = File.createTempFile(timeStamp, ".jpg", storageDir);
+        photoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    //Starting camera app to take photo
+    public void goCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(cameraIntent, 1);
+            }
+        }
+    }
+
+    //If photo taken successfully open AddPostActivity() and pass photo path to it
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Intent intent = new Intent(this, AddPostActivity.class);
+            intent.putExtra("photoPath", photoPath);
+            startActivity(intent);
+
+
+            /*
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(photoPath, options);
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inJustDecodeBounds = false;
+
+            Bitmap bm = BitmapFactory.decodeFile(photoPath, options);
+
+            if (bm != null)
+                imageView.setImageBitmap(bm);
+                */
+        }
     }
 
 }
