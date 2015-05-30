@@ -1,29 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:background="@color/app_blue"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="56dp"
-            android:elevation="4dp">
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <ImageButton
-                    android:id="@+id/done_button"
-                    android:padding="16dp"
-                    android:background="@drawable/nav_item_selected_back"
-                    android:src="@drawable/ic_done_white_24dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:onClick="donePressed"/>
-        </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
+    <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar"/>
 
     <LinearLayout
             android:layout_below="@+id/toolbar"
@@ -49,7 +30,8 @@
                     android:scaleType="centerCrop"
                     android:id="@+id/photo"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/photo"/>
         </FrameLayout>
 
         <EditText
@@ -60,7 +42,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textCapCharacters"
                 android:lines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                tools:ignore="TextFields"/>
 
         <EditText
                 android:id="@+id/post_description"

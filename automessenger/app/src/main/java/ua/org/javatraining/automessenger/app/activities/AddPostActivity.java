@@ -1,23 +1,20 @@
-package ua.org.javatraining.automessenger.app.activityies;
+package ua.org.javatraining.automessenger.app.activities;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-import ua.org.javatraining.automessenger.app.InputTextVerification;
 import ua.org.javatraining.automessenger.app.R;
-
 
 public class AddPostActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    EditText editText;
     ImageView imageView;
     String photoPath;
     int reqWidth;
@@ -51,18 +48,15 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
         photoPath = getIntent().getStringExtra("photoPath");
-    }
-
-    public void donePressed(View view) {
-
-        String tag = tagText.getText().toString();
-        Log.i("", tag);
-        if(InputTextVerification.checkTag(tag)){
-
-        }else{
-            Toast.makeText(this , "not ok", Toast.LENGTH_LONG).show();
-        }
-
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.menu_add_post);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     public void addPhotoPressed(View view) {
@@ -83,5 +77,11 @@ public class AddPostActivity extends AppCompatActivity {
             }
         }
         return inSampleSize;
+    }
+
+    public void donePressed(MenuItem item) {
+
+
+
     }
 }

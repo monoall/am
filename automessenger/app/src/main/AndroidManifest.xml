@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ua.org.javatraining.automessenger.app" >
+          xmlns:tools="http://schemas.android.com/tools" package="ua.org.javatraining.automessenger.app" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activityies.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,15 +23,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activityies.AddPostActivity"
+            android:name=".activities.AddPostActivity"
             android:label="@string/title_activity_add_post"
-            android:parentActivityName=".activityies.MainActivity" >
+            android:parentActivityName=".activities.MainActivity"
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activityies.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activityies.PostDetails"
+            android:name=".activities.PostDetails"
             android:label="@string/title_activity_post_details" >
         </activity>
     </application>

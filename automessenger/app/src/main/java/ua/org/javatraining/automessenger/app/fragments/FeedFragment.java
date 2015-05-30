@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.activityies.MainActivity;
+import ua.org.javatraining.automessenger.app.activities.MainActivity;
 
 public class FeedFragment extends Fragment {
 

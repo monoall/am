@@ -1,6 +1,6 @@
 <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_gravity="center"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -10,21 +10,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_star_grey600_24dp"/>
+            android:src="@drawable/ic_star_grey600_24dp" tools:ignore="ContentDescription"/>
 
     <TextView
             android:id="@+id/tv"
             android:layout_below="@+id/tric"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14dp"
-            android:text="Feed fragment"/>
+            android:textSize="14sp"
+            android:text="Feed fragment" tools:ignore="HardcodedText"/>
 
         <Button
                 android:layout_below="@+id/tv"
                 android:text="Start PostDetails activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="spda"/>
+                android:onClick="spda" tools:ignore="HardcodedText"/>
 
 </RelativeLayout>

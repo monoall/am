@@ -1,20 +1,15 @@
-package ua.org.javatraining.automessenger.app.activityies;
-
+package ua.org.javatraining.automessenger.app.activities;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import ua.org.javatraining.automessenger.app.R;
-
-import java.io.InputStream;
 
 public class PostDetails extends AppCompatActivity {
 
@@ -27,9 +22,14 @@ public class PostDetails extends AppCompatActivity {
         setContentView(R.layout.post_details);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-
         toolbar.inflateMenu(R.menu.menu_post_details);
-
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         justForTest();
     }
 

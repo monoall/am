@@ -20,6 +20,16 @@
     <string name="title_activity_post_details">Details</string>
     <string name="share">share</string>
     <string name="subscribe">Subscribe</string>
+    <string name="done">Done</string>
+    <string name="fab_add">Floating action button add</string>
+    <string name="fab_camera">Camera button</string>
+    <string name="fab_pen">Add new post button</string>
+    <string name="fab_cancel">Cancel</string>
+    <string name="nav_draw_head">Navigation drawer header image</string>
+    <string name="sub_button">Subscribe button</string>
+    <string name="photo">Photo</string>
+    <string name="thumb_up">Vote up</string>
+    <string name="thumb_down">Vote down</string>
 
 
 </resources>

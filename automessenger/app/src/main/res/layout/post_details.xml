@@ -3,15 +3,10 @@
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="ua.org.javatraining.automessenger.app.activityies.PostDetails">
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:background="@color/app_blue"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:minHeight="56dp"
-            android:elevation="4dp"/>
+                tools:context="ua.org.javatraining.automessenger.app.activities.PostDetails">
+    <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar"/>
     <ScrollView
             android:layout_below="@+id/toolbar"
             android:layout_width="fill_parent"
@@ -20,7 +15,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-           <android.support.v7.widget.CardView
+            <android.support.v7.widget.CardView
                     android:padding="0dp"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -35,7 +30,8 @@
                             android:scaleType="centerCrop"
                             android:id="@+id/photo"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp"/>
+                            android:layout_height="200dp"
+                            android:contentDescription="@string/photo"/>
                     <TextView
                             android:id="@+id/description_text"
                             android:padding="16dp"
@@ -45,10 +41,12 @@
                     <TextView
                             android:id="@+id/date_text"
                             android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
                             android:paddingBottom="16dp"
                             android:textColor="@color/black54"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            tools:ignore="RtlHardcoded"/>
                     <RelativeLayout
                             android:padding="8dp"
                             android:layout_width="fill_parent"
@@ -63,7 +61,8 @@
                                 android:src="@drawable/ic_thumb_up_grey600_24dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:onClick="actionSetRate"/>
+                                android:onClick="actionSetRate"
+                                android:contentDescription="@string/thumb_up"/>
 
                         <ImageButton
                                 android:id="@+id/share_button"
@@ -74,7 +73,8 @@
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/nav_item_selected_back"
                                 android:src="@drawable/ic_share_grey600_24dp"
-                                android:onClick="actionShare"/>
+                                android:onClick="actionShare"
+                                android:contentDescription="@string/share"/>
 
                         <ImageButton
                                 android:id="@+id/down_button"
@@ -87,10 +87,11 @@
                                 android:src="@drawable/ic_thumb_down_grey600_24dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:onClick="actionSetRate"/>
+                                android:onClick="actionSetRate"
+                                android:contentDescription="@string/thumb_down"/>
                     </RelativeLayout>
                 </LinearLayout>
-             </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
