@@ -13,6 +13,7 @@
                 android:background="@color/app_blue"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:theme="@style/Theme.AppCompat.NoActionBar"
                 android:minHeight="56dp"
                 android:transitionName="actionBar"
                 android:elevation="4dp"/>
@@ -25,6 +26,7 @@
         <ImageButton
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:id="@+id/fab_add"
                 android:visibility="visible"
                 android:layout_margin="16dp"
@@ -106,7 +108,7 @@
                 android:onClick="NDController">
             <ImageView
                     android:padding="16dp"
-                    android:src="@drawable/ic_track_changes_grey600_24dp"
+                    android:src="@drawable/ic_star_grey600_24dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             <TextView

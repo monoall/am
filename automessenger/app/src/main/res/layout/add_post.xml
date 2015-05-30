@@ -8,7 +8,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:minHeight="56dp"
-            android:transitionName="actionBar"
             android:elevation="4dp">
         <RelativeLayout
                 android:layout_width="match_parent"
@@ -22,8 +21,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    android:onClick="donePressed">
-            </ImageButton>
+                    android:onClick="donePressed"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
@@ -60,8 +58,9 @@
                 android:layout_margin="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapCharacters" android:lines="1" android:singleLine="true"
-                />
+                android:inputType="textCapCharacters"
+                android:lines="1"
+                android:singleLine="true"/>
 
         <EditText
                 android:id="@+id/post_description"

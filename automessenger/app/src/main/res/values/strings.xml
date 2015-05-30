@@ -17,5 +17,9 @@
     <string name="add">ADD</string>
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="add_photo">Add photo</string>
+    <string name="title_activity_post_details">Details</string>
+    <string name="share">share</string>
+    <string name="subscribe">Subscribe</string>
+
 
 </resources>

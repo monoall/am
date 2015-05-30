@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void toolbarInit(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white87));
         toolbar.setNavigationIcon(R.drawable.ic_action);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         return (int) ((metrics.widthPixels < metrics.heightPixels ? metrics.widthPixels : metrics.heightPixels) - 56 * metrics.density);
     }
 
+    //Создаем файл для последующей передачи в приложение камеры, для записи в него новой фотографии
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File storageDir = Environment.getExternalStorageDirectory();
@@ -174,21 +174,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddPostActivity.class);
             intent.putExtra("photoPath", photoPath);
             startActivity(intent);
-
-
-            /*
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(photoPath, options);
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-            options.inJustDecodeBounds = false;
-
-            Bitmap bm = BitmapFactory.decodeFile(photoPath, options);
-
-            if (bm != null)
-                imageView.setImageBitmap(bm);
-                */
         }
     }
 
+    //Временный метод для проверки активности
+    public void spda(View view) {
+        startActivity(new Intent(this, PostDetails.class));
+    }
 }

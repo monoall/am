@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,8 +25,10 @@ public class AddPostActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         imageView = (ImageView) findViewById(R.id.photo);
+
         reqHeight = imageView.getHeight();
         reqWidth = imageView.getWidth();
+        //Выводим уменьшеный вариант фотографии в ImageView
         if (photoPath != null) {
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
@@ -56,7 +57,7 @@ public class AddPostActivity extends AppCompatActivity {
 
     }
 
-
+    //Щитаем в сколько раз нужно уменьшить фотографию перед тем как вывести ее в ImageView
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
