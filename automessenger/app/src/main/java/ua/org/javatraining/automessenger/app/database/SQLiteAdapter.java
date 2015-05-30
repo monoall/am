@@ -6,38 +6,35 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import ua.org.javatraining.automessenger.app.C;
 
 import java.util.ArrayList;
 
 /**
  * Created by berkut on 29.05.15.
  */
-public class SQLiteAdapter extends SQLiteOpenHelper {
+public class SQLiteAdapter extends SQLiteOpenHelper implements DbConstants {
 
     private static SQLiteAdapter sQLiteAdapter;
     private static SQLiteDatabase sqLiteDatabase;
 
     private SQLiteAdapter(Context context){
-        super(context, C.MYDATABASE_NAME, null, C.MYDATABASE_VERSION);
+        super(context, MYDATABASE_NAME, null, MYDATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(C.USER_CREATE);
-        db.execSQL(C.TAG_CREATE);
-        db.execSQL(C.SUBSCRIPTION_CREATE);
-        db.execSQL(C.POST_CREATE);
-        db.execSQL(C.COMMENT_CREATE);
-        db.execSQL(C.GRADE_POST_CREATE);
-        db.execSQL(C.GRADE_COMMENT_CREATE);
-        db.execSQL(C.PHOTO_CREATE);
+        db.execSQL(USER_CREATE);
+        db.execSQL(TAG_CREATE);
+        db.execSQL(SUBSCRIPTION_CREATE);
+        db.execSQL(POST_CREATE);
+        db.execSQL(COMMENT_CREATE);
+        db.execSQL(GRADE_POST_CREATE);
+        db.execSQL(GRADE_COMMENT_CREATE);
+        db.execSQL(PHOTO_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS USER");
-        onCreate(db);
     }
 
     public static synchronized SQLiteAdapter initInstance(Context context) {
@@ -78,8 +75,8 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToUser(String userName) {
         ContentValues cv = new ContentValues();
-        cv.put(C.USER_NAME, userName);
-        return sqLiteDatabase.insert(C.USER_TABLE, null, cv);
+        cv.put(USER_NAME, userName);
+        return sqLiteDatabase.insert(USER_TABLE, null, cv);
     }
 
 
@@ -92,7 +89,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from USER where USER_NAME = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{userName});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -105,7 +102,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected void deleteUser(String userName){
         int id = Integer.parseInt(querryIdFromUser(userName));
-        sqLiteDatabase.delete(C.USER_TABLE, "ID = " + id, null);
+        sqLiteDatabase.delete(USER_TABLE, "ID = " + id, null);
     }
 
     /**
@@ -115,8 +112,8 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToTag(String tagName) {
         ContentValues cv = new ContentValues();
-        cv.put(C.TAG_NAME, tagName);
-        return sqLiteDatabase.insert(C.TAG_TABLE, null, cv);
+        cv.put(TAG_NAME, tagName);
+        return sqLiteDatabase.insert(TAG_TABLE, null, cv);
     }
 
     /**
@@ -128,7 +125,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from TAG where TAG_NAME = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{tagName});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -141,7 +138,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected void deleteTag(String tagName){
         int id = Integer.parseInt(querryIdFromTag(tagName));
-        sqLiteDatabase.delete(C.TAG_TABLE, "ID = " + id, null);
+        sqLiteDatabase.delete(TAG_TABLE, "ID = " + id, null);
     }
 
     /**
@@ -152,9 +149,9 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToSubscription(int idUser, int idTag) {
         ContentValues cv = new ContentValues();
-        cv.put(C.USER_ID, idUser);
-        cv.put(C.TAG_ID, idTag);
-        return sqLiteDatabase.insert(C.SUBSCRIPTION_TABLE, null, cv);
+        cv.put(USER_ID, idUser);
+        cv.put(TAG_ID, idTag);
+        return sqLiteDatabase.insert(SUBSCRIPTION_TABLE, null, cv);
     }
 
     protected String querryIdFromSubscription(int idUser) {
@@ -162,7 +159,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from SUBSCRIPTION where ID_USER = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{id});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -174,7 +171,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      * @param idSubscription Id Subscription
      */
     protected void deleteSubscription(int idSubscription){
-        sqLiteDatabase.delete(C.SUBSCRIPTION_TABLE, "ID = " + idSubscription, null);
+        sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = " + idSubscription, null);
     }
 
     /**
@@ -188,12 +185,12 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToPost(int idUser, String postText, int postDate, String postLocation, int idTag) {
         ContentValues cv = new ContentValues();
-        cv.put(C.USER_ID, idUser);
-        cv.put(C.POST_TEXT, postText);
-        cv.put(C.POST_DATE, postDate);
-        cv.put(C.POST_LOCATION, postLocation);
-        cv.put(C.TAG_ID, idTag);
-        return sqLiteDatabase.insert(C.POST_TABLE, null, cv);
+        cv.put(USER_ID, idUser);
+        cv.put(POST_TEXT, postText);
+        cv.put(POST_DATE, postDate);
+        cv.put(POST_LOCATION, postLocation);
+        cv.put(TAG_ID, idTag);
+        return sqLiteDatabase.insert(POST_TABLE, null, cv);
     }
 
     /**
@@ -205,7 +202,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from POST where POST_TEXT = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{textPost});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -214,15 +211,15 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
 
 
     public ArrayList<String[]> queryPosts() {
-        Cursor cursor = sqLiteDatabase.query(C.POST_TABLE, null,
+        Cursor cursor = sqLiteDatabase.query(POST_TABLE, null,
                 null, null, null, null, null);
         ArrayList<String[]> al = new ArrayList<String[]>();
 
-        int indexPostText = cursor.getColumnIndex(C.POST_TEXT);
-        int indexPostDate = cursor.getColumnIndex(C.POST_DATE);
-        int indexPostLocation = cursor.getColumnIndex(C.POST_LOCATION);
-        int indexUserId = cursor.getColumnIndex(C.USER_ID);
-        int indexTagId = cursor.getColumnIndex(C.TAG_ID);
+        int indexPostText = cursor.getColumnIndex(POST_TEXT);
+        int indexPostDate = cursor.getColumnIndex(POST_DATE);
+        int indexPostLocation = cursor.getColumnIndex(POST_LOCATION);
+        int indexUserId = cursor.getColumnIndex(USER_ID);
+        int indexTagId = cursor.getColumnIndex(TAG_ID);
 
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             String[] ar = new String[5];
@@ -241,7 +238,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      * @param idPost Id поста
      */
     protected void deletePost(int idPost){
-        sqLiteDatabase.delete(C.POST_TABLE, "ID = " + idPost, null);
+        sqLiteDatabase.delete(POST_TABLE, "ID = " + idPost, null);
     }
 
     /**
@@ -254,11 +251,11 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToComment(int idUser, int commentDate, String commentText, int idPost) {
         ContentValues cv = new ContentValues();
-        cv.put(C.USER_ID, idUser);
-        cv.put(C.COMMENT_DATE, commentDate);
-        cv.put(C.COMMENT_TEXT, commentText);
-        cv.put(C.ID_POST, idPost);
-        return sqLiteDatabase.insert(C.COMMENT_TABLE, null, cv);
+        cv.put(USER_ID, idUser);
+        cv.put(COMMENT_DATE, commentDate);
+        cv.put(COMMENT_TEXT, commentText);
+        cv.put(ID_POST, idPost);
+        return sqLiteDatabase.insert(COMMENT_TABLE, null, cv);
     }
 
     protected String querryIdFromComment(String textComment, int idPost) {
@@ -266,7 +263,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from COMMENT where COMMENT_TEXT = ? and ID_POST = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{textComment, id});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -278,7 +275,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      * @param idComment Id комментария
      */
     protected void deleteComment(int idComment){
-        sqLiteDatabase.delete(C.COMMENT_TABLE, "ID = " + idComment, null);
+        sqLiteDatabase.delete(COMMENT_TABLE, "ID = " + idComment, null);
     }
 
     /**
@@ -289,10 +286,10 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToGrandePost(int idUser, int idPost, int grade) {
         ContentValues cv = new ContentValues();
-        cv.put(C.USER_ID, idUser);
-        cv.put(C.ID_POST, idPost);
-        cv.put(C.GRADE, grade);
-        return sqLiteDatabase.insert(C.GRADE_POST_TABLE, null, cv);
+        cv.put(USER_ID, idUser);
+        cv.put(ID_POST, idPost);
+        cv.put(GRADE, grade);
+        return sqLiteDatabase.insert(GRADE_POST_TABLE, null, cv);
     }
 
     protected String querryIdFromGrandePost(int idUser) {
@@ -300,7 +297,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from GRADE_POST where ID_USER = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{id});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -312,7 +309,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      * @param idGrandePost Id GrandePost
      */
     protected void deleteGrandePost(int idGrandePost){
-        sqLiteDatabase.delete(C.GRADE_POST_TABLE, "ID = " + idGrandePost, null);
+        sqLiteDatabase.delete(GRADE_POST_TABLE, "ID = " + idGrandePost, null);
     }
 
     /**
@@ -323,10 +320,10 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      */
     protected long insertToGrandeComment(int idUser, int idComment, int grade) {
         ContentValues cv = new ContentValues();
-        cv.put(C.USER_ID, idUser);
-        cv.put(C.ID_COMMENT, idComment);
-        cv.put(C.GRADE, grade);
-        return sqLiteDatabase.insert(C.GRADE_COMMENT_TABLE, null, cv);
+        cv.put(USER_ID, idUser);
+        cv.put(ID_COMMENT, idComment);
+        cv.put(GRADE, grade);
+        return sqLiteDatabase.insert(GRADE_COMMENT_TABLE, null, cv);
     }
 
 
@@ -335,7 +332,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
         String sqlQuery = "SELECT ID from GRADE_COMMENT where ID_USER = ?";
         Cursor cursor = sqLiteDatabase
                 .rawQuery(sqlQuery, new String[]{id});
-        int indexId = cursor.getColumnIndex(C.ID);
+        int indexId = cursor.getColumnIndex(ID);
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             return cursor.getString(indexId);
         }
@@ -348,6 +345,6 @@ public class SQLiteAdapter extends SQLiteOpenHelper {
      * @param idGrandeComment Id GrandePost
      */
     protected void deleteGrandeComment(int idGrandeComment){
-        sqLiteDatabase.delete(C.GRADE_COMMENT_TABLE, "ID = " + idGrandeComment, null);
+        sqLiteDatabase.delete(GRADE_COMMENT_TABLE, "ID = " + idGrandeComment, null);
     }
 }

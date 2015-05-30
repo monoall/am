@@ -5,9 +5,12 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+import ua.org.javatraining.automessenger.app.InputTextVerification;
 import ua.org.javatraining.automessenger.app.R;
 
 
@@ -19,12 +22,13 @@ public class AddPostActivity extends AppCompatActivity {
     String photoPath;
     int reqWidth;
     int reqHeight;
-
+    EditText tagText;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         imageView = (ImageView) findViewById(R.id.photo);
+        tagText = (EditText) findViewById(R.id.car_number);
 
         reqHeight = imageView.getHeight();
         reqWidth = imageView.getWidth();
@@ -50,6 +54,14 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     public void donePressed(View view) {
+
+        String tag = tagText.getText().toString();
+        Log.i("", tag);
+        if(InputTextVerification.checkTag(tag)){
+
+        }else{
+            Toast.makeText(this , "not ok", Toast.LENGTH_LONG).show();
+        }
 
     }
 

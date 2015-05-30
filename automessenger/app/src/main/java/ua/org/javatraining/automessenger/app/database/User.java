@@ -16,8 +16,11 @@ public class User {
     public User(Context context, String nameUser){
         this.context = context;
         this.nameUser = nameUser;
+
         sqLiteAdapter = SQLiteAdapter.initInstance(context);
         sqLiteAdapter.openToWrite();
+        sqLiteAdapter.getWritableDatabase();
+
         sqLiteAdapter.insertToUser(nameUser);
     }
 

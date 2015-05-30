@@ -6,12 +6,12 @@ package ua.org.javatraining.automessenger.app;
 public class InputTextVerification {
 
     //Проверка на валидность номера авто
-    public boolean checkTag(String tag) {
+    public static boolean checkTag(String tag) {
 
         int length = tag.length();
 
         //проверка на количество знаков.
-        if (length < 3 | length > 10) return false;
+        if (length < 3 || length > 10) return false;
 
         int letters = 0;
         int digits = 0;
@@ -21,7 +21,7 @@ public class InputTextVerification {
         for (int i = 0; i < length; i++) {
             int chr = (int) tag.charAt(i);
             if (chr > 47 && chr < 58) digits++;
-            else if ((chr > 64 && chr < 91) | (chr > 96 && chr < 123) |
+            else if ((chr > 64 && chr < 91) || (chr > 96 && chr < 123) ||
                     (chr > 190 && chr <= 255)) letters++;
             else otherChars++;
         }

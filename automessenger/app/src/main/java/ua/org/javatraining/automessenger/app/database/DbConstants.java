@@ -1,9 +1,9 @@
-package ua.org.javatraining.automessenger.app;
+package ua.org.javatraining.automessenger.app.database;
 
 /**
  * Created by berkut on 29.05.15.
  */
-public class C {
+public interface DbConstants {
 
     public static final String MYDATABASE_NAME = "autoMessenger";
     public static final int MYDATABASE_VERSION = 1;
@@ -87,5 +87,4 @@ public class C {
     public static final String ID_COMMENT = "ID_COMMENT";
 
     public static final String LINK = "LINK";
-
 }
