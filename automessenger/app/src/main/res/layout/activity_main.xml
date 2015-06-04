@@ -10,6 +10,11 @@
             android:layout_height="match_parent">
         <include layout="@layout/toolbar"
                  android:id="@+id/toolbar"/>
+        <View
+                android:layout_below="@id/toolbar"
+                android:layout_width="fill_parent"
+                android:layout_height="3dp"
+                android:background="@drawable/shadow"/>
         <FrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
@@ -86,7 +91,6 @@
             android:background="@android:color/white"
             android:layout_height="match_parent"
             android:orientation="vertical"
-
             android:layout_width="0dp">
 
         <ImageView
@@ -95,9 +99,14 @@
                 android:layout_height="74dp"
                 android:src="@drawable/nav_header"
                 android:scaleType="centerCrop"
-                android:layout_marginBottom="8dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/nav_draw_head"/>
+        <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/shadow"/>
+
 
         <LinearLayout
                 android:id="@+id/item_feed"

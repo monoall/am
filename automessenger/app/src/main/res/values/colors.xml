@@ -14,4 +14,7 @@
     <item name="grey_dark" type="color">#9E9E9E</item>
     <item name="white54" type="color">#8AFFFFFF</item>
 
+    <color name="transparent">#00FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black26">#42000000</color>
 </resources>
