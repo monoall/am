@@ -86,5 +86,18 @@ public interface DbConstants {
     public static final String GRADE_COMMENT_TABLE = "GRADE_COMMENT";
     public static final String ID_COMMENT = "ID_COMMENT";
 
+    public static final String PHOTO_TABLE = "PHOTO";
     public static final String LINK = "LINK";
+
+    //Select запросы
+    public static final String QUERY_USER_BY_ID = new StringBuilder().append("SELECT ").append(USER_NAME).append(" from ").append(USER_TABLE).append(" where ").append(ID).append(" = ?").toString();
+    public static final String QUERY_TAG_BY_ID = new StringBuilder().append("SELECT ").append(TAG_NAME).append(" from ").append(TAG_TABLE).append(" where ").append(ID).append(" = ?").toString();
+    public static final String QUERY_ALL_TAG_ID_BY_USER_ID = new StringBuilder().append("SELECT ").append("*").append(" from ").append(SUBSCRIPTION_TABLE).append(" where ").append(USER_ID).append(" = ?").toString();
+    public static final String QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID = new StringBuilder().append("SELECT ").append("*").append(" from ").append(POST_TABLE).append(" where ").append(USER_ID).append(" = ?").append(" and ").append(TAG_ID).append(" = ?").toString();
+    public static final String QUERY_ALL_COMMENTS_BY_POST_ID = new StringBuilder().append("SELECT ").append("*").append(" from ").append(COMMENT_TABLE).append(" where ").append(ID_POST).append(" = ?").toString();
+    public static final String QUERY_ID_USER_BY_NAME = new StringBuilder().append("SELECT ").append("ID").append(" from ").append(USER_TABLE).append(" where ").append(USER_NAME).append(" = ?").toString();
+    public static final String QUERY_GRADE_POST_BY_ID_POST = new StringBuilder().append("SELECT ").append("*").append(" from ").append(GRADE_POST_TABLE).append(" where ").append(ID_POST).append(" = ?").toString();
+    public static final String QUERY_GRADE_COMMENT_BY_ID_COMMENT = new StringBuilder().append("SELECT ").append("*").append(" from ").append(GRADE_COMMENT_TABLE).append(" where ").append(ID_COMMENT).append(" = ?").toString();
+    public static final String QUERY_PHOTO_BY_ID_POST = new StringBuilder().append("SELECT ").append("*").append(" from ").append(PHOTO_TABLE).append(" where ").append(ID_POST).append(" = ?").toString();
+
 }

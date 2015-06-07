@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton imageButton;
     int drawerWidth;
     String photoPath;
+    SQLiteAdapter sqLiteAdapter;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -46,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         toolbarInit();
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
