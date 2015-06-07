@@ -31,6 +31,26 @@ public class PostService implements DbConstants {
         return post;
     }
 
+    public Post getPostById(long id){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(POST_TABLE, null,
+                null, null, null, null, null);
+        int indexPostText = cursor.getColumnIndex(POST_TEXT);
+        int indexPostDate = cursor.getColumnIndex(POST_DATE);
+        int indexPostLocation = cursor.getColumnIndex(POST_LOCATION);
+        int indexIdUser = cursor.getColumnIndex(USER_ID);
+        int indexTagId = cursor.getColumnIndex(TAG_ID);
+        cursor.move((int) id);
+        Post post = new Post();
+        post.setId(id);
+        post.setPostText(cursor.getString(indexPostText));
+        post.setPostDate(cursor.getInt(indexPostDate));
+        post.setPostLocation(cursor.getString(indexPostLocation));
+        post.setIdUser(cursor.getInt(indexIdUser));
+        post.setIdTag(cursor.getInt(indexTagId));
+        return post;
+    };
+
 
     public ArrayList<Post> getAllPosts(long userId, long tagId){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
@@ -55,7 +75,7 @@ public class PostService implements DbConstants {
         return al;
     };
 
-    protected void deletePost(Post post){
+    public void deletePost(Post post){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = " + post.getPostText(), null);
     }

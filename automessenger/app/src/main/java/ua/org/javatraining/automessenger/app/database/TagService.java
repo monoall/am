@@ -17,6 +17,13 @@ public class TagService implements DbConstants {
     }
 
     public Tag insertTag(Tag tag) {
+        /*
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(USER_NAME, user.getName());
+        long id = sqLiteDatabase.insert(USER_TABLE, null, cv);
+        user.setId(id);
+        return user;*/
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(TAG_NAME, tag.getTagName());
@@ -26,19 +33,37 @@ public class TagService implements DbConstants {
     }
 
     public Tag getTagById(long id){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        /*SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_TAG_BY_ID, new String[]{String.valueOf(id)});
         int indexUser = cursor.getColumnIndex(USER_NAME);
         Tag tag = new Tag();
         tag.setTagId(id);
         tag.setTagName(cursor.getString(indexUser));
+        return tag;*/
+       /* SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(USER_TABLE, null,
+                null, null, null, null, null);
+        int indexUser = cursor.getColumnIndex(USER_NAME);
+        cursor.move((int) id);
+        User user = new User();
+        user.setId(id);
+        user.setName(cursor.getString(indexUser));
+        return user;*/
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(TAG_TABLE, null,
+                null, null, null, null, null);
+        int indexTag = cursor.getColumnIndex(TAG_NAME);
+        cursor.move((int) id);
+        Tag tag = new Tag();
+        tag.setTagId(id);
+        tag.setTagName(cursor.getString(indexTag));
         return tag;
     };
 
     public void deleteTag(Tag tag){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(TAG_TABLE, TAG_NAME + " = " + tag.getTagName(), null);
+        sqLiteDatabase.delete(TAG_TABLE, ID + " = " + (int) tag.getTagId(), null);
     }
 
 }

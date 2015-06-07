@@ -30,7 +30,7 @@ public class UserService implements DbConstants{
     }
 
     public User getUserById(long id){
-          /*SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        /*SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery("SELECT USER_NAME from USER where ID = ?", new String[]{String.valueOf(id)});
         int indexUser = cursor.getColumnIndex(USER_NAME);
@@ -48,22 +48,20 @@ public class UserService implements DbConstants{
         return user;
     };
 
-    protected User querryIdFromUser(String userName) {
+    public User queryIdFromUser(String userName) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ID_USER_BY_NAME, new String[]{userName});
+                .rawQuery(QUERY_ID_USER_BY_NAME , new String[]{userName});
         int indexId = cursor.getColumnIndex(ID);
-        for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
-            User u = new User();
+        User u = new User();
+        cursor.moveToFirst();
             u.setId(cursor.getLong(indexId));
-            return u;
-        }
-        return new User();
+        return u;
     }
 
     public void deleteUser(User user){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(USER_TABLE, USER_NAME + " = " + user.getName(), null);
+        sqLiteDatabase.delete(USER_TABLE, ID + " = " + (int) user.getId(), null);
     }
 
 }
