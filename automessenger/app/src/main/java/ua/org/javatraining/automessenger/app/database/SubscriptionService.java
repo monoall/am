@@ -7,9 +7,6 @@ import ua.org.javatraining.automessenger.app.entityes.Subscription;
 
 import java.util.ArrayList;
 
-/**
- * Created by berkut on 05.06.15.
- */
 public class SubscriptionService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
@@ -42,7 +39,7 @@ public class SubscriptionService implements DbConstants {
             al.add(subscription);
         }
         return al;
-    };
+    }
 
     protected void deleteSubscription(Subscription subscription){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();

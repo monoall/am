@@ -5,9 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.User;
 
-/**
- * Created by berkut on 04.06.15.
- */
 public class UserService implements DbConstants{
     private SQLiteAdapter sqLiteAdapter;
 
@@ -46,7 +43,7 @@ public class UserService implements DbConstants{
         user.setId(id);
         user.setName(cursor.getString(indexUser));
         return user;
-    };
+    }
 
     public User queryIdFromUser(String userName) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();

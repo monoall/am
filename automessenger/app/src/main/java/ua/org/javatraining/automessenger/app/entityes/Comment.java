@@ -1,8 +1,5 @@
 package ua.org.javatraining.automessenger.app.entityes;
 
-/**
- * Created by berkut on 05.06.15.
- */
 public class Comment {
 
     private long id;

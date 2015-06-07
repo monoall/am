@@ -1,17 +1,14 @@
 package ua.org.javatraining.automessenger.app.database;
 
-/**
- * Created by berkut on 29.05.15.
- */
 public interface DbConstants {
 
-    public static final String MYDATABASE_NAME = "autoMessenger";
-    public static final int MYDATABASE_VERSION = 1;
+    String MYDATABASE_NAME = "autoMessenger";
+    int MYDATABASE_VERSION = 1;
     //Запросы создания таблиц
-    public static final String USER_CREATE = "create table IF NOT EXISTS USER (ID integer primary key autoincrement not null unique, USER_NAME text);";
-    public static final String TAG_CREATE = "create table IF NOT EXISTS TAG (ID integer primary key not null, TAG_NAME text);";
-    public static final String SUBSCRIPTION_CREATE = "create table IF NOT EXISTS SUBSCRIPTION (ID integer primary key not null unique, ID_USER integer, ID_TAG integer, CONSTRAINT fk_subscription_user_parent FOREIGN KEY (id_user) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT fk_subscription_tag_parent FOREIGN KEY (id_tag) REFERENCES tag (id) ON DELETE CASCADE ON UPDATE CASCADE);";
-    public static final String POST_CREATE = "create table IF NOT EXISTS POST (ID integer primary key autoincrement not null unique, POST_TEXT text, POST_DATE integer, POST_LOCATION text, ID_USER integer, ID_TAG integer, CONSTRAINT fk_post_user_parent\n" +
+    String USER_CREATE = "create table IF NOT EXISTS USER (ID integer primary key autoincrement not null unique, USER_NAME text);";
+    String TAG_CREATE = "create table IF NOT EXISTS TAG (ID integer primary key not null, TAG_NAME text);";
+    String SUBSCRIPTION_CREATE = "create table IF NOT EXISTS SUBSCRIPTION (ID integer primary key not null unique, ID_USER integer, ID_TAG integer, CONSTRAINT fk_subscription_user_parent FOREIGN KEY (id_user) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT fk_subscription_tag_parent FOREIGN KEY (id_tag) REFERENCES tag (id) ON DELETE CASCADE ON UPDATE CASCADE);";
+    String POST_CREATE = "create table IF NOT EXISTS POST (ID integer primary key autoincrement not null unique, POST_TEXT text, POST_DATE integer, POST_LOCATION text, ID_USER integer, ID_TAG integer, CONSTRAINT fk_post_user_parent\n" +
             "\tFOREIGN KEY (id_user)\n" +
             "\tREFERENCES user (id)\n" +
             "\t\t ON DELETE CASCADE\n" +
@@ -21,7 +18,7 @@ public interface DbConstants {
             "\tREFERENCES tag (id)\n" +
             "\t\t ON DELETE CASCADE\n" +
             "\t  ON UPDATE CASCADE);";
-    public static final String COMMENT_CREATE = "create table IF NOT EXISTS COMMENT (ID integer primary key autoincrement not null unique, COMMENT_DATE integer not null, COMMENT_TEXT text, ID_USER integer, ID_POST integer, CONSTRAINT fk_comment_user_parent\n" +
+    String COMMENT_CREATE = "create table IF NOT EXISTS COMMENT (ID integer primary key autoincrement not null unique, COMMENT_DATE integer not null, COMMENT_TEXT text, ID_USER integer, ID_POST integer, CONSTRAINT fk_comment_user_parent\n" +
             "    FOREIGN KEY (id_user)\n" +
             "    REFERENCES user (id)\n" +
             "    ON DELETE CASCADE\n" +
@@ -32,7 +29,7 @@ public interface DbConstants {
             "    REFERENCES `post`(id)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE);";
-    public static final String GRADE_POST_CREATE = "create table IF NOT EXISTS GRADE_POST (ID integer primary key not null, ID_USER integer, ID_POST integer, GRADE integer, CONSTRAINT fk_grade_post_user_parent\n" +
+    String GRADE_POST_CREATE = "create table IF NOT EXISTS GRADE_POST (ID integer primary key not null, ID_USER integer, ID_POST integer, GRADE integer, CONSTRAINT fk_grade_post_user_parent\n" +
             "    FOREIGN KEY (id_user)\n" +
             "    REFERENCES user (id)\n" +
             "    ON DELETE CASCADE\n" +
@@ -43,7 +40,7 @@ public interface DbConstants {
             "    REFERENCES comment (id)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE);";
-    public static final String GRADE_COMMENT_CREATE = "create table IF NOT EXISTS GRADE_COMMENT (ID integer primary key autoincrement not null unique, ID_USER integer, ID_COMMENT integer, GRADE integer,  CONSTRAINT fk_grade_comment_user_parent\n" +
+    String GRADE_COMMENT_CREATE = "create table IF NOT EXISTS GRADE_COMMENT (ID integer primary key autoincrement not null unique, ID_USER integer, ID_COMMENT integer, GRADE integer,  CONSTRAINT fk_grade_comment_user_parent\n" +
             "    FOREIGN KEY (id_user)\n" +
             "    REFERENCES user (id)\n" +
             "    ON DELETE CASCADE\n" +
@@ -53,51 +50,51 @@ public interface DbConstants {
             "    REFERENCES comment (id)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE);";
-    public static final String PHOTO_CREATE = "create table IF NOT EXISTS PHOTO (ID integer primary key autoincrement not null unique, LINK text, ID_POST integer,  CONSTRAINT fk_photo_post_parent\n" +
+    String PHOTO_CREATE = "create table IF NOT EXISTS PHOTO (ID integer primary key autoincrement not null unique, LINK text, ID_POST integer,  CONSTRAINT fk_photo_post_parent\n" +
             "\tFOREIGN KEY (id_post)\n" +
             "\tREFERENCES post (id)\n" +
             "\t\t ON DELETE CASCADE\n" +
             "\t  ON UPDATE CASCADE)";
     //Константы для таблиц
-    public static final String ID = "ID";
-    public static final String USER_TABLE = "USER";
-    public static final String USER_NAME = "USER_NAME";
+    String ID = "ID";
+    String USER_TABLE = "USER";
+    String USER_NAME = "USER_NAME";
 
-    public static final String TAG_TABLE = "TAG";
-    public static final String TAG_NAME = "TAG_NAME";
+    String TAG_TABLE = "TAG";
+    String TAG_NAME = "TAG_NAME";
 
-    public static final String SUBSCRIPTION_TABLE = "SUBSCRIPTION";
-    public static final String USER_ID = "ID_USER";
-    public static final String TAG_ID = "ID_TAG";
+    String SUBSCRIPTION_TABLE = "SUBSCRIPTION";
+    String USER_ID = "ID_USER";
+    String TAG_ID = "ID_TAG";
 
-    public static final String POST_TABLE = "POST";
-    public static final String POST_TEXT = "POST_TEXT";
-    public static final String POST_DATE = "POST_DATE";
-    public static final String POST_LOCATION = "POST_LOCATION";
+    String POST_TABLE = "POST";
+    String POST_TEXT = "POST_TEXT";
+    String POST_DATE = "POST_DATE";
+    String POST_LOCATION = "POST_LOCATION";
 
-    public static final String COMMENT_TABLE = "COMMENT";
-    public static final String COMMENT_DATE = "COMMENT_DATE";
-    public static final String COMMENT_TEXT = "COMMENT_TEXT";
-    public static final String ID_POST = "ID_POST";
+    String COMMENT_TABLE = "COMMENT";
+    String COMMENT_DATE = "COMMENT_DATE";
+    String COMMENT_TEXT = "COMMENT_TEXT";
+    String ID_POST = "ID_POST";
 
-    public static final String GRADE_POST_TABLE = "GRADE_POST";
-    public static final String GRADE = "GRADE";
+    String GRADE_POST_TABLE = "GRADE_POST";
+    String GRADE = "GRADE";
 
-    public static final String GRADE_COMMENT_TABLE = "GRADE_COMMENT";
-    public static final String ID_COMMENT = "ID_COMMENT";
+    String GRADE_COMMENT_TABLE = "GRADE_COMMENT";
+    String ID_COMMENT = "ID_COMMENT";
 
-    public static final String PHOTO_TABLE = "PHOTO";
-    public static final String LINK = "LINK";
+    String PHOTO_TABLE = "PHOTO";
+    String LINK = "LINK";
 
     //Select запросы
-    public static final String QUERY_USER_BY_ID = new StringBuilder().append("SELECT ").append(USER_NAME).append(" from ").append(USER_TABLE).append(" where ").append(ID).append(" = ?").toString();
-    public static final String QUERY_TAG_BY_ID = new StringBuilder().append("SELECT ").append(TAG_NAME).append(" from ").append(TAG_TABLE).append(" where ").append(ID).append(" = ?").toString();
-    public static final String QUERY_ALL_TAG_ID_BY_USER_ID = new StringBuilder().append("SELECT ").append("*").append(" from ").append(SUBSCRIPTION_TABLE).append(" where ").append(USER_ID).append(" = ?").toString();
-    public static final String QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID = new StringBuilder().append("SELECT ").append("*").append(" from ").append(POST_TABLE).append(" where ").append(USER_ID).append(" = ?").append(" and ").append(TAG_ID).append(" = ?").toString();
-    public static final String QUERY_ALL_COMMENTS_BY_POST_ID = new StringBuilder().append("SELECT ").append("*").append(" from ").append(COMMENT_TABLE).append(" where ").append(ID_POST).append(" = ?").toString();
-    public static final String QUERY_ID_USER_BY_NAME = new StringBuilder().append("SELECT ").append("ID").append(" from ").append(USER_TABLE).append(" where ").append(USER_NAME).append(" = ?").toString();
-    public static final String QUERY_GRADE_POST_BY_ID_POST = new StringBuilder().append("SELECT ").append("*").append(" from ").append(GRADE_POST_TABLE).append(" where ").append(ID_POST).append(" = ?").toString();
-    public static final String QUERY_GRADE_COMMENT_BY_ID_COMMENT = new StringBuilder().append("SELECT ").append("*").append(" from ").append(GRADE_COMMENT_TABLE).append(" where ").append(ID_COMMENT).append(" = ?").toString();
-    public static final String QUERY_PHOTO_BY_ID_POST = new StringBuilder().append("SELECT ").append("*").append(" from ").append(PHOTO_TABLE).append(" where ").append(ID_POST).append(" = ?").toString();
+    String QUERY_USER_BY_ID = "SELECT " + USER_NAME + " from " + USER_TABLE + " where " + ID + " = ?";
+    String QUERY_TAG_BY_ID = "SELECT " + TAG_NAME + " from " + TAG_TABLE + " where " + ID + " = ?";
+    String QUERY_ALL_TAG_ID_BY_USER_ID = "SELECT " + "*" + " from " + SUBSCRIPTION_TABLE + " where " + USER_ID + " = ?";
+    String QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_ID + " = ?" + " and " + TAG_ID + " = ?";
+    String QUERY_ALL_COMMENTS_BY_POST_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID_POST + " = ?";
+    String QUERY_ID_USER_BY_NAME = "SELECT " + "ID" + " from " + USER_TABLE + " where " + USER_NAME + " = ?";
+    String QUERY_GRADE_POST_BY_ID_POST = "SELECT " + "*" + " from " + GRADE_POST_TABLE + " where " + ID_POST + " = ?";
+    String QUERY_GRADE_COMMENT_BY_ID_COMMENT = "SELECT " + "*" + " from " + GRADE_COMMENT_TABLE + " where " + ID_COMMENT + " = ?";
+    String QUERY_PHOTO_BY_ID_POST = "SELECT " + "*" + " from " + PHOTO_TABLE + " where " + ID_POST + " = ?";
 
 }

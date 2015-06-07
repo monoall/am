@@ -1,8 +1,5 @@
 package ua.org.javatraining.automessenger.app.entityes;
 
-/**
- * Created by berkut on 29.05.15.
- */
 public class Subscription {
 
     private long id;

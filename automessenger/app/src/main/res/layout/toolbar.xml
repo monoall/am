@@ -4,5 +4,4 @@
         android:background="@color/app_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.NoActionBar"
         android:minHeight="56dp"/>

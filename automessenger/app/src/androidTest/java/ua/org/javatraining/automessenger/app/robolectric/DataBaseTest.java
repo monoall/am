@@ -13,10 +13,6 @@ import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * Created by berkut on 04.06.15.
- */
-@SuppressWarnings("DefaultFileTemplate")
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class DataBaseTest {

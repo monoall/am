@@ -7,9 +7,6 @@ import ua.org.javatraining.automessenger.app.entityes.Post;
 
 import java.util.ArrayList;
 
-/**
- * Created by berkut on 05.06.15.
- */
 public class PostService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
@@ -49,7 +46,7 @@ public class PostService implements DbConstants {
         post.setIdUser(cursor.getInt(indexIdUser));
         post.setIdTag(cursor.getInt(indexTagId));
         return post;
-    };
+    }
 
 
     public ArrayList<Post> getAllPosts(long userId, long tagId){
@@ -73,7 +70,7 @@ public class PostService implements DbConstants {
             al.add(post);
         }
         return al;
-    };
+    }
 
     public void deletePost(Post post){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();

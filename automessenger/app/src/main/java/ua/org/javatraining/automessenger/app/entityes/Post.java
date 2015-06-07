@@ -1,7 +1,5 @@
 package ua.org.javatraining.automessenger.app.entityes;
 
-// не завершено
-
 public class Post {
 
     private long id;
@@ -10,6 +8,7 @@ public class Post {
     private String postLocation;
     private int idUser;
     private int idTag;
+    private String imageLink;
 
     public long getId() {
         return id;
@@ -59,5 +58,11 @@ public class Post {
         this.postText = postText;
     }
 
+    public String getImageLink() {
+        return imageLink;
+    }
 
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
 }

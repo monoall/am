@@ -5,9 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.GradeComment;
 
-/**
- * Created by berkut on 06.06.15.
- */
 public class GradeCommentService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;

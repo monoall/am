@@ -1,5 +1,6 @@
 package ua.org.javatraining.automessenger.app.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,9 +8,6 @@ import ua.org.javatraining.automessenger.app.entityes.Comment;
 
 import java.util.ArrayList;
 
-/**
- * Created by berkut on 05.06.15.
- */
 public class CommentService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
@@ -33,7 +31,7 @@ public class CommentService implements DbConstants {
     public ArrayList<Comment> getAllComments(int postId){
 
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase
+        @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_COMMENTS_BY_POST_ID , new String[]{String.valueOf(postId)});
         int indexCommentDate = cursor.getColumnIndex(COMMENT_DATE);
         int indexCommentText = cursor.getColumnIndex(COMMENT_TEXT);
@@ -50,7 +48,7 @@ public class CommentService implements DbConstants {
             al.add(comment);
         }
         return al;
-    };
+    }
 
     protected void deleteComment(Comment comment){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();

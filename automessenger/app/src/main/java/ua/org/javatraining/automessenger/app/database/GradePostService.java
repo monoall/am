@@ -5,9 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.GradePost;
 
-/**
- * Created by berkut on 06.06.15.
- */
 public class GradePostService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;

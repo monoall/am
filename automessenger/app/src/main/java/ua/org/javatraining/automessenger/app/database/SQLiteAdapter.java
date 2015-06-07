@@ -4,9 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by berkut on 29.05.15.
- */
 @SuppressWarnings("DefaultFileTemplate")
 public class SQLiteAdapter extends SQLiteOpenHelper implements DbConstants {
 

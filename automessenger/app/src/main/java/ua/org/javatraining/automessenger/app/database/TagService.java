@@ -5,9 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
 
-/**
- * Created by berkut on 05.06.15.
- */
 public class TagService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
@@ -59,7 +56,7 @@ public class TagService implements DbConstants {
         tag.setTagId(id);
         tag.setTagName(cursor.getString(indexTag));
         return tag;
-    };
+    }
 
     public void deleteTag(Tag tag){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
