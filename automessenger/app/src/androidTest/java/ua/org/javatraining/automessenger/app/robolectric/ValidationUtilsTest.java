@@ -7,11 +7,11 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static ua.org.javatraining.automessenger.app.InputTextVerification.checkTag;
+import static ua.org.javatraining.automessenger.app.utils.ValidationUtils.checkTag;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class InputVerificationTest {
+public class ValidationUtilsTest {
 
     @Test //Тест на длину строки. Строка слишком короткая
     public void testLengthCheckForShort() throws Exception {

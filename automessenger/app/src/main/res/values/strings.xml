@@ -30,6 +30,8 @@
     <string name="photo">Photo</string>
     <string name="thumb_up">Vote up</string>
     <string name="thumb_down">Vote down</string>
+    <string name="button_share">Share</string>
+    <string name="button_subscribe">Subscribe</string>
 
 
 </resources>

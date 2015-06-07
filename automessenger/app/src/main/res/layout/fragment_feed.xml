@@ -1,30 +1,23 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_gravity="center"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_gravity="start"
+        android:padding="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    <ImageView
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tric"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_star_grey600_24dp" tools:ignore="ContentDescription"/>
-
-    <TextView
-            android:id="@+id/tv"
-            android:layout_below="@+id/tric"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Feed fragment" tools:ignore="HardcodedText"/>
+<include layout="@layout/card_layout"
+         android:layout_alignParentTop="true"
+         android:id="@+id/card"
+         android:layout_height="wrap_content"
+         android:layout_width="fill_parent"/>
 
     <Button
-            android:layout_below="@+id/tv"
+            android:layout_below="@+id/card"
             android:text="Start PostDetails activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="spda" tools:ignore="HardcodedText"/>
+            android:onClick="spda"
+            tools:ignore="HardcodedText"/>
 
 </RelativeLayout>
