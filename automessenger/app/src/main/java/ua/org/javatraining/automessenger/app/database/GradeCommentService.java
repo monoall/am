@@ -38,6 +38,8 @@ public class GradeCommentService implements DbConstants {
     public GradeComment getGradeComment(int idComment){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery(QUERY_GRADE_COMMENT_BY_ID_COMMENT, new String[]{String.valueOf(idComment)});
+        //Cursor cursor = sqLiteDatabase.query(GRADE_COMMENT_TABLE, null, null, null, null, null, null);
+        //cursor.move(idComment);
         int indexId = cursor.getColumnIndex(ID);
         int indexIdUser = cursor.getColumnIndex(USER_ID);
         int indexIdComment = cursor.getColumnIndex(ID_COMMENT);

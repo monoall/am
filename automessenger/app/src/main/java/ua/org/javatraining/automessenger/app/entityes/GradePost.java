@@ -38,4 +38,12 @@ public class GradePost {
     public void setGrade(int grade) {
         this.grade = grade;
     }
+
+    public void increaseGrade(){
+        grade++;
+    }
+
+    public void decreaseGrade(){
+        grade--;
+    }
 }

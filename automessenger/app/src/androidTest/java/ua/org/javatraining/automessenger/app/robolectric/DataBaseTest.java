@@ -7,9 +7,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.Post;
-
-import java.util.ArrayList;
+import ua.org.javatraining.automessenger.app.entityes.GradePost;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -24,6 +22,9 @@ public class DataBaseTest {
     SubscriptionService subscriptionService;
     PostService postService;
     CommentService commentService;
+    GradeCommentService gradeCommentService;
+    GradePostService gradePostService;
+    PhotoService photoService;
 
     @Before
     public void initialize(){
@@ -34,6 +35,9 @@ public class DataBaseTest {
         subscriptionService = new SubscriptionService(sqLiteAdapter);
         postService = new PostService(sqLiteAdapter);
         commentService = new CommentService(sqLiteAdapter);
+        gradeCommentService = new GradeCommentService(sqLiteAdapter);
+        gradePostService = new GradePostService(sqLiteAdapter);
+        photoService = new PhotoService(sqLiteAdapter);
     }
 
    /* @Test
@@ -123,7 +127,7 @@ public class DataBaseTest {
     //Post
 
 
-    @Test
+    /*@Test
     public void testInsertPost(){
         Post post1 = new Post();
         Post post2 = new Post();
@@ -148,9 +152,9 @@ public class DataBaseTest {
         postService.insertPost(post3);
         ArrayList<Post> list = postService.getAllPosts(1,1);
         assertEquals(2 ,list.size());
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testGetPostById(){
         Post post1 = new Post();
         Post post2 = new Post();
@@ -175,11 +179,11 @@ public class DataBaseTest {
         postService.insertPost(post3);
         Post checkPost = postService.getPostById(3);
         assertEquals("Some Text3", checkPost.getPostText());
-    }
+    }*/
 
-    @Test
+   /*@Test
     //Not compile
-    public void deleteTest(){
+    public void testDeletePest(){
         Post post1 = new Post();
         Post post2 = new Post();
         Post post3 = new Post();
@@ -205,6 +209,164 @@ public class DataBaseTest {
         postService.deletePost(checkPost);
         Post checkPost2 = postService.getPostById(2);
         assertEquals("Some Text3", checkPost.getPostText());
+    }*/
+
+    /*@Test
+    public void testInsertToSubscription(){
+        Subscription subscription = new Subscription();
+        subscription.setIdUser(1);
+        subscription.setIdTag(2);
+        Subscription subscription2 = new Subscription();
+        subscription2.setIdUser(1);
+        subscription2.setIdTag(3);
+        Subscription subscription3 = new Subscription();
+        subscription3.setIdUser(2);
+        subscription3.setIdTag(3);
+        subscriptionService.insertSubscription(subscription);
+        subscriptionService.insertSubscription(subscription2);
+        subscriptionService.insertSubscription(subscription3);
+        ArrayList<Subscription> subscriptions = subscriptionService.getAllSubscriptions(1);
+        assertTrue(subscriptions.size()==2);
+        //assertEquals("", "");
+    }*/
+
+
+    /*@Test
+    public void testDeleteSubscription(){
+        Subscription subscription = new Subscription();
+        subscription.setIdUser(1);
+        subscription.setIdTag(2);
+        Subscription subscription2 = new Subscription();
+        subscription2.setIdUser(1);
+        subscription2.setIdTag(3);
+        Subscription subscription3 = new Subscription();
+        subscription3.setIdUser(2);
+        subscription3.setIdTag(3);
+        subscriptionService.insertSubscription(subscription);
+        subscriptionService.insertSubscription(subscription2);
+        subscriptionService.insertSubscription(subscription3);
+        ArrayList<Subscription> subscriptions = subscriptionService.getAllSubscriptions(1);
+        Subscription checkSubscription = subscriptions.get(1);
+        subscriptionService.deleteSubscription(checkSubscription);
+    }*/
+
+
+    //Comment
+   /* @Test
+     public void testInsertToComment(){
+        Comment comment = new Comment();
+        comment.setCommentDate(120214);
+        comment.setCommentText("Comment1");
+        comment.setIdUser(1);
+        comment.setIdPost(2);
+        Comment comment2 = new Comment();
+        comment2.setCommentDate(120215);
+        comment2.setCommentText("Comment2");
+        comment2.setIdUser(2);
+        comment2.setIdPost(2);
+        Comment comment3 = new Comment();
+        comment3.setCommentDate(120215);
+        comment3.setCommentText("Comment3");
+        comment3.setIdUser(1);
+        comment3.setIdPost(1);
+        commentService.insertComment(comment);
+        commentService.insertComment(comment2);
+        commentService.insertComment(comment3);
+        ArrayList<Comment> comments = commentService.getAllComments(2);
+        assertTrue(comments.size()==2);
+        //assertEquals("", "");
+    }*/
+
+   /* @Test
+    //Not compile
+    public void testDeleteComment(){
+        Comment comment = new Comment();
+        comment.setCommentDate(120214);
+        comment.setCommentText("Comment1");
+        comment.setIdUser(1);
+        comment.setIdPost(2);
+        Comment comment2 = new Comment();
+        comment2.setCommentDate(120215);
+        comment2.setCommentText("Comment2");
+        comment2.setIdUser(2);
+        comment2.setIdPost(2);
+        Comment comment3 = new Comment();
+        comment3.setCommentDate(120215);
+        comment3.setCommentText("Comment3");
+        comment3.setIdUser(1);
+        comment3.setIdPost(1);
+        commentService.insertComment(comment);
+        commentService.insertComment(comment2);
+        commentService.insertComment(comment3);
+        ArrayList<Comment> comments = commentService.getAllComments(2);
+        Comment checkComment = comments.get(1);
+        commentService.deleteComment(checkComment);
+    }*/
+
+
+    //Grade comment
+   /* @Test
+    public void testInsertGradeComment(){
+        GradeComment gradeComment = new GradeComment();
+        gradeComment.setIdComment(1);
+        gradeComment.setIdUser(2);
+        gradeComment.increaseGrade();
+        GradeComment gradeComment2 = new GradeComment();
+        gradeComment2.setIdComment(2);
+        gradeComment2.setIdUser(2);
+        gradeComment2.increaseGrade();
+        gradeComment2.increaseGrade();
+        gradeCommentService.insertGradeComment(gradeComment);
+        gradeCommentService.insertGradeComment(gradeComment2);
+        GradeComment checkGrade = gradeCommentService.getGradeComment(2);
+        assertEquals(String.valueOf(2), String.valueOf(checkGrade.getGrade()));
+    }*/
+
+
+    /*@Test
+    //not compile
+    public void testUpdateGradeComment(){
+        GradeComment gradeComment = new GradeComment();
+        gradeComment.setIdComment(1);
+        gradeComment.setIdUser(2);
+        gradeComment.increaseGrade();
+        gradeCommentService.insertGradeComment(gradeComment);
+        GradeComment checkGrade = gradeCommentService.getGradeComment(1);
+        checkGrade.increaseGrade();
+        gradeCommentService.updateGradePost(checkGrade);
+        GradeComment checkGrade2 = gradeCommentService.getGradeComment(1);
+        assertEquals(String.valueOf(2), String.valueOf(checkGrade2.getGrade()));
+    }*/
+
+
+    @Test
+    public void testInsertGradePost(){
+        GradePost gradePost = new GradePost();
+        gradePost.setIdPost(1);
+        gradePost.setIdUser(2);
+        gradePost.increaseGrade();
+        GradePost gradePost2 = new GradePost();
+        gradePost2.setIdPost(1);
+        gradePost2.setIdUser(2);
+        gradePost.increaseGrade();
+        gradePostService.insertGradePost(gradePost);
+        gradePostService.insertGradePost(gradePost2);
+        GradePost checkGrade = gradePostService.getGradePost(1);
+        assertEquals(String.valueOf(1), String.valueOf(checkGrade.getGrade()));
+    }
+
+    @Test
+    public void testUpdateGradePost(){
+        GradePost gradePost = new GradePost();
+        gradePost.setIdPost(1);
+        gradePost.setIdUser(2);
+        gradePost.increaseGrade();
+        gradePostService.insertGradePost(gradePost);
+        GradePost checkGrade = gradePostService.getGradePost(1);
+        checkGrade.increaseGrade();
+        gradePostService.updateGradePost(checkGrade);
+        GradePost checkGrade2 =  gradePostService.getGradePost(1);
+        assertEquals(String.valueOf(2), String.valueOf(checkGrade2.getGrade()));
     }
 
 }

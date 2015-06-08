@@ -50,7 +50,7 @@ public class CommentService implements DbConstants {
         return al;
     }
 
-    protected void deleteComment(Comment comment){
+    public void deleteComment(Comment comment){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = " + comment.getCommentText(), null);
     }

@@ -41,7 +41,7 @@ public class SubscriptionService implements DbConstants {
         return al;
     }
 
-    protected void deleteSubscription(Subscription subscription){
+    public void deleteSubscription(Subscription subscription){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = " + subscription.getId(), null);
     }

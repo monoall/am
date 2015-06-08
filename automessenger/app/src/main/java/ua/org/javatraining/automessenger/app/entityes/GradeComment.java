@@ -5,7 +5,7 @@ public class GradeComment {
     private long id;
     private int idUser;
     private int idComment;
-    private int grade;
+    private int grade = 0;
 
     public long getId() {
         return id;
@@ -35,7 +35,15 @@ public class GradeComment {
         return grade;
     }
 
-    public void setGrade(int grade) {
+    public void setGrade(int grade){
         this.grade = grade;
     }
+    public void increaseGrade(){
+        grade++;
+    }
+
+    public void decreaseGrade(){
+        grade--;
+    }
+
 }
