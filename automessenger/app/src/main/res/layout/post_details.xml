@@ -1,16 +1,24 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="ua.org.javatraining.automessenger.app.activities.PostDetails">
-    <include
-            layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="ua.org.javatraining.automessenger.app.activities.PostDetails"
+        android:orientation="vertical"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent">
 
-    <ScrollView
-            android:layout_below="@+id/toolbar"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        <include
+                layout="@layout/toolbar"
+                android:id="@+id/toolbar"/>
+
+        <ScrollView
+                android:id="@+id/scroll_view"
+                android:layout_below="@+id/toolbar"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
             <LinearLayout
                     android:orientation="vertical"
@@ -85,11 +93,38 @@
                         android:layout_width="fill_parent"
                         android:layout_height="2dp"
                         android:background="@drawable/light_shadow"/>
+                <include layout="@layout/comment_layout"/>
+                <include layout="@layout/comment_layout"/>
+                <include layout="@layout/comment_layout"/>
             </LinearLayout>
-    </ScrollView>
-    <View
-            android:layout_below="@+id/toolbar"
+
+        </ScrollView>
+        <View
+                android:layout_below="@+id/toolbar"
+                android:layout_width="fill_parent"
+                android:layout_height="3dp"
+                android:background="@drawable/shadow"/>
+    </RelativeLayout>
+    <LinearLayout
+            android:id="@+id/add_comment_field"
+            android:background="@color/white"
             android:layout_width="fill_parent"
-            android:layout_height="3dp"
-            android:background="@drawable/shadow"/>
-</RelativeLayout>
+            android:layout_height="wrap_content">
+
+        <EditText
+                android:hint="@string/add_comment_hint"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="16dp"
+                android:textColor="@color/black87"
+                android:layout_height="wrap_content"/>
+        <ImageButton
+                android:background="@drawable/nav_item_selected_back"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_send_grey600_24dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/post_comment"/>
+    </LinearLayout>
+
+</LinearLayout>

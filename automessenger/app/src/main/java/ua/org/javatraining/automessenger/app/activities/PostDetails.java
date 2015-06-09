@@ -15,6 +15,7 @@ public class PostDetails extends AppCompatActivity {
 
     Toolbar toolbar;
     TextView descriptionTextView;
+    View listItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,5 +72,20 @@ public class PostDetails extends AppCompatActivity {
 
     //нажата кнопка оценки
     public void actionSetRate(View view) {
+    }
+
+    public void listItemPressed(View view) {
+        View tempListItem = view.findViewById(R.id.rate_panel);
+        if (listItem == tempListItem)
+            if (listItem.getVisibility() == View.VISIBLE)
+                listItem.setVisibility(View.GONE);
+            else
+                listItem.setVisibility(View.VISIBLE);
+        else{
+            if(listItem!=null)
+                listItem.setVisibility(View.GONE);
+            tempListItem.setVisibility(View.VISIBLE);
+        }
+        listItem = tempListItem;
     }
 }
