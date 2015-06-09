@@ -7,9 +7,12 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.GradePost;
+import ua.org.javatraining.automessenger.app.entityes.*;
+
+import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
@@ -40,7 +43,7 @@ public class DataBaseTest {
         photoService = new PhotoService(sqLiteAdapter);
     }
 
-   /* @Test
+    @Test
     public void testInsertUser(){
         User user = new User();
         user.setName("Tom");
@@ -68,9 +71,9 @@ public class DataBaseTest {
         userService.insertUser(user3);
         User checkUser = userService.queryIdFromUser("Ron");
         assertEquals(3, checkUser.getId());
-    }*/
+    }
 
-    /*
+
     //Not compile
     @Test
     public void testDeleteUser(){
@@ -84,12 +87,12 @@ public class DataBaseTest {
         userService.deleteUser(checkUser);
         User checkUser2 = userService.getUserById(1);
         assertEquals("Jack", checkUser2.getName());
-    }*/
+    }
 
 
     //Tags
 
-    /*@Test
+    @Test
     public void testInsertTag(){
         Tag tag = new Tag();
         Tag tag2 = new Tag();
@@ -102,9 +105,9 @@ public class DataBaseTest {
         tagService.insertTag(tag3);
         Tag checkTag = tagService.getTagById(2);
         assertEquals("BE 1228", checkTag.getTagName());
-    }*/
+    }
 
-   /*
+
    //Not compile
    @Test
    public void testDeleteTag(){
@@ -121,13 +124,13 @@ public class DataBaseTest {
         tagService.deleteTag(checkTag);
         Tag checkTag2 = tagService.getTagById(1);
         assertEquals("BE 1228", checkTag2.getTagName());
-    }*/
+    }
 
 
     //Post
 
 
-    /*@Test
+    @Test
     public void testInsertPost(){
         Post post1 = new Post();
         Post post2 = new Post();
@@ -152,9 +155,9 @@ public class DataBaseTest {
         postService.insertPost(post3);
         ArrayList<Post> list = postService.getAllPosts(1,1);
         assertEquals(2 ,list.size());
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void testGetPostById(){
         Post post1 = new Post();
         Post post2 = new Post();
@@ -179,9 +182,9 @@ public class DataBaseTest {
         postService.insertPost(post3);
         Post checkPost = postService.getPostById(3);
         assertEquals("Some Text3", checkPost.getPostText());
-    }*/
+    }
 
-   /*@Test
+    @Test
     //Not compile
     public void testDeletePest(){
         Post post1 = new Post();
@@ -209,9 +212,9 @@ public class DataBaseTest {
         postService.deletePost(checkPost);
         Post checkPost2 = postService.getPostById(2);
         assertEquals("Some Text3", checkPost.getPostText());
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void testInsertToSubscription(){
         Subscription subscription = new Subscription();
         subscription.setIdUser(1);
@@ -228,10 +231,10 @@ public class DataBaseTest {
         ArrayList<Subscription> subscriptions = subscriptionService.getAllSubscriptions(1);
         assertTrue(subscriptions.size()==2);
         //assertEquals("", "");
-    }*/
+    }
 
 
-    /*@Test
+    @Test
     public void testDeleteSubscription(){
         Subscription subscription = new Subscription();
         subscription.setIdUser(1);
@@ -248,11 +251,11 @@ public class DataBaseTest {
         ArrayList<Subscription> subscriptions = subscriptionService.getAllSubscriptions(1);
         Subscription checkSubscription = subscriptions.get(1);
         subscriptionService.deleteSubscription(checkSubscription);
-    }*/
+    }
 
 
     //Comment
-   /* @Test
+     @Test
      public void testInsertToComment(){
         Comment comment = new Comment();
         comment.setCommentDate(120214);
@@ -275,9 +278,9 @@ public class DataBaseTest {
         ArrayList<Comment> comments = commentService.getAllComments(2);
         assertTrue(comments.size()==2);
         //assertEquals("", "");
-    }*/
+    }
 
-   /* @Test
+    @Test
     //Not compile
     public void testDeleteComment(){
         Comment comment = new Comment();
@@ -301,11 +304,11 @@ public class DataBaseTest {
         ArrayList<Comment> comments = commentService.getAllComments(2);
         Comment checkComment = comments.get(1);
         commentService.deleteComment(checkComment);
-    }*/
+    }
 
 
     //Grade comment
-   /* @Test
+    @Test
     public void testInsertGradeComment(){
         GradeComment gradeComment = new GradeComment();
         gradeComment.setIdComment(1);
@@ -320,10 +323,10 @@ public class DataBaseTest {
         gradeCommentService.insertGradeComment(gradeComment2);
         GradeComment checkGrade = gradeCommentService.getGradeComment(2);
         assertEquals(String.valueOf(2), String.valueOf(checkGrade.getGrade()));
-    }*/
+    }
 
 
-    /*@Test
+    @Test
     //not compile
     public void testUpdateGradeComment(){
         GradeComment gradeComment = new GradeComment();
@@ -336,7 +339,7 @@ public class DataBaseTest {
         gradeCommentService.updateGradePost(checkGrade);
         GradeComment checkGrade2 = gradeCommentService.getGradeComment(1);
         assertEquals(String.valueOf(2), String.valueOf(checkGrade2.getGrade()));
-    }*/
+    }
 
 
     @Test
