@@ -16,39 +16,56 @@ public class GradeCommentService implements DbConstants {
 
     public GradeComment insertGradeComment(GradeComment gradeComment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(USER_ID, gradeComment.getIdUser());
-        cv.put(ID_COMMENT, gradeComment.getIdComment());
-        cv.put(GRADE, gradeComment.getGrade());
-        long id = sqLiteDatabase.insert(GRADE_COMMENT_TABLE, null, cv);
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(USER_ID, gradeComment.getIdUser());
+            cv.put(ID_COMMENT, gradeComment.getIdComment());
+            cv.put(GRADE, gradeComment.getGrade());
+            id = sqLiteDatabase.insert(GRADE_COMMENT_TABLE, null, cv);
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally{
+            sqLiteDatabase.endTransaction();
+        }
         gradeComment.setId(id);
         return gradeComment;
     }
 
     public GradeComment updateGradePost(GradeComment gradeComment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(GRADE, gradeComment.getGrade());
-        long id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, "ID = ?", new String[] { String.valueOf(gradeComment.getId()) });
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(GRADE, gradeComment.getGrade());
+            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, "ID = ?", new String[]{String.valueOf(gradeComment.getId())});
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
         gradeComment.setId(id);
         return gradeComment;
     }
 
 
-    public GradeComment getGradeComment(int idComment){
+    public GradeComment getGradeComment(long id){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery(QUERY_GRADE_COMMENT_BY_ID_COMMENT, new String[]{String.valueOf(idComment)});
-        //Cursor cursor = sqLiteDatabase.query(GRADE_COMMENT_TABLE, null, null, null, null, null, null);
-        //cursor.move(idComment);
-        int indexId = cursor.getColumnIndex(ID);
-        int indexIdUser = cursor.getColumnIndex(USER_ID);
-        int indexIdComment = cursor.getColumnIndex(ID_COMMENT);
-        int indexGrade = cursor.getColumnIndex(GRADE);
+        Cursor cursor = sqLiteDatabase.query(GRADE_COMMENT_TABLE, null, "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+        GradeComment gradeComment = null;
+        if(cursor.moveToFirst()){
+            gradeComment = buildGradeComment(cursor);
+        }
+        return gradeComment;
+    }
+
+
+    private GradeComment buildGradeComment(Cursor c){
         GradeComment gradeComment = new GradeComment();
-        gradeComment.setId(cursor.getInt(indexId));
-        gradeComment.setIdUser(cursor.getInt(indexIdUser));
-        gradeComment.setIdComment(cursor.getInt(indexIdComment));
-        gradeComment.setGrade(cursor.getInt(indexGrade));
+        gradeComment.setId(c.getInt(c.getColumnIndex(ID)));
+        gradeComment.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
+        gradeComment.setIdComment(c.getInt(c.getColumnIndex(ID_COMMENT)));
+        gradeComment.setGrade(c.getInt(c.getColumnIndex(GRADE)));
         return gradeComment;
     }
 }

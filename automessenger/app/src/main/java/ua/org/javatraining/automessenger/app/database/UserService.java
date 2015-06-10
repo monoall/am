@@ -19,46 +19,40 @@ public class UserService implements DbConstants{
      */
     public User insertUser(User user) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(USER_NAME, user.getName());
-        long id = sqLiteDatabase.insert(USER_TABLE, null, cv);
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(USER_NAME, user.getName());
+            id = sqLiteDatabase.insert(USER_TABLE, null, cv);
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
         user.setId(id);
         return user;
     }
 
     public User getUserById(long id){
-        /*SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase
-                .rawQuery("SELECT USER_NAME from USER where ID = ?", new String[]{String.valueOf(id)});
-        int indexUser = cursor.getColumnIndex(USER_NAME);
-        User user = new User();
-        user.setId(id);
-        user.setName(cursor.getString(indexUser));*/
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(USER_TABLE, null,
-                null, null, null, null, null);
-        int indexUser = cursor.getColumnIndex(USER_NAME);
-        cursor.move((int) id);
-        User user = new User();
-        user.setId(id);
-        user.setName(cursor.getString(indexUser));
+                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+        User user = null;
+        if(cursor.moveToFirst()){
+            user =  buildUser(cursor);
+        }
         return user;
     }
 
-    public User queryIdFromUser(String userName) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ID_USER_BY_NAME , new String[]{userName});
-        int indexId = cursor.getColumnIndex(ID);
+    public void deleteUser(User user){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
+        sqLiteDatabase.delete(USER_TABLE, "ID = ?", new String[]{String.valueOf(user.getId())});
+    }
+
+    private User buildUser(Cursor c){
         User u = new User();
-        cursor.moveToFirst();
-            u.setId(cursor.getLong(indexId));
+        u.setId(c.getLong(c.getColumnIndex(ID)));
+        u.setName(c.getString(c.getColumnIndex(USER_NAME)));
         return u;
     }
-
-    public void deleteUser(User user){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(USER_TABLE, ID + " = " + (int) user.getId(), null);
-    }
-
 }

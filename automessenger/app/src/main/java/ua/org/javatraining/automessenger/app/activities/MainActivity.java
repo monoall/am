@@ -11,11 +11,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.database.*;
+import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.entityes.Tag;
+import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
@@ -24,6 +29,7 @@ import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -51,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
+        //////////////////////////////////////////////////////
+        dbTest();
+        //////////////////////////////////////////////////////
 
         if(savedInstanceState == null){
             drawerWidth = getNavDrawWidth();
@@ -184,4 +193,35 @@ public class MainActivity extends AppCompatActivity {
     public void spda(View view) {
         startActivity(new Intent(this, PostDetails.class));
     }
+
+    private void dbTest(){
+        SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
+        UserService userService = new UserService(sqLiteAdapter);
+        TagService tagService = new TagService(sqLiteAdapter);
+        SubscriptionService subscriptionService = new SubscriptionService(sqLiteAdapter);
+        PostService postService = new PostService(sqLiteAdapter);
+        CommentService commentService = new CommentService(sqLiteAdapter);
+        GradeCommentService gradeCommentService = new GradeCommentService(sqLiteAdapter);
+        GradePostService gradePostService = new GradePostService(sqLiteAdapter);
+        PhotoService photoService = new PhotoService(sqLiteAdapter);
+        User user = new User();
+        user.setName("Tom");
+        Log.d("myTags", "User insert " + userService.insertUser(user).getId());
+        Tag tag = new Tag();
+        tagService.insertTag(tag);
+        Log.d("myTags", "Tag insert " + tagService.insertTag(tag).getTagId());
+        Post post1 = new Post();
+        post1.setPostText("Some Text1");
+        post1.setPostLocation("location1");
+        post1.setPostDate(120215);
+        User chekUser = userService.getUserById(1);
+        Tag checkTag = tagService.getTagById(1);
+        post1.setIdUser((int)chekUser.getId());
+        post1.setIdTag((int)checkTag.getTagId());
+        Log.d("myTags", "Post insert " + postService.insertPost(post1).getId());
+        ArrayList<Post> p = postService.getAllPosts((int)chekUser.getId(), (int)checkTag.getTagId());
+        Post checkPost = p.get(1);
+        Log.d("myTags", "Post text " + checkPost.getPostText());
+    }
+
 }

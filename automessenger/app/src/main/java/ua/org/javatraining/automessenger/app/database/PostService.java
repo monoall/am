@@ -17,13 +17,20 @@ public class PostService implements DbConstants {
 
     public Post insertPost(Post post) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(POST_TEXT, post.getPostText());
-        cv.put(POST_DATE, post.getPostDate());
-        cv.put(POST_LOCATION, post.getPostLocation());
-        cv.put(USER_ID, post.getIdUser());
-        cv.put(TAG_ID, post.getIdTag());
-        long id = sqLiteDatabase.insert(POST_TABLE, null, cv);
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(POST_TEXT, post.getPostText());
+            cv.put(POST_DATE, post.getPostDate());
+            cv.put(POST_LOCATION, post.getPostLocation());
+            cv.put(USER_ID, post.getIdUser());
+            cv.put(TAG_ID, post.getIdTag());
+            id = sqLiteDatabase.insert(POST_TABLE, null, cv);
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
         post.setId(id);
         return post;
     }
@@ -31,20 +38,11 @@ public class PostService implements DbConstants {
     public Post getPostById(long id){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(POST_TABLE, null,
-                null, null, null, null, null);
-        int indexPostText = cursor.getColumnIndex(POST_TEXT);
-        int indexPostDate = cursor.getColumnIndex(POST_DATE);
-        int indexPostLocation = cursor.getColumnIndex(POST_LOCATION);
-        int indexIdUser = cursor.getColumnIndex(USER_ID);
-        int indexTagId = cursor.getColumnIndex(TAG_ID);
-        cursor.move((int) id);
-        Post post = new Post();
-        post.setId(id);
-        post.setPostText(cursor.getString(indexPostText));
-        post.setPostDate(cursor.getInt(indexPostDate));
-        post.setPostLocation(cursor.getString(indexPostLocation));
-        post.setIdUser(cursor.getInt(indexIdUser));
-        post.setIdTag(cursor.getInt(indexTagId));
+                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+        Post post = null;
+        if(cursor.moveToFirst()){
+            post = buildPost(cursor);
+        }
         return post;
     }
 
@@ -53,20 +51,9 @@ public class PostService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID, new String[]{String.valueOf(userId), String.valueOf(tagId)});
-        int indexPostText = cursor.getColumnIndex(POST_TEXT);
-        int indexPostDate = cursor.getColumnIndex(POST_DATE);
-        int indexPostLocation = cursor.getColumnIndex(POST_LOCATION);
-        int indexIdUser = cursor.getColumnIndex(USER_ID);
-        int indexTagId = cursor.getColumnIndex(TAG_ID);
-
         ArrayList<Post> al = new ArrayList<Post>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
-            Post post = new Post();
-            post.setPostText(cursor.getString(indexPostText));
-            post.setPostDate(cursor.getInt(indexPostDate));
-            post.setPostLocation(cursor.getString(indexPostLocation));
-            post.setIdUser(cursor.getInt(indexIdUser));
-            post.setIdTag(cursor.getInt(indexTagId));
+            Post post = buildPost(cursor);
             al.add(post);
         }
         return al;
@@ -74,8 +61,18 @@ public class PostService implements DbConstants {
 
     public void deletePost(Post post){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = " + post.getPostText(), null);
+        sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?", new String[]{post.getPostText()});
     }
 
+    private Post buildPost(Cursor c){
+        Post p =  new Post();
+        p.setId(c.getLong(c.getColumnIndex(ID)));
+        p.setPostText(c.getString(c.getColumnIndex(POST_TEXT)));
+        p.setPostDate(c.getInt(c.getColumnIndex(POST_DATE)));
+        p.setPostLocation(c.getString(c.getColumnIndex(POST_LOCATION)));
+        p.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
+        p.setIdTag(c.getInt(c.getColumnIndex(TAG_ID)));
+        return p;
+    }
 
 }

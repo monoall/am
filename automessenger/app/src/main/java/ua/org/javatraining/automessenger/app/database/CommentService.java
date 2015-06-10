@@ -18,12 +18,19 @@ public class CommentService implements DbConstants {
 
     public Comment insertComment(Comment comment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COMMENT_DATE, comment.getCommentDate());
-        cv.put(COMMENT_TEXT, comment.getCommentText());
-        cv.put(USER_ID, comment.getIdUser());
-        cv.put(ID_POST, comment.getIdPost());
-        long id = sqLiteDatabase.insert(COMMENT_TABLE, null, cv);
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(COMMENT_DATE, comment.getCommentDate());
+            cv.put(COMMENT_TEXT, comment.getCommentText());
+            cv.put(USER_ID, comment.getIdUser());
+            cv.put(ID_POST, comment.getIdPost());
+            id = sqLiteDatabase.insert(COMMENT_TABLE, null, cv);
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
         comment.setId(id);
         return comment;
     }
@@ -33,18 +40,10 @@ public class CommentService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_COMMENTS_BY_POST_ID , new String[]{String.valueOf(postId)});
-        int indexCommentDate = cursor.getColumnIndex(COMMENT_DATE);
-        int indexCommentText = cursor.getColumnIndex(COMMENT_TEXT);
-        int indexIdUser = cursor.getColumnIndex(USER_ID);
-        int indexIdPost = cursor.getColumnIndex(ID_POST);
 
         ArrayList<Comment> al = new ArrayList<Comment>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
-            Comment comment = new Comment();
-            comment.setCommentDate(cursor.getInt(indexCommentDate));
-            comment.setCommentText(cursor.getString(indexCommentText));
-            comment.setIdUser(cursor.getInt(indexIdUser));
-            comment.setIdPost(cursor.getInt(indexIdPost));
+            Comment comment = buildComment(cursor);
             al.add(comment);
         }
         return al;
@@ -52,7 +51,17 @@ public class CommentService implements DbConstants {
 
     public void deleteComment(Comment comment){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = " + comment.getCommentText(), null);
+        sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = ?", new String[]{comment.getCommentText()});
+    }
+
+    private Comment buildComment(Cursor c){
+        Comment com = new Comment();
+        com.setId(c.getLong(c.getColumnIndex(ID)));
+        com.setCommentDate(c.getInt(c.getColumnIndex(COMMENT_DATE)));
+        com.setCommentText(c.getString(c.getColumnIndex(COMMENT_TEXT)));
+        com.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
+        com.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
+        return com;
     }
 
 

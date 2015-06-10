@@ -20,24 +20,36 @@ public class PhotoService implements DbConstants {
 
    public Photo insertPhoto(Photo photo){
        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-       ContentValues cv = new ContentValues();
-       cv.put(LINK, photo.getPhotoLink());
-       cv.put(ID_POST, photo.getIdPost());
-       long id = sqLiteDatabase.insert(PHOTO_TABLE, null, cv);
+       long id;
+       sqLiteDatabase.beginTransaction();
+       try{
+           ContentValues cv = new ContentValues();
+           cv.put(LINK, photo.getPhotoLink());
+           cv.put(ID_POST, photo.getIdPost());
+           id = sqLiteDatabase.insert(PHOTO_TABLE, null, cv);
+           sqLiteDatabase.setTransactionSuccessful();
+       }finally {
+           sqLiteDatabase.endTransaction();
+       }
        photo.setId(id);
        return photo;
    }
 
    public Photo getPhoto(int idPost){
        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-       Cursor cursor = sqLiteDatabase.rawQuery(QUERY_PHOTO_BY_ID_POST, new String[]{String.valueOf(idPost)});
-       int indexId = cursor.getColumnIndex(ID);
-       int indexPhotoLink = cursor.getColumnIndex(LINK);
-       int indexIdPost = cursor.getColumnIndex(ID_POST);
-       Photo photo = new Photo();
-       photo.setId(cursor.getInt(indexId));
-       photo.setPhotoLink(cursor.getString(indexPhotoLink));
-       photo.setIdPost(cursor.getInt(indexIdPost));
+       Cursor cursor = sqLiteDatabase.query(PHOTO_TABLE, null, "ID_POST = ?", new String[]{String.valueOf(idPost)}, null,null,null);
+       Photo photo = null;
+       if(cursor.moveToFirst()){
+           photo = buildPhoto(cursor);
+       }
        return photo;
+   }
+
+   private Photo buildPhoto(Cursor c){
+       Photo p = new Photo();
+       p.setId(c.getInt(c.getColumnIndex(ID)));
+       p.setPhotoLink(c.getString(c.getColumnIndex(LINK)));
+       p.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
+       return p;
    }
 }

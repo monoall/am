@@ -17,10 +17,17 @@ public class SubscriptionService implements DbConstants {
 
     public Subscription insertSubscription(Subscription subscription) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(USER_ID, subscription.getIdUser());
-        cv.put(TAG_ID, subscription.getIdTag());
-        long id = sqLiteDatabase.insert(SUBSCRIPTION_TABLE, null, cv);
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(USER_ID, subscription.getIdUser());
+            cv.put(TAG_ID, subscription.getIdTag());
+            id = sqLiteDatabase.insert(SUBSCRIPTION_TABLE, null, cv);
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
         subscription.setId(id);
         return subscription;
     }
@@ -43,7 +50,7 @@ public class SubscriptionService implements DbConstants {
 
     public void deleteSubscription(Subscription subscription){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = " + subscription.getId(), null);
+        sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = ?", new String[]{String.valueOf(subscription.getId())});
     }
 
 }

@@ -7,16 +7,14 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.*;
-
-import java.util.ArrayList;
+import ua.org.javatraining.automessenger.app.entityes.Tag;
+import ua.org.javatraining.automessenger.app.entityes.User;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class DataBaseTestI {
+public class DataBaseTest {
 
     MainActivity mainActivity;
     SQLiteAdapter sqLiteAdapter;
@@ -32,6 +30,7 @@ public class DataBaseTestI {
     @Before
     public void initialize(){
         mainActivity = new MainActivity();
+        //sqLiteAdapter = SQLiteAdapter.initInstance(Robolectric.application.getApplicationContext());
         sqLiteAdapter = SQLiteAdapter.initInstance(mainActivity);
         userService = new UserService(sqLiteAdapter);
         tagService = new TagService(sqLiteAdapter);
@@ -43,8 +42,9 @@ public class DataBaseTestI {
         photoService = new PhotoService(sqLiteAdapter);
     }
 
-    @Test
-    public void testInsertUser(){
+    @Before
+    public void insertTo(){
+        //User
         User user = new User();
         user.setName("Tom");
         User user2 = new User();
@@ -54,46 +54,7 @@ public class DataBaseTestI {
         userService.insertUser(user);
         userService.insertUser(user2);
         userService.insertUser(user3);
-        User checkUser = userService.getUserById(2);
-        assertEquals("Jack", checkUser.getName());
-    }
-
-    @Test
-    public void testQueryIdFromUser(){
-        User user = new User();
-        user.setName("Tom");
-        User user2 = new User();
-        user2.setName("Jack");
-        User user3 = new User();
-        user3.setName("Ron");
-        userService.insertUser(user);
-        userService.insertUser(user2);
-        userService.insertUser(user3);
-        User checkUser = userService.queryIdFromUser("Ron");
-        assertEquals(3, checkUser.getId());
-    }
-
-
-    //Not compile
-    @Test
-    public void testDeleteUser(){
-        User user = new User();
-        user.setName("Tom");
-        User user2 = new User();
-        user2.setName("Jack");
-        userService.insertUser(user);
-        userService.insertUser(user2);
-        User checkUser = userService.getUserById(1);
-        userService.deleteUser(checkUser);
-        User checkUser2 = userService.getUserById(1);
-        assertEquals("Jack", checkUser2.getName());
-    }
-
-
-    //Tags
-
-    @Test
-    public void testInsertTag(){
+        //Tag
         Tag tag = new Tag();
         Tag tag2 = new Tag();
         Tag tag3 = new Tag();
@@ -103,6 +64,44 @@ public class DataBaseTestI {
         tagService.insertTag(tag);
         tagService.insertTag(tag2);
         tagService.insertTag(tag3);
+
+    }
+
+    @Test
+    public void testInsertUser(){
+        User user4 = new User();
+        user4.setName("John");
+        User checkUser = userService.insertUser(user4);
+        assertEquals(4, checkUser.getId());
+    }
+
+
+    @Test
+    public void testGetUserById(){
+        User checkUser = userService.getUserById(2);
+        assertEquals("Jack", checkUser.getName());
+    }
+
+    //Not compile
+    @Test
+    public void testDeleteUser(){
+        User checkUser = userService.getUserById(1);
+        userService.deleteUser(checkUser);
+        User checkUser2 = userService.getUserById(1);
+        assertEquals("Jack", checkUser2.getName());
+    }
+
+    //Tags
+   /* @Test
+    public void testInsertTag(){
+        Tag tag4 = new Tag();
+        tag4.setTagName("BE 0102");
+        Tag checkTag = tagService.insertTag(tag4);
+        assertEquals(4, checkTag.getTagId());
+    }
+
+    @Test
+    public void testGetTagById(){
         Tag checkTag = tagService.getTagById(2);
         assertEquals("BE 1228", checkTag.getTagName());
     }
@@ -111,15 +110,6 @@ public class DataBaseTestI {
    //Not compile
    @Test
    public void testDeleteTag(){
-        Tag tag = new Tag();
-        Tag tag2 = new Tag();
-        Tag tag3 = new Tag();
-        tag.setTagName("BE 0208");
-        tag2.setTagName("BE 1228");
-        tag3.setTagName("BE 0268");
-        tagService.insertTag(tag);
-        tagService.insertTag(tag2);
-        tagService.insertTag(tag3);
         Tag checkTag = tagService.getTagById(1);
         tagService.deleteTag(checkTag);
         Tag checkTag2 = tagService.getTagById(1);
@@ -130,7 +120,7 @@ public class DataBaseTestI {
     //Post
 
 
-    @Test
+    /*@Test
     public void testInsertPost(){
         Post post1 = new Post();
         Post post2 = new Post();
@@ -370,6 +360,6 @@ public class DataBaseTestI {
         gradePostService.updateGradePost(checkGrade);
         GradePost checkGrade2 =  gradePostService.getGradePost(1);
         assertEquals(String.valueOf(2), String.valueOf(checkGrade2.getGrade()));
-    }
+    }*/
 
 }

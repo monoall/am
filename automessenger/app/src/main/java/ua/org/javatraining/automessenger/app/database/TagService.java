@@ -14,53 +14,42 @@ public class TagService implements DbConstants {
     }
 
     public Tag insertTag(Tag tag) {
-        /*
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(USER_NAME, user.getName());
-        long id = sqLiteDatabase.insert(USER_TABLE, null, cv);
-        user.setId(id);
-        return user;*/
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(TAG_NAME, tag.getTagName());
-        long id = sqLiteDatabase.insert(TAG_TABLE, null, cv);
+        long id;
+        sqLiteDatabase.beginTransaction();
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(TAG_NAME, tag.getTagName());
+            id = sqLiteDatabase.insert(TAG_TABLE, null, cv);
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
         tag.setTagId(id);
         return tag;
     }
 
     public Tag getTagById(long id){
-        /*SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_TAG_BY_ID, new String[]{String.valueOf(id)});
-        int indexUser = cursor.getColumnIndex(USER_NAME);
-        Tag tag = new Tag();
-        tag.setTagId(id);
-        tag.setTagName(cursor.getString(indexUser));
-        return tag;*/
-       /* SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(USER_TABLE, null,
-                null, null, null, null, null);
-        int indexUser = cursor.getColumnIndex(USER_NAME);
-        cursor.move((int) id);
-        User user = new User();
-        user.setId(id);
-        user.setName(cursor.getString(indexUser));
-        return user;*/
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(TAG_TABLE, null,
-                null, null, null, null, null);
-        int indexTag = cursor.getColumnIndex(TAG_NAME);
-        cursor.move((int) id);
-        Tag tag = new Tag();
-        tag.setTagId(id);
-        tag.setTagName(cursor.getString(indexTag));
+                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+        Tag tag = null;
+        if(cursor.moveToFirst()){
+            tag =  buildTag(cursor);
+        }
         return tag;
     }
 
     public void deleteTag(Tag tag){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(TAG_TABLE, ID + " = " + (int) tag.getTagId(), null);
+        sqLiteDatabase.delete(TAG_TABLE, "ID = ?", new String[]{String.valueOf(tag.getTagId())});
+    }
+
+    private Tag buildTag(Cursor c){
+        Tag t = new Tag();
+        t.setTagId(c.getLong(c.getColumnIndex(ID)));
+        t.setTagName(c.getString(c.getColumnIndex(TAG_NAME)));
+        return t;
     }
 
 }
