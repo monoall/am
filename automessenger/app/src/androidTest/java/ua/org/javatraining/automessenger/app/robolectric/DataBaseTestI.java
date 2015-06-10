@@ -14,7 +14,7 @@ import static junit.framework.Assert.assertEquals;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class DataBaseTest {
+public class DataBaseTestI {
 
     MainActivity mainActivity;
     SQLiteAdapter sqLiteAdapter;
