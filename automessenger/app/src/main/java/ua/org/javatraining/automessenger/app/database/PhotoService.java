@@ -18,7 +18,12 @@ public class PhotoService implements DbConstants {
     private String photoLink;
     private int idPost;
 
-   public Photo insertPhoto(Photo photo){
+    /**
+     * Вставляет в таблицу Photo
+     * @param photo объект Photo
+     * @return вставленный объект
+     */
+    public Photo insertPhoto(Photo photo){
        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
        long id;
        sqLiteDatabase.beginTransaction();
@@ -33,23 +38,28 @@ public class PhotoService implements DbConstants {
        }
        photo.setId(id);
        return photo;
-   }
+    }
 
-   public Photo getPhoto(int idPost){
-       SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+    /**
+     * Возвращает объект Photo для поста
+     * @param idPost id поста
+     * @return объект Post
+     */
+     public Photo getPhoto(int idPost){
+       SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
        Cursor cursor = sqLiteDatabase.query(PHOTO_TABLE, null, "ID_POST = ?", new String[]{String.valueOf(idPost)}, null,null,null);
        Photo photo = null;
        if(cursor.moveToFirst()){
            photo = buildPhoto(cursor);
        }
        return photo;
-   }
+     }
 
-   private Photo buildPhoto(Cursor c){
+     private Photo buildPhoto(Cursor c){
        Photo p = new Photo();
        p.setId(c.getInt(c.getColumnIndex(ID)));
        p.setPhotoLink(c.getString(c.getColumnIndex(LINK)));
        p.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
        return p;
-   }
+     }
 }

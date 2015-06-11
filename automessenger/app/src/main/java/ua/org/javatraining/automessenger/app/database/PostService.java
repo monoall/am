@@ -15,6 +15,11 @@ public class PostService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
+    /**
+     * Вставляет пост в таблицу Post
+     * @param post объект Post
+     * @return вставленный объект
+     */
     public Post insertPost(Post post) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
@@ -35,6 +40,11 @@ public class PostService implements DbConstants {
         return post;
     }
 
+    /**
+     * Возвращает пост по его id
+     * @param id id поста
+     * @return объект Post
+     */
     public Post getPostById(long id){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(POST_TABLE, null,
@@ -46,7 +56,12 @@ public class PostService implements DbConstants {
         return post;
     }
 
-
+    /**
+     * Возвращает все посты юзера по тегу
+     * @param userId id юзера
+     * @param tagId id тега
+     * @return Список постов
+     */
     public ArrayList<Post> getAllPosts(long userId, long tagId){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
@@ -59,9 +74,18 @@ public class PostService implements DbConstants {
         return al;
     }
 
+    /**
+     * Удаляет пост
+     * @param post объект Post
+     */
     public void deletePost(Post post){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?", new String[]{post.getPostText()});
+        try{
+            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?", new String[]{post.getPostText()});
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     private Post buildPost(Cursor c){

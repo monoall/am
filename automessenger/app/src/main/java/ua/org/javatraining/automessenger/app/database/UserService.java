@@ -33,6 +33,11 @@ public class UserService implements DbConstants{
         return user;
     }
 
+    /**
+     * Возвращает юзера по его id
+     * @param id - id юзера
+     * @return объект User
+     */
     public User getUserById(long id){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(USER_TABLE, null,
@@ -44,10 +49,19 @@ public class UserService implements DbConstants{
         return user;
     }
 
+    /**
+     * Удаляет юзера
+     */
     public void deleteUser(User user){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        sqLiteDatabase.delete(USER_TABLE, "ID = ?", new String[]{String.valueOf(user.getId())});
-    }
+        sqLiteDatabase.beginTransaction();
+        try{
+            sqLiteDatabase.delete(USER_TABLE, "ID = ?", new String[]{String.valueOf(user.getId())});
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
+       }
 
     private User buildUser(Cursor c){
         User u = new User();

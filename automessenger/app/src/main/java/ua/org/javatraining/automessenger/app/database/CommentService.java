@@ -16,6 +16,11 @@ public class CommentService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
+    /**
+     * Вставляет в таблицу Comment
+     * @param comment объект Comment
+     * @return вставленный объект
+     */
     public Comment insertComment(Comment comment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
@@ -35,12 +40,16 @@ public class CommentService implements DbConstants {
         return comment;
     }
 
+    /**
+     * Возвращает все комментарии к посту
+     * @param postId id поста
+     * @return Список комментариев
+     */
     public ArrayList<Comment> getAllComments(int postId){
 
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_COMMENTS_BY_POST_ID , new String[]{String.valueOf(postId)});
-
         ArrayList<Comment> al = new ArrayList<Comment>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             Comment comment = buildComment(cursor);
@@ -49,9 +58,19 @@ public class CommentService implements DbConstants {
         return al;
     }
 
+    /**
+     *
+     * Удаляет комментарии
+     * @param comment объект Comment
+     */
     public void deleteComment(Comment comment){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = ?", new String[]{comment.getCommentText()});
+        try{
+            sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = ?", new String[]{comment.getCommentText()});
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     private Comment buildComment(Cursor c){
