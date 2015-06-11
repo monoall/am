@@ -8,10 +8,11 @@
     
     <style name="MyToolbarTheme" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/app_blue</item>
+        <item name="android:elevation">4dp</item>
     </style>
 
     <style name="MyCustomShadow">
-        <item name="android:visibility">visible</item>
+        <item name="android:visibility">gone</item>
     </style>
 
 </resources>

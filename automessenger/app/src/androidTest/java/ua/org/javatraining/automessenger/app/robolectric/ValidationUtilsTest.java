@@ -1,16 +1,10 @@
 package ua.org.javatraining.automessenger.app.robolectric;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static ua.org.javatraining.automessenger.app.utils.ValidationUtils.checkTag;
 
-@Config(emulateSdk = 18)
-@RunWith(RobolectricTestRunner.class)
 public class ValidationUtilsTest {
 
     @Test //Тест на длину строки. Строка слишком короткая

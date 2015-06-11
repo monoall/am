@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void toolbarInit(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_action);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @SuppressLint("RtlHardcoded")
             @Override

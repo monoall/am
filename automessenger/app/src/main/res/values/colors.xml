@@ -5,14 +5,10 @@
     <item name="black87" type="color">#de000000</item>
     <item name="black54" type="color">#8a000000</item>
     <item name="app_blue" type="color">#2196F3</item>
-    <item name="app_blue_light" type="color">#8a2196F3</item>
-    <item name="app_blue_light_87" type="color">#de2196F3</item>
     <item name="blue_dark" type="color">#1976D2</item>
-    <item name="blue" type="color">#90CAF9</item>
     <item name="shadow" type="color">#24000000</item>
     <item name="grey" type="color">#BDBDBD</item>
     <item name="grey_dark" type="color">#9E9E9E</item>
-    <item name="white54" type="color">#8AFFFFFF</item>
 
     <color name="transparent">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
