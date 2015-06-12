@@ -8,6 +8,7 @@
     <item name="blue_dark" type="color">#1976D2</item>
     <item name="shadow" type="color">#24000000</item>
     <item name="grey" type="color">#BDBDBD</item>
+    <item name="grey26" type="color">#42BDBDBD</item>
     <item name="grey_dark" type="color">#9E9E9E</item>
 
     <color name="transparent">#00FFFFFF</color>
