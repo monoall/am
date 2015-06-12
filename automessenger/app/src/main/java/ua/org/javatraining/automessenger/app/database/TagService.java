@@ -13,6 +13,11 @@ public class TagService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
+    /**
+     * Вставляет новый тег
+     * @param tag объект тег
+     * @return вставленный объект
+     */
     public Tag insertTag(Tag tag) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
@@ -29,6 +34,12 @@ public class TagService implements DbConstants {
         return tag;
     }
 
+
+    /**
+     * Возвращает тег по его id
+     * @param id id юзера
+     * @return объект тег
+     */
     public Tag getTagById(long id){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(TAG_TABLE, null,
@@ -40,9 +51,19 @@ public class TagService implements DbConstants {
         return tag;
     }
 
+    /**
+     * Удаляет тег
+     * @param tag объект тег
+     */
     public void deleteTag(Tag tag){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(TAG_TABLE, "ID = ?", new String[]{String.valueOf(tag.getTagId())});
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+        try{
+            sqLiteDatabase.delete(TAG_TABLE, "ID = ?", new String[]{String.valueOf(tag.getTagId())});
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     private Tag buildTag(Cursor c){

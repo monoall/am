@@ -13,6 +13,11 @@ public class GradePostService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
+    /**
+     * Вставляет оценку в таблицу GradePost
+     * @param gradePost объект GradePost
+     * @return вставленный объект
+     */
     public GradePost insertGradePost(GradePost gradePost) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
@@ -31,9 +36,15 @@ public class GradePostService implements DbConstants {
         return gradePost;
     }
 
+    /**
+     * Обновляет существующий GradePost
+     * @param gradePost объект GradePost
+     * @return обновленный объект GradePost
+     */
     public GradePost updateGradePost(GradePost gradePost) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
+        sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
             cv.put(GRADE, gradePost.getGrade());
@@ -46,10 +57,13 @@ public class GradePostService implements DbConstants {
         return gradePost;
     }
 
-
+    /**
+     * Возвращает оценку по id Поста
+     * @param idPost id поста
+     * @return объект GradePost
+     */
     public GradePost getGradePost(int idPost){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-
         Cursor cursor = sqLiteDatabase.query(GRADE_POST_TABLE, null, "ID = ?", new String[]{String.valueOf(idPost)}, null, null, null);
         GradePost gradePost = null;
         if(cursor.moveToFirst()){

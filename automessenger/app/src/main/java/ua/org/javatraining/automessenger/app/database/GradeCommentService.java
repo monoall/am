@@ -13,7 +13,11 @@ public class GradeCommentService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
-
+    /**
+     * Вставляет оценку в таблицу GradeComment
+     * @param gradeComment объект GradeComment
+     * @return вставленный объект
+     */
     public GradeComment insertGradeComment(GradeComment gradeComment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
@@ -32,7 +36,12 @@ public class GradeCommentService implements DbConstants {
         return gradeComment;
     }
 
-    public GradeComment updateGradePost(GradeComment gradeComment) {
+    /**
+     * Обновляет существующий GradeComment
+     * @param gradeComment объект GradeComment
+     * @return обновленный объект GradeComment
+     */
+    public GradeComment updateGradeComment(GradeComment gradeComment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
         sqLiteDatabase.beginTransaction();
@@ -48,7 +57,11 @@ public class GradeCommentService implements DbConstants {
         return gradeComment;
     }
 
-
+    /**
+     * Возвращает оценку по id комментария
+     * @param id id комментария
+     * @return объект GradeComment
+     */
     public GradeComment getGradeComment(long id){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(GRADE_COMMENT_TABLE, null, "ID = ?", new String[]{String.valueOf(id)}, null, null, null);

@@ -15,6 +15,11 @@ public class SubscriptionService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
+    /**
+     * Вставить подписку
+     * @param subscription объект subscription
+     * @return объект subscription
+     */
     public Subscription insertSubscription(Subscription subscription) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
@@ -32,6 +37,11 @@ public class SubscriptionService implements DbConstants {
         return subscription;
     }
 
+    /**
+     * Возвращает все подписки юзера
+     * @param userId id юзера
+     * @return Список подписок
+     */
     public ArrayList<Subscription> getAllSubscriptions(long userId){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
@@ -48,9 +58,18 @@ public class SubscriptionService implements DbConstants {
         return al;
     }
 
+    /**
+     * Удаляет подписку
+     * @param subscription объект Subscription
+     */
     public void deleteSubscription(Subscription subscription){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = ?", new String[]{String.valueOf(subscription.getId())});
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
+        try{
+            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = ?", new String[]{String.valueOf(subscription.getId())});
+            sqLiteDatabase.setTransactionSuccessful();
+        }finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
 }
