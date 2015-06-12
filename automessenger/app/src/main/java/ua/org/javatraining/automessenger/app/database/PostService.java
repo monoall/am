@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.entityes.Tag;
 
 import java.util.ArrayList;
 
@@ -73,6 +74,72 @@ public class PostService implements DbConstants {
         }
         return al;
     }
+
+    /**
+     * Возвращает последние 50 постов юзера
+     * @param userId id юзера
+     * @return Список постов
+     */
+    public ArrayList<Post> getPostsFromSubscribes(long userId){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_ALL_POST_BY_USER_ID, new String[]{String.valueOf(userId)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if(count < 50){
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            }else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    /**
+     * Возвращает последние 50 постов по локации
+     * @param location локация
+     * @return Список постов
+     */
+    public ArrayList <Post> getPostsFromNearby(String location){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_ALL_POST_BY_LOCATION, new String[]{location});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if(count < 50){
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            }else {
+                break;
+            }
+        }
+        return al;
+    }
+
+
+    /**
+     * Возвращает все посты по тегу
+     * @param tag объект Tag
+     * @return Список постов
+     */
+    public ArrayList <Post> getPostsByTag(Tag tag){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_ALL_POST_BY_TAG_ID, new String[]{String.valueOf(tag.getTagId())});
+        ArrayList<Post> al = new ArrayList<Post>();
+        for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
+            Post post = buildPost(cursor);
+            al.add(post);
+        }
+        return al;
+    }
+
+
 
     /**
      * Удаляет пост

@@ -42,7 +42,7 @@ public class SubscriptionService implements DbConstants {
      * @param userId id юзера
      * @return Список подписок
      */
-    public ArrayList<Subscription> getAllSubscriptions(long userId){
+    public ArrayList<Subscription> getSubscriptionsList(long userId){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_TAG_ID_BY_USER_ID, new String[]{String.valueOf(userId)});

@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
 
+import java.util.ArrayList;
+
 public class TagService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
@@ -50,6 +52,28 @@ public class TagService implements DbConstants {
         }
         return tag;
     }
+
+
+    /**
+     * Возвращает список тегов названия которых
+     * содержат в себе подстроку str;
+     * @param str строка, которую должно
+     *            содержать имя тега
+     * @return Список тегов
+     */
+    public ArrayList<Tag> searchTags(String str){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(null, null, null, null, null, null, null);
+        ArrayList<Tag> al = new ArrayList<Tag>();
+        for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
+            Tag tag = buildTag(cursor);
+            if(tag.getTagName().contains(str)){
+                al.add(tag);
+            }
+        }
+        return al;
+    }
+
 
     /**
      * Удаляет тег

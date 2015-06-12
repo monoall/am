@@ -91,6 +91,9 @@ public interface DbConstants {
     String QUERY_TAG_BY_ID = "SELECT " + TAG_NAME + " from " + TAG_TABLE + " where " + ID + " = ?";
     String QUERY_ALL_TAG_ID_BY_USER_ID = "SELECT " + "*" + " from " + SUBSCRIPTION_TABLE + " where " + USER_ID + " = ?";
     String QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_ID + " = ?" + " and " + TAG_ID + " = ?";
+    String QUERY_ALL_POST_BY_TAG_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + TAG_ID + " = ?";
+    String QUERY_ALL_POST_BY_USER_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_ID + " = ?";
+    String QUERY_ALL_POST_BY_LOCATION = "SELECT " + "*" + " from " + POST_TABLE + " where " + POST_LOCATION + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID_POST + " = ?";
     String QUERY_ID_USER_BY_NAME = "SELECT " + "ID" + " from " + USER_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_GRADE_POST_BY_ID_POST = "SELECT " + "*" + " from " + GRADE_POST_TABLE + " where " + ID_POST + " = ?";
