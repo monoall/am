@@ -32,24 +32,24 @@ public class TagService implements DbConstants {
         }finally {
             sqLiteDatabase.endTransaction();
         }
-        tag.setTagId(id);
         return tag;
     }
 
 
     /**
      * Возвращает тег по его id
-     * @param id id юзера
+     * @param tagName  имя тега
      * @return объект тег
      */
-    public Tag getTagById(long id){
+    public Tag getTag(String tagName){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(TAG_TABLE, null,
-                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+                TAG_NAME + " = ?", new String[]{tagName}, null, null, null);
         Tag tag = null;
         if(cursor.moveToFirst()){
             tag =  buildTag(cursor);
         }
+        cursor.close();
         return tag;
     }
 
@@ -71,6 +71,7 @@ public class TagService implements DbConstants {
                 al.add(tag);
             }
         }
+        cursor.close();
         return al;
     }
 
@@ -83,7 +84,7 @@ public class TagService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(TAG_TABLE, "ID = ?", new String[]{String.valueOf(tag.getTagId())});
+            sqLiteDatabase.delete(TAG_TABLE, TAG_NAME + " = ?", new String[]{tag.getTagName()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
@@ -92,7 +93,6 @@ public class TagService implements DbConstants {
 
     private Tag buildTag(Cursor c){
         Tag t = new Tag();
-        t.setTagId(c.getLong(c.getColumnIndex(ID)));
         t.setTagName(c.getString(c.getColumnIndex(TAG_NAME)));
         return t;
     }

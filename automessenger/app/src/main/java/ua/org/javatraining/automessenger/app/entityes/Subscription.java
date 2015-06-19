@@ -3,8 +3,8 @@ package ua.org.javatraining.automessenger.app.entityes;
 public class Subscription {
 
     private long id;
-    private int idUser;
-    private int idTag;
+    private String nameUser;
+    private String nameTag;
 
     public long getId() {
         return id;
@@ -14,20 +14,21 @@ public class Subscription {
         this.id = id;
     }
 
-    public int getIdUser() {
-        return idUser;
+    public String getNameUser() {
+        return nameUser;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
-    public int getIdTag() {
-        return idTag;
+    public String getNameTag() {
+        return nameTag;
     }
 
-    public void setIdTag(int idTag) {
-        this.idTag = idTag;
+    public void setNameTag(String nameTag) {
+        this.nameTag = nameTag;
     }
+
 
 }

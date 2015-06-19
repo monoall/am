@@ -5,7 +5,7 @@ public class Comment {
     private long id;
     private int commentDate;
     private String commentText;
-    private int idUser;
+    private String nameUser;
     private int idPost;
 
     public long getId() {
@@ -32,12 +32,12 @@ public class Comment {
         this.commentText = commentText;
     }
 
-    public int getIdUser() {
-        return idUser;
+    public String getNameUser() {
+        return nameUser;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     public int getIdPost() {

@@ -29,7 +29,7 @@ public class CommentService implements DbConstants {
             ContentValues cv = new ContentValues();
             cv.put(COMMENT_DATE, comment.getCommentDate());
             cv.put(COMMENT_TEXT, comment.getCommentText());
-            cv.put(USER_ID, comment.getIdUser());
+            cv.put(USER_NAME, comment.getNameUser());
             cv.put(ID_POST, comment.getIdPost());
             id = sqLiteDatabase.insert(COMMENT_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
@@ -78,7 +78,7 @@ public class CommentService implements DbConstants {
         com.setId(c.getLong(c.getColumnIndex(ID)));
         com.setCommentDate(c.getInt(c.getColumnIndex(COMMENT_DATE)));
         com.setCommentText(c.getString(c.getColumnIndex(COMMENT_TEXT)));
-        com.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
+        com.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
         com.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
         return com;
     }

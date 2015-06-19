@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.Subscription;
+import ua.org.javatraining.automessenger.app.entityes.User;
 
 import java.util.ArrayList;
 
@@ -26,8 +27,8 @@ public class SubscriptionService implements DbConstants {
         sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
-            cv.put(USER_ID, subscription.getIdUser());
-            cv.put(TAG_ID, subscription.getIdTag());
+            cv.put(USER_NAME, subscription.getNameUser());
+            cv.put(TAG_NAME, subscription.getNameTag());
             id = sqLiteDatabase.insert(SUBSCRIPTION_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
@@ -39,20 +40,20 @@ public class SubscriptionService implements DbConstants {
 
     /**
      * Возвращает все подписки юзера
-     * @param userId id юзера
+     * @param user объект юзера
      * @return Список подписок
      */
-    public ArrayList<Subscription> getSubscriptionsList(long userId){
+    public ArrayList<Subscription> getSubscriptionsList(User user){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ALL_TAG_ID_BY_USER_ID, new String[]{String.valueOf(userId)});
-        int indexUser = cursor.getColumnIndex(USER_ID);
-        int indexTag = cursor.getColumnIndex(TAG_ID);
+                .rawQuery(QUERY_ALL_TAG_ID_BY_USER_NAME, new String[]{user.getName()});
+        int indexUser = cursor.getColumnIndex(USER_NAME);
+        int indexTag = cursor.getColumnIndex(TAG_NAME);
         ArrayList<Subscription> al = new ArrayList<Subscription>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             Subscription subscription = new Subscription();
-            subscription.setIdUser(cursor.getInt(indexUser));
-            subscription.setIdTag(cursor.getInt(indexTag));
+            subscription.setNameUser(cursor.getString(indexUser));
+            subscription.setNameTag(cursor.getString(indexTag));
             al.add(subscription);
         }
         return al;

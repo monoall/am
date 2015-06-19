@@ -17,8 +17,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
+import ua.org.javatraining.automessenger.app.database.TagService;
+import ua.org.javatraining.automessenger.app.database.UserService;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
@@ -29,7 +30,6 @@ import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
         //////////////////////////////////////////////////////
-        dbTest();
+        //dbTest();
+        test();
         //////////////////////////////////////////////////////
 
         if(savedInstanceState == null){
@@ -194,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, PostDetails.class));
     }
 
-    private void dbTest(){
+
+   /*private void dbTest(){
         SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
         UserService userService = new UserService(sqLiteAdapter);
         TagService tagService = new TagService(sqLiteAdapter);
@@ -206,22 +208,39 @@ public class MainActivity extends AppCompatActivity {
         PhotoService photoService = new PhotoService(sqLiteAdapter);
         User user = new User();
         user.setName("Tom");
-        Log.d("myTags", "User insert " + userService.insertUser(user).getId());
+        Log.d("myTags", "User insert " + userService.insertUser(user).getName());
         Tag tag = new Tag();
+        tag.setTagName("BE1");
         tagService.insertTag(tag);
-        Log.d("myTags", "Tag insert " + tagService.insertTag(tag).getTagId());
+        Log.d("myTags", "Tag insert " + tagService.insertTag(tag).getTagName());
         Post post1 = new Post();
         post1.setPostText("Some Text1");
         post1.setPostLocation("location1");
         post1.setPostDate(120215);
-        User chekUser = userService.getUserById(1);
-        Tag checkTag = tagService.getTagById(1);
-        post1.setIdUser((int)chekUser.getId());
-        post1.setIdTag((int)checkTag.getTagId());
+        User chekUser = userService.getUser("Tom");
+        Tag checkTag = tagService.getTag("BE1");
+        post1.setNameUser(chekUser.getName());
+        post1.setNameTag(checkTag.getTagName());
         Log.d("myTags", "Post insert " + postService.insertPost(post1).getId());
-        ArrayList<Post> p = postService.getAllPosts((int)chekUser.getId(), (int)checkTag.getTagId());
-        Post checkPost = p.get(1);
+        ArrayList<Post> p = postService.getAllPosts( chekUser.getName(), checkTag.getTagName());
+        Post checkPost = p.get(0);
         Log.d("myTags", "Post text " + checkPost.getPostText());
+    }*/
+
+   void test(){
+        SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
+        UserService userService = new UserService(sqLiteAdapter);
+        User user = new User();
+        user.setName("Tom");
+        userService.insertUser(user);
+        User check = userService.getUser("Tom");
+        Log.d("myTags", "User " + check.getName());
+        TagService tagService = new TagService(sqLiteAdapter);
+        Tag tag = new Tag();
+        tag.setTagName("BE");
+        tagService.insertTag(tag);
+        Tag checkTag = tagService.getTag("BE");
+        Log.d("myTags", "Tag " + checkTag.getTagName());
     }
 
 }

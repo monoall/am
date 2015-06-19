@@ -5,22 +5,22 @@ public interface DbConstants {
     String MYDATABASE_NAME = "autoMessenger";
     int MYDATABASE_VERSION = 1;
     //Запросы создания таблиц
-    String USER_CREATE = "create table IF NOT EXISTS USER (ID integer primary key autoincrement not null unique, USER_NAME text);";
-    String TAG_CREATE = "create table IF NOT EXISTS TAG (ID integer primary key not null, TAG_NAME text);";
-    String SUBSCRIPTION_CREATE = "create table IF NOT EXISTS SUBSCRIPTION (ID integer primary key not null unique, ID_USER integer, ID_TAG integer, CONSTRAINT fk_subscription_user_parent FOREIGN KEY (id_user) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT fk_subscription_tag_parent FOREIGN KEY (id_tag) REFERENCES tag (id) ON DELETE CASCADE ON UPDATE CASCADE);";
-    String POST_CREATE = "create table IF NOT EXISTS POST (ID integer primary key autoincrement not null unique, POST_TEXT text, POST_DATE integer, POST_LOCATION text, ID_USER integer, ID_TAG integer, CONSTRAINT fk_post_user_parent\n" +
-            "\tFOREIGN KEY (id_user)\n" +
-            "\tREFERENCES user (id)\n" +
+    String USER_CREATE = "create table IF NOT EXISTS USER (USER_NAME text primary key not null unique);";
+    String TAG_CREATE = "create table IF NOT EXISTS TAG (TAG_NAME text primary key);";
+    String SUBSCRIPTION_CREATE = "create table IF NOT EXISTS SUBSCRIPTION (ID integer primary key not null unique, USER_NAME text, TAG_NAME text, CONSTRAINT fk_subscription_user_parent FOREIGN KEY (USER_NAME) REFERENCES user (USER_NAME) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT fk_subscription_tag_parent FOREIGN KEY (TAG_NAME) REFERENCES tag (TAG_NAME) ON DELETE CASCADE ON UPDATE CASCADE);";
+    String POST_CREATE = "create table IF NOT EXISTS POST (ID integer primary key autoincrement not null unique, POST_TEXT text, POST_DATE integer, POST_LOCATION text, USER_NAME text, TAG_NAME text, CONSTRAINT fk_post_user_parent\n" +
+            "\tFOREIGN KEY (USER_NAME)\n" +
+            "\tREFERENCES user (USER_NAME)\n" +
             "\t\t ON DELETE CASCADE\n" +
             "\t  ON UPDATE CASCADE,\n" +
             " CONSTRAINT fk_post_tag_parent\n" +
-            "\tFOREIGN KEY (id_tag)\n" +
-            "\tREFERENCES tag (id)\n" +
+            "\tFOREIGN KEY (TAG_NAME)\n" +
+            "\tREFERENCES tag (TAG_NAME)\n" +
             "\t\t ON DELETE CASCADE\n" +
             "\t  ON UPDATE CASCADE);";
-    String COMMENT_CREATE = "create table IF NOT EXISTS COMMENT (ID integer primary key autoincrement not null unique, COMMENT_DATE integer not null, COMMENT_TEXT text, ID_USER integer, ID_POST integer, CONSTRAINT fk_comment_user_parent\n" +
-            "    FOREIGN KEY (id_user)\n" +
-            "    REFERENCES user (id)\n" +
+    String COMMENT_CREATE = "create table IF NOT EXISTS COMMENT (ID integer primary key autoincrement not null unique, COMMENT_DATE integer not null, COMMENT_TEXT text, USER_NAME text, ID_POST integer, CONSTRAINT fk_comment_user_parent\n" +
+            "    FOREIGN KEY (USER_NAME)\n" +
+            "    REFERENCES user (USER_NAME)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE,\n" +
             "\n" +
@@ -29,9 +29,9 @@ public interface DbConstants {
             "    REFERENCES `post`(id)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE);";
-    String GRADE_POST_CREATE = "create table IF NOT EXISTS GRADE_POST (ID integer primary key not null, ID_USER integer, ID_POST integer, GRADE integer, CONSTRAINT fk_grade_post_user_parent\n" +
-            "    FOREIGN KEY (id_user)\n" +
-            "    REFERENCES user (id)\n" +
+    String GRADE_POST_CREATE = "create table IF NOT EXISTS GRADE_POST (ID integer primary key not null, USER_NAME text, ID_POST integer, GRADE integer, CONSTRAINT fk_grade_post_user_parent\n" +
+            "    FOREIGN KEY (USER_NAME)\n" +
+            "    REFERENCES user (USER_NAME)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE,\n" +
             "\n" +
@@ -40,9 +40,9 @@ public interface DbConstants {
             "    REFERENCES comment (id)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE);";
-    String GRADE_COMMENT_CREATE = "create table IF NOT EXISTS GRADE_COMMENT (ID integer primary key autoincrement not null unique, ID_USER integer, ID_COMMENT integer, GRADE integer,  CONSTRAINT fk_grade_comment_user_parent\n" +
-            "    FOREIGN KEY (id_user)\n" +
-            "    REFERENCES user (id)\n" +
+    String GRADE_COMMENT_CREATE = "create table IF NOT EXISTS GRADE_COMMENT (ID integer primary key autoincrement not null unique, USER_NAME text, ID_COMMENT integer, GRADE integer,  CONSTRAINT fk_grade_comment_user_parent\n" +
+            "    FOREIGN KEY (USER_NAME)\n" +
+            "    REFERENCES user (USER_NAME)\n" +
             "    ON DELETE CASCADE\n" +
             "    ON UPDATE CASCADE,\n" +
             "    CONSTRAINT fk_grade_comment_comment_parent\n" +
@@ -63,9 +63,7 @@ public interface DbConstants {
     String TAG_TABLE = "TAG";
     String TAG_NAME = "TAG_NAME";
 
-    String SUBSCRIPTION_TABLE = "SUBSCRIPTION";
-    String USER_ID = "ID_USER";
-    String TAG_ID = "ID_TAG";
+    String SUBSCRIPTION_TABLE = "SUBSCRIPTION";;
 
     String POST_TABLE = "POST";
     String POST_TEXT = "POST_TEXT";
@@ -87,12 +85,12 @@ public interface DbConstants {
     String LINK = "LINK";
 
     //Select запросы
-    String QUERY_USER_BY_ID = "SELECT " + USER_NAME + " from " + USER_TABLE + " where " + ID + " = ?";
+    String QUERY_USER = "SELECT " + USER_NAME + " from " + USER_TABLE + " where " + USER_NAME + " =?";
     String QUERY_TAG_BY_ID = "SELECT " + TAG_NAME + " from " + TAG_TABLE + " where " + ID + " = ?";
-    String QUERY_ALL_TAG_ID_BY_USER_ID = "SELECT " + "*" + " from " + SUBSCRIPTION_TABLE + " where " + USER_ID + " = ?";
-    String QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_ID + " = ?" + " and " + TAG_ID + " = ?";
-    String QUERY_ALL_POST_BY_TAG_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + TAG_ID + " = ?";
-    String QUERY_ALL_POST_BY_USER_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_ID + " = ?";
+    String QUERY_ALL_TAG_ID_BY_USER_NAME = "SELECT " + "*" + " from " + SUBSCRIPTION_TABLE + " where " + USER_NAME + " = ?";
+    String QUERY_ALL_POST_BY_USER_NAME_AND_TAG_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_NAME + " = ?" + " and " + TAG_NAME + " = ?";
+    String QUERY_ALL_POST_BY_TAG_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + TAG_NAME + " = ?";
+    String QUERY_ALL_POST_BY_USER_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_ALL_POST_BY_LOCATION = "SELECT " + "*" + " from " + POST_TABLE + " where " + POST_LOCATION + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID_POST + " = ?";
     String QUERY_ID_USER_BY_NAME = "SELECT " + "ID" + " from " + USER_TABLE + " where " + USER_NAME + " = ?";

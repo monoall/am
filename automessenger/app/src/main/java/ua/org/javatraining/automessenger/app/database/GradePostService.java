@@ -24,7 +24,7 @@ public class GradePostService implements DbConstants {
         sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
-            cv.put(USER_ID, gradePost.getIdUser());
+            cv.put(USER_NAME, gradePost.getNameUser());
             cv.put(ID_POST, gradePost.getIdPost());
             cv.put(GRADE, gradePost.getGrade());
             id = sqLiteDatabase.insert(GRADE_POST_TABLE, null, cv);
@@ -75,7 +75,7 @@ public class GradePostService implements DbConstants {
     private GradePost buildGradePost(Cursor c){
         GradePost gradePost = new GradePost();
         gradePost.setId(c.getInt(c.getColumnIndex(ID)));
-        gradePost.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
+        gradePost.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
         gradePost.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
         gradePost.setGrade(c.getInt(c.getColumnIndex(GRADE)));
         return gradePost;
