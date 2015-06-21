@@ -1,19 +1,21 @@
 package databasetest;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.database.DbConstants;
 import ua.org.javatraining.automessenger.app.database.PostService;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -32,7 +34,7 @@ public class PostTableTest extends DBITest implements DbConstants {
 
     @Before
     public void init(){
-        postService = new PostService(sqLiteAdapter);
+        postService = new PostService(SQLiteAdapter.initInstance(Robolectric.application));
     }
 
     @Test
@@ -49,53 +51,48 @@ public class PostTableTest extends DBITest implements DbConstants {
         assertTrue(c.moveToFirst());
         assertEquals("Yum", c.getString(c.getColumnIndex(USER_NAME)));
         assertEquals("Post text1", c.getString(c.getColumnIndex(POST_TEXT)));
+        c.close();
     }
 
 
     @Test
     public void testGetAllPosts(){
-        ContentValues cv = new ContentValues();
-        cv.put(POST_TEXT, "Post text");
-        cv.put(POST_DATE, 120515);
-        cv.put(POST_LOCATION, "location");
-        cv.put(USER_NAME, "Andr");
-        cv.put(TAG_NAME, "WE 021");
-        db.insert(POST_TABLE, null, cv);
-        ContentValues cv2 = new ContentValues();
-        cv2.put(POST_TEXT, "Post text2");
-        cv2.put(POST_DATE, 120815);
-        cv2.put(POST_LOCATION, "location");
-        cv2.put(USER_NAME, "Andr");
-        cv2.put(TAG_NAME, "WE 021");
-        db.insert(POST_TABLE, null, cv2);
-        ContentValues cv3 = new ContentValues();
-        cv3.put(POST_TEXT, "Post text3");
-        cv3.put(POST_DATE, 120915);
-        cv3.put(POST_LOCATION, "location");
-        cv3.put(USER_NAME, "Whell");
-        cv3.put(TAG_NAME, "WE 021");
-        db.insert(POST_TABLE, null, cv3);
-        ArrayList<Post> al = postService.getAllPosts("Andr", "WE 021");
+        ArrayList<Post> al = postService.getAllPosts("User", "BE 0102");
         assertEquals(2, al.size());
+    }
+
+
+    @Test
+    public void testGetPostsFromSubscribes(){
+        ArrayList<Post> al = postService.getPostsFromSubscribes("User");
+        assertEquals(4, al.size());
+    }
+
+    @Test
+    public void testGetPostsFromNearby(){
+        ArrayList<Post> al = postService.getPostsFromNearby("location");
+        assertEquals(4, al.size());
+    }
+
+    @Test
+    public void testGetPostsByTag(){
+        ArrayList<Post> al = postService.getPostsByTag("BE 0102");
+        assertEquals(3, al.size());
     }
 
     @Test
     public void testDeletePost(){
         Post post = new Post();
-        post.setPostText("Post text1");
-        post.setPostDate(120215);
+        post.setPostText("Post text4");
+        post.setPostDate(120817);
         post.setPostLocation("location");
-        post.setNameUser("Yum");
-        post.setNameTag("BE 120515");
-        ContentValues cv = new ContentValues();
-        cv.put(POST_TEXT, "Post text1");
-        cv.put(POST_DATE, 120215);
-        cv.put(POST_LOCATION, "location");
-        cv.put(USER_NAME, "Yum");
-        cv.put(TAG_NAME, "BE 120515");
-        long id = db.insert(POST_TABLE, null, cv);
-        post.setId(id);
+        post.setNameUser("John");
+        post.setNameTag("BE 0102");
         postService.deletePost(post);
+        Cursor c = db.query(POST_TABLE, null,
+                POST_TEXT + " = ?", new String[]{"Post text4"}, null, null, null);
+        assertFalse(c.moveToFirst());
+        c.close();
     }
 
 }

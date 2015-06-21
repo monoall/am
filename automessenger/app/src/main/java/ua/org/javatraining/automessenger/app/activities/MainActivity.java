@@ -57,11 +57,6 @@ public class MainActivity extends AppCompatActivity {
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
-        //////////////////////////////////////////////////////
-        //dbTest();
-        test();
-        //////////////////////////////////////////////////////
-
         if(savedInstanceState == null){
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
@@ -195,52 +190,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, PostDetails.class));
     }
 
-
-   /*private void dbTest(){
-        SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
-        UserService userService = new UserService(sqLiteAdapter);
-        TagService tagService = new TagService(sqLiteAdapter);
-        SubscriptionService subscriptionService = new SubscriptionService(sqLiteAdapter);
-        PostService postService = new PostService(sqLiteAdapter);
-        CommentService commentService = new CommentService(sqLiteAdapter);
-        GradeCommentService gradeCommentService = new GradeCommentService(sqLiteAdapter);
-        GradePostService gradePostService = new GradePostService(sqLiteAdapter);
-        PhotoService photoService = new PhotoService(sqLiteAdapter);
-        User user = new User();
-        user.setName("Tom");
-        Log.d("myTags", "User insert " + userService.insertUser(user).getName());
-        Tag tag = new Tag();
-        tag.setTagName("BE1");
-        tagService.insertTag(tag);
-        Log.d("myTags", "Tag insert " + tagService.insertTag(tag).getTagName());
-        Post post1 = new Post();
-        post1.setPostText("Some Text1");
-        post1.setPostLocation("location1");
-        post1.setPostDate(120215);
-        User chekUser = userService.getUser("Tom");
-        Tag checkTag = tagService.getTag("BE1");
-        post1.setNameUser(chekUser.getName());
-        post1.setNameTag(checkTag.getTagName());
-        Log.d("myTags", "Post insert " + postService.insertPost(post1).getId());
-        ArrayList<Post> p = postService.getAllPosts( chekUser.getName(), checkTag.getTagName());
-        Post checkPost = p.get(0);
-        Log.d("myTags", "Post text " + checkPost.getPostText());
-    }*/
-
-   void test(){
-        SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
-        UserService userService = new UserService(sqLiteAdapter);
-        User user = new User();
-        user.setName("Tom");
-        userService.insertUser(user);
-        User check = userService.getUser("Tom");
-        Log.d("myTags", "User " + check.getName());
-        TagService tagService = new TagService(sqLiteAdapter);
-        Tag tag = new Tag();
-        tag.setTagName("BE");
-        tagService.insertTag(tag);
-        Tag checkTag = tagService.getTag("BE");
-        Log.d("myTags", "Tag " + checkTag.getTagName());
-    }
 
 }

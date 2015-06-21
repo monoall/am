@@ -1,6 +1,5 @@
 package databasetest;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +16,7 @@ import ua.org.javatraining.automessenger.app.entityes.User;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -57,18 +57,6 @@ public class SubscriptionDataBaseTest extends DBITest implements DbConstants {
     public void testGetSubscriptionList(){
         User user = new User();
         user.setName("Tom");
-        ContentValues cv = new ContentValues();
-        cv.put(USER_NAME, "Tom");
-        cv.put(TAG_NAME, "BA 12");
-        db.insert(SUBSCRIPTION_TABLE, null, cv);
-        ContentValues cv1 = new ContentValues();
-        cv1.put(USER_NAME, "Tom");
-        cv1.put(TAG_NAME, "BW 12");
-        db.insert(SUBSCRIPTION_TABLE, null, cv1);
-        ContentValues cv2 = new ContentValues();
-        cv2.put(USER_NAME, "Jack");
-        cv2.put(TAG_NAME, "BS 12");
-        db.insert(SUBSCRIPTION_TABLE, null, cv2);
         ArrayList<Subscription> al = subscriptionService.getSubscriptionsList(user);
         assertEquals(2, al.size());
     }
@@ -77,13 +65,12 @@ public class SubscriptionDataBaseTest extends DBITest implements DbConstants {
     @Test
     public void testDeleteSubscription(){
         Subscription subscription = new Subscription();
-        subscription.setNameTag("BA 12");
-        subscription.setNameUser("Tom");
-        ContentValues cv = new ContentValues();
-        cv.put(USER_NAME, "Tom");
-        cv.put(TAG_NAME, "BA 12");
-        long id = db.insert(SUBSCRIPTION_TABLE, null, cv);
-        subscription.setId(id);
+        subscription.setNameTag("BE 0102");
+        subscription.setNameUser("John");
         subscriptionService.deleteSubscription(subscription);
+        Cursor c = db.query(SUBSCRIPTION_TABLE, null,
+                USER_NAME + " = ?", new String[]{"John"}, null, null, null);
+        assertFalse(c.moveToFirst());
+        c.close();
     }
 }

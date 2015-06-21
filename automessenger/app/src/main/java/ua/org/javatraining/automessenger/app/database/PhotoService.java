@@ -14,10 +14,6 @@ public class PhotoService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
-    private long id;
-    private String photoLink;
-    private int idPost;
-
     /**
      * Вставляет в таблицу Photo
      * @param photo объект Photo

@@ -48,27 +48,12 @@ public class GradePostService implements DbConstants {
         try{
             ContentValues cv = new ContentValues();
             cv.put(GRADE, gradePost.getGrade());
-            id = sqLiteDatabase.update(GRADE_POST_TABLE, cv, "ID = ?", new String[] { String.valueOf(gradePost.getId()) });
+            id = sqLiteDatabase.update(GRADE_POST_TABLE, cv,  USER_NAME + " = ?" + " and " + ID_POST  + " = ?", new String[] { gradePost.getNameUser(), String.valueOf(gradePost.getIdPost())});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
         }
         gradePost.setId(id);
-        return gradePost;
-    }
-
-    /**
-     * Возвращает оценку по id Поста
-     * @param idPost id поста
-     * @return объект GradePost
-     */
-    public GradePost getGradePost(int idPost){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(GRADE_POST_TABLE, null, "ID = ?", new String[]{String.valueOf(idPost)}, null, null, null);
-        GradePost gradePost = null;
-        if(cursor.moveToFirst()){
-           gradePost = buildGradePost(cursor);
-        }
         return gradePost;
     }
 

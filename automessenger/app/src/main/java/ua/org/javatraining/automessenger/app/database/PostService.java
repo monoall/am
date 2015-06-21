@@ -40,23 +40,7 @@ public class PostService implements DbConstants {
         return post;
     }
 
-    /**
-     * Возвращает пост по его id
-     * @param id id поста
-     * @return объект Post
-     */
-    public Post getPostById(long id){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(POST_TABLE, null,
-                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
-        Post post = null;
-        if(cursor.moveToFirst()){
-            post = buildPost(cursor);
-        }
-        return post;
-    }
-
-    /**
+  /**
      * Возвращает все посты юзера по тегу
      * @param userName имя юзера
      * @param tagName имя тега
@@ -146,8 +130,9 @@ public class PostService implements DbConstants {
      */
     public void deletePost(Post post){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?", new String[]{post.getPostText()});
+            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?" + " and " + USER_NAME + " = ?", new String[]{post.getPostText(), post.getNameUser()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();

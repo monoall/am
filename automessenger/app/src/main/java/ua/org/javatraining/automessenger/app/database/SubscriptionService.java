@@ -65,8 +65,9 @@ public class SubscriptionService implements DbConstants {
      */
     public void deleteSubscription(Subscription subscription){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, "ID = ?", new String[]{String.valueOf(subscription.getId())});
+            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ?", new String[]{subscription.getNameUser()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();

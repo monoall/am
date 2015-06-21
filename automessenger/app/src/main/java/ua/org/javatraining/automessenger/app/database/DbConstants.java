@@ -63,7 +63,7 @@ public interface DbConstants {
     String TAG_TABLE = "TAG";
     String TAG_NAME = "TAG_NAME";
 
-    String SUBSCRIPTION_TABLE = "SUBSCRIPTION";;
+    String SUBSCRIPTION_TABLE = "SUBSCRIPTION";
 
     String POST_TABLE = "POST";
     String POST_TEXT = "POST_TEXT";

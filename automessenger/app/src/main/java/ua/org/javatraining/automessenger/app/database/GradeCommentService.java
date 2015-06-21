@@ -48,7 +48,7 @@ public class GradeCommentService implements DbConstants {
         try{
             ContentValues cv = new ContentValues();
             cv.put(GRADE, gradeComment.getGrade());
-            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, "ID = ?", new String[]{String.valueOf(gradeComment.getId())});
+            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, USER_NAME + " = ?" + " and " + ID_COMMENT  + " = ?", new String[] { gradeComment.getNameUser(), String.valueOf(gradeComment.getIdComment())});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();

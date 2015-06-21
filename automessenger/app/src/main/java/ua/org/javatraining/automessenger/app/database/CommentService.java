@@ -65,6 +65,7 @@ public class CommentService implements DbConstants {
      */
     public void deleteComment(Comment comment){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        sqLiteDatabase.beginTransaction();
         try{
             sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = ?", new String[]{comment.getCommentText()});
             sqLiteDatabase.setTransactionSuccessful();
