@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entityes.Post;
-import ua.org.javatraining.automessenger.app.entityes.Tag;
 
 import java.util.ArrayList;
 
@@ -30,8 +29,8 @@ public class PostService implements DbConstants {
             cv.put(POST_TEXT, post.getPostText());
             cv.put(POST_DATE, post.getPostDate());
             cv.put(POST_LOCATION, post.getPostLocation());
-            cv.put(USER_ID, post.getIdUser());
-            cv.put(TAG_ID, post.getIdTag());
+            cv.put(USER_NAME, post.getNameUser());
+            cv.put(TAG_NAME, post.getNameTag());
             id = sqLiteDatabase.insert(POST_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
@@ -41,32 +40,16 @@ public class PostService implements DbConstants {
         return post;
     }
 
-    /**
-     * Возвращает пост по его id
-     * @param id id поста
-     * @return объект Post
-     */
-    public Post getPostById(long id){
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(POST_TABLE, null,
-                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
-        Post post = null;
-        if(cursor.moveToFirst()){
-            post = buildPost(cursor);
-        }
-        return post;
-    }
-
-    /**
+  /**
      * Возвращает все посты юзера по тегу
-     * @param userId id юзера
-     * @param tagId id тега
+     * @param userName имя юзера
+     * @param tagName имя тега
      * @return Список постов
      */
-    public ArrayList<Post> getAllPosts(long userId, long tagId){
+    public ArrayList<Post> getAllPosts(String userName, String tagName){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ALL_POST_BY_USER_ID_AND_TAG_ID, new String[]{String.valueOf(userId), String.valueOf(tagId)});
+                .rawQuery(QUERY_ALL_POST_BY_USER_NAME_AND_TAG_NAME, new String[]{userName, tagName});
         ArrayList<Post> al = new ArrayList<Post>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             Post post = buildPost(cursor);
@@ -77,13 +60,13 @@ public class PostService implements DbConstants {
 
     /**
      * Возвращает последние 50 постов юзера
-     * @param userId id юзера
+     * @param userName имя юзера
      * @return Список постов
      */
-    public ArrayList<Post> getPostsFromSubscribes(long userId){
+    public ArrayList<Post> getPostsFromSubscribes(String userName){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ALL_POST_BY_USER_ID, new String[]{String.valueOf(userId)});
+                .rawQuery(QUERY_ALL_POST_BY_USER_NAME, new String[]{userName});
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
@@ -124,13 +107,13 @@ public class PostService implements DbConstants {
 
     /**
      * Возвращает все посты по тегу
-     * @param tag объект Tag
+     * @param tagName имя тега
      * @return Список постов
      */
-    public ArrayList <Post> getPostsByTag(Tag tag){
+    public ArrayList <Post> getPostsByTag(String tagName){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ALL_POST_BY_TAG_ID, new String[]{String.valueOf(tag.getTagId())});
+                .rawQuery(QUERY_ALL_POST_BY_TAG_NAME, new String[]{tagName});
         ArrayList<Post> al = new ArrayList<Post>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             Post post = buildPost(cursor);
@@ -147,8 +130,9 @@ public class PostService implements DbConstants {
      */
     public void deletePost(Post post){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?", new String[]{post.getPostText()});
+            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?" + " and " + USER_NAME + " = ?", new String[]{post.getPostText(), post.getNameUser()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
@@ -161,8 +145,8 @@ public class PostService implements DbConstants {
         p.setPostText(c.getString(c.getColumnIndex(POST_TEXT)));
         p.setPostDate(c.getInt(c.getColumnIndex(POST_DATE)));
         p.setPostLocation(c.getString(c.getColumnIndex(POST_LOCATION)));
-        p.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
-        p.setIdTag(c.getInt(c.getColumnIndex(TAG_ID)));
+        p.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
+        p.setNameTag(c.getString(c.getColumnIndex(TAG_NAME)));
         return p;
     }
 

@@ -3,7 +3,7 @@ package ua.org.javatraining.automessenger.app.entityes;
 public class GradePost {
 
     private long id;
-    private int idUser;
+    private String nameUser;
     private int idPost;
     private int grade;
 
@@ -15,12 +15,12 @@ public class GradePost {
         this.id = id;
     }
 
-    public int getIdUser() {
-        return idUser;
+    public String getNameUser() {
+        return nameUser;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     public int getIdPost() {

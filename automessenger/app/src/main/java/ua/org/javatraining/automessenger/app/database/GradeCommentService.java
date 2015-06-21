@@ -24,7 +24,7 @@ public class GradeCommentService implements DbConstants {
         sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
-            cv.put(USER_ID, gradeComment.getIdUser());
+            cv.put(USER_NAME, gradeComment.getNameUser());
             cv.put(ID_COMMENT, gradeComment.getIdComment());
             cv.put(GRADE, gradeComment.getGrade());
             id = sqLiteDatabase.insert(GRADE_COMMENT_TABLE, null, cv);
@@ -48,7 +48,7 @@ public class GradeCommentService implements DbConstants {
         try{
             ContentValues cv = new ContentValues();
             cv.put(GRADE, gradeComment.getGrade());
-            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, "ID = ?", new String[]{String.valueOf(gradeComment.getId())});
+            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, USER_NAME + " = ?" + " and " + ID_COMMENT  + " = ?", new String[] { gradeComment.getNameUser(), String.valueOf(gradeComment.getIdComment())});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
@@ -76,7 +76,7 @@ public class GradeCommentService implements DbConstants {
     private GradeComment buildGradeComment(Cursor c){
         GradeComment gradeComment = new GradeComment();
         gradeComment.setId(c.getInt(c.getColumnIndex(ID)));
-        gradeComment.setIdUser(c.getInt(c.getColumnIndex(USER_ID)));
+        gradeComment.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
         gradeComment.setIdComment(c.getInt(c.getColumnIndex(ID_COMMENT)));
         gradeComment.setGrade(c.getInt(c.getColumnIndex(GRADE)));
         return gradeComment;

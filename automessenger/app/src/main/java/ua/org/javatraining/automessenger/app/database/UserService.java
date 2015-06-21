@@ -24,28 +24,28 @@ public class UserService implements DbConstants{
         try {
             ContentValues cv = new ContentValues();
             cv.put(USER_NAME, user.getName());
-            id = sqLiteDatabase.insert(USER_TABLE, null, cv);
+            sqLiteDatabase.insert(USER_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         } finally {
             sqLiteDatabase.endTransaction();
         }
-        user.setId(id);
         return user;
     }
 
     /**
-     * Возвращает юзера по его id
-     * @param id - id юзера
+     * Возвращает юзера по его имени
+     * @param userName - имя юзера
      * @return объект User
      */
-    public User getUserById(long id){
+    public User getUser(String userName){
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(USER_TABLE, null,
-                "ID = ?", new String[]{String.valueOf(id)}, null, null, null);
+                USER_NAME + " = ?", new String[]{userName}, null, null, null);
         User user = null;
         if(cursor.moveToFirst()){
             user =  buildUser(cursor);
         }
+        cursor.close();
         return user;
     }
 
@@ -56,7 +56,7 @@ public class UserService implements DbConstants{
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(USER_TABLE, "ID = ?", new String[]{String.valueOf(user.getId())});
+            sqLiteDatabase.delete(USER_TABLE, USER_NAME + " = ?", new String[]{user.getName()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
@@ -65,7 +65,6 @@ public class UserService implements DbConstants{
 
     private User buildUser(Cursor c){
         User u = new User();
-        u.setId(c.getLong(c.getColumnIndex(ID)));
         u.setName(c.getString(c.getColumnIndex(USER_NAME)));
         return u;
     }

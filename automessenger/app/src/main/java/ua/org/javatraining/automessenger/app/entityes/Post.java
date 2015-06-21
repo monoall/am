@@ -6,9 +6,8 @@ public class Post {
     private String postText;
     private int postDate;
     private String postLocation;
-    private int idUser;
-    private int idTag;
-    private String imageLink;
+    private String nameUser;
+    private String nameTag;
 
     public long getId() {
         return id;
@@ -18,20 +17,20 @@ public class Post {
         this.id = id;
     }
 
-    public int getIdTag() {
-        return idTag;
+    public String getNameUser() {
+        return nameUser;
     }
 
-    public void setIdTag(int idTag) {
-        this.idTag = idTag;
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
-    public int getIdUser() {
-        return idUser;
+    public String getNameTag() {
+        return nameTag;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public void setNameTag(String nameTag) {
+        this.nameTag = nameTag;
     }
 
     public String getPostLocation() {
@@ -58,11 +57,4 @@ public class Post {
         this.postText = postText;
     }
 
-    public String getImageLink() {
-        return imageLink;
-    }
-
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
-    }
 }

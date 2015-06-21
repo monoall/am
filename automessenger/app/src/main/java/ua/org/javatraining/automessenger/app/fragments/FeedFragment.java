@@ -35,8 +35,8 @@ public class FeedFragment extends Fragment {
         mainActivity.toolbar.setTitle(R.string.feed);
 
         imageView = (ImageView) view.findViewById(R.id.card_image_view);
-        textViewTag = (TextView) view.findViewById(R.id.on_picture_text);
-        textViewDscrb = (TextView) view.findViewById(R.id.description_label);
+        textViewTag = (TextView) view.findViewById(R.id.text_tag);
+        textViewDscrb = (TextView) view.findViewById(R.id.text_description);
         textViewDate = (TextView) view.findViewById(R.id.text_date);
 
         imageView.setImageResource(R.drawable.myimg);

@@ -1,6 +1,5 @@
 package ua.org.javatraining.automessenger.app;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,15 +10,12 @@ import ua.org.javatraining.automessenger.app.entityes.Comment;
 
 import java.util.List;
 
-public class CommentsRVAdapter extends RecyclerView.Adapter<CommentsRVAdapter.ViewHolder> {
-
-    private static final int TYPE_HEADER = 2;
-    private static final int TYPE_ITEM = 1;
+public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
 
     private List<Comment> dataset;
     static View listItem;
 
-    public CommentsRVAdapter(List<Comment> dataset){
+    public CommentsAdapter(List<Comment> dataset){
         this.dataset = dataset;
     }
 
@@ -49,13 +45,13 @@ public class CommentsRVAdapter extends RecyclerView.Adapter<CommentsRVAdapter.Vi
     }
 
     @Override
-    public CommentsRVAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public CommentsAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.comment_layout, viewGroup, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CommentsRVAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(CommentsAdapter.ViewHolder viewHolder, int i) {
         viewHolder.descriptionField.setText(dataset.get(i).getCommentText());
         viewHolder.dateField.setText("1h");// <- случайные данные для проверки разметки
 

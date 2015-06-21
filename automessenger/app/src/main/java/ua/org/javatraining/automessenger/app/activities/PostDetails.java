@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import ua.org.javatraining.automessenger.app.CommentsRVAdapter;
+import ua.org.javatraining.automessenger.app.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.entityes.Comment;
 
@@ -61,7 +61,7 @@ public class PostDetails extends AppCompatActivity {
         myRV.setHasFixedSize(true);
         myLM = new LinearLayoutManager(this);
         myRV.setLayoutManager(myLM);
-        myAdapter = new CommentsRVAdapter(comments);
+        myAdapter = new CommentsAdapter(comments);
         myRV.setAdapter(myAdapter);
         myRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             private int mOffset = 0;
