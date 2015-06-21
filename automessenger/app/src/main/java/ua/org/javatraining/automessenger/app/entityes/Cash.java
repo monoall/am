@@ -1,8 +1,5 @@
 package ua.org.javatraining.automessenger.app.entityes;
 
-/**
- * Created by berkut on 17.06.15.
- */
 public class Cash {
 
     private long id;

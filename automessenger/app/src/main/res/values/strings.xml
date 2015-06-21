@@ -37,5 +37,6 @@
     <string name="random_quote_2">Creativity is the process of having original ideas that have value</string>
     <string name="add_comment_hint">Write comment here</string>
     <string name="post_comment">Post Comment</string>
+    <string name="validation_error">Incorrect data</string>
 
 </resources>

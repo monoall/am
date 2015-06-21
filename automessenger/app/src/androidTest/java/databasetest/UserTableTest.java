@@ -2,6 +2,7 @@ package databasetest;
 
 import android.database.Cursor;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -14,9 +15,7 @@ import ua.org.javatraining.automessenger.app.entityes.User;
 
 import static junit.framework.TestCase.*;
 
-/**
- * Created by berkut on 17.06.15.
- */
+@Ignore
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class UserTableTest extends DBITest implements DbConstants {

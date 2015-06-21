@@ -2,6 +2,7 @@ package databasetest;
 
 import android.database.Cursor;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -14,9 +15,7 @@ import ua.org.javatraining.automessenger.app.entityes.Tag;
 
 import static junit.framework.Assert.*;
 
-/**
- * Created by berkut on 18.06.15.
- */
+@Ignore
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class TagTableTest extends DBITest implements DbConstants {

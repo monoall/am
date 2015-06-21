@@ -11,16 +11,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.database.TagService;
 import ua.org.javatraining.automessenger.app.database.UserService;
-import ua.org.javatraining.automessenger.app.entityes.Tag;
+import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
@@ -31,16 +32,21 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NearbyFragment.NearbyFragmentInterface {
 
     public Toolbar toolbar;
     DrawerLayout drawerLayout;
     RelativeLayout relativeLayout;
     ImageButton imageButton;
     int drawerWidth;
-    String photoPath;
+    String photoURI;
+    private String username;
+
+    List<Post> lastPosts;
+    List<Post> nearbyPosts;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -57,18 +63,26 @@ public class MainActivity extends AppCompatActivity {
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
-        if(savedInstanceState == null){
+        username = "test_user";
+
+
+        if (savedInstanceState == null) {
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
-        }else {
+            initUIL();
+            SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
+            UserService userService = new UserService(sqLiteAdapter);
+            User user = new User();
+            user.setName(username);
+            userService.insertUser(user);
+        } else {
             drawerWidth = savedInstanceState.getInt("drawerWidth");
         }
 
         findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
-
     }
 
-    private void toolbarInit(){
+    private void toolbarInit() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -106,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 relativeLayout.setVisibility(View.INVISIBLE);
                 //Work here
                 Intent intent = new Intent(this, AddPostActivity.class);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
         }
@@ -115,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     //Navigation Drawer
     public void NDController(View view) {
         int id = view.getId();
-        switch (id){
+        switch (id) {
             case R.id.item_feed:
                 //Work here
                 drawerLayout.closeDrawers();
@@ -153,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(timeStamp, ".jpg", storageDir);
-        photoPath = image.getAbsolutePath();
+        photoURI = "file://" + image.getAbsolutePath();
         return image;
     }
 
@@ -180,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, AddPostActivity.class);
-            intent.putExtra("photoPath", photoPath);
+            intent.putExtra("photoURI", photoURI);
+            intent.putExtra("username", username);
             startActivity(intent);
         }
     }
@@ -190,5 +206,21 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, PostDetails.class));
     }
 
+    //Вызывается из NearbyFragment для получения коллекции с постами по локации
+    @Override
+    public List<Post> getNearbyPosts() {
+        return nearbyPosts;
+    }
 
+    //Initializing Universal Image Loader
+    private void initUIL() {
+        DisplayImageOptions displayImageOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .resetViewBeforeLoading(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+                .defaultDisplayImageOptions(displayImageOptions)
+                .build();
+        ImageLoader.getInstance().init(config);
+    }
 }

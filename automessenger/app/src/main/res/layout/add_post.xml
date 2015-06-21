@@ -44,7 +44,7 @@
                 android:textColor="@color/black54"
                 android:lines="1"
                 android:singleLine="true"
-                tools:ignore="TextFields"/>
+                tools:ignore="TextFields" android:text="111"/>
 
         <EditText
                 android:id="@+id/post_description"
@@ -54,7 +54,7 @@
                 android:textColor="@color/black54"
                 android:layout_marginBottom="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" android:text="test"/>
 
     </LinearLayout>
     <include layout="@layout/shadow"

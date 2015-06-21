@@ -7,9 +7,9 @@ public class ValidationUtils {
 
     //Проверка на валидность номера авто
     public static boolean checkTag(String tag) {
-        if ( tag.length() < 3 | tag.length() > 12 ) return false;
+        if ( tag.length() < 3 || tag.length() > 12 ) return false;
 
-        String pattern = "^(\\D*\\d){2,6}$";
+        String pattern = "^(\\D*\\d\\D*){2,6}$";
 
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(tag);

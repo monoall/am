@@ -21,9 +21,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
-/**
- * Created by berkut on 17.06.15.
- */
 @Ignore
 @RunWith(RobolectricTestRunner.class)
 public abstract class DBITest {

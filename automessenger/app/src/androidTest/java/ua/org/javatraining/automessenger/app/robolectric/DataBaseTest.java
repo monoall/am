@@ -1,6 +1,7 @@
 package ua.org.javatraining.automessenger.app.robolectric;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -12,6 +13,7 @@ import ua.org.javatraining.automessenger.app.entityes.User;
 
 import static junit.framework.Assert.assertEquals;
 
+@Ignore
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class DataBaseTest {

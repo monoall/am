@@ -18,6 +18,12 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/toolbar">
         </FrameLayout>
+
+        <include layout="@layout/shadow"
+                 android:layout_below="@id/toolbar"
+                 android:layout_width="fill_parent"
+                 android:layout_height="3dp"/>
+
         <ImageButton
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -35,8 +41,9 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:clickable="true"
                 android:visibility="invisible"
-                android:background="@color/white87"
+                android:background="@color/white54"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
             <ImageButton
@@ -81,10 +88,7 @@
                     tools:ignore="RtlHardcoded"/>
         </RelativeLayout>
 
-        <include layout="@layout/shadow"
-                 android:layout_below="@id/toolbar"
-                 android:layout_width="fill_parent"
-                 android:layout_height="3dp"/>
+
     </RelativeLayout>
 
     <LinearLayout

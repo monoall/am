@@ -6,6 +6,10 @@
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="4dp"
         card_view:cardPreventCornerOverlap="false"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp"
 
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto">
@@ -24,22 +28,22 @@
             <ImageView
                     android:id="@+id/card_image_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="190dp"
+                    android:layout_height="wrap_content"
                     android:scaleType="centerCrop"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true"
                     android:contentDescription="@string/photo"/>
             <TextView
+                    android:layout_alignBottom="@id/card_image_view"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="@color/white87"
-                    android:id="@+id/on_picture_text"
+                    android:id="@+id/text_tag"
                     android:padding="16dp"
                     android:background="@drawable/title_gradient"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/card_image_view"/>
+                    android:layout_height="wrap_content"/>
         </RelativeLayout>
         <TextView
                 android:textSize="14sp"
@@ -53,7 +57,7 @@
         <TextView
                 android:textSize="14sp"
                 android:textColor="@color/black87"
-                android:id="@+id/description_label"
+                android:id="@+id/text_description"
                 android:padding="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
