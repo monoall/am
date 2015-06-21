@@ -193,5 +193,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
         </LinearLayout>
+            <LinearLayout
+                    android:id="@+id/item_choose_account"
+                    android:orientation="horizontal"
+                    android:clickable="true"
+                    android:layout_width="fill_parent"
+                    android:background="@drawable/nav_item_selected_back"
+                    android:layout_height="wrap_content"
+                    android:onClick="NDController">
+                    <ImageView
+                            android:padding="16dp"
+                            android:src="@drawable/ic_google_grey600_24dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    <TextView
+                            android:padding="16dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/black87"
+                            android:text="@string/change_account"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+            </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
