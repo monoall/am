@@ -3,6 +3,7 @@ package ua.org.javatraining.automessenger.app.activities;
 
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -13,16 +14,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
+import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -32,6 +37,10 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    //bakaev
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     public Toolbar toolbar;
     DrawerLayout drawerLayout;
@@ -55,28 +64,27 @@ public class MainActivity extends AppCompatActivity {
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
-////////+++++++++++
-        String lastUser = Authentication.getLastUser(this);
+        if (savedInstanceState == null) {
+            drawerWidth = getNavDrawWidth();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+        } else {
+            drawerWidth = savedInstanceState.getInt("drawerWidth");
+        }
+        findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
 
-        if (lastUser.equals("")){
+        String lastUser = Authentication.getLastUser(this);
+        if (lastUser.equals("")) {
             Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                     false, null, null, null, null);
             startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
         }
-///////------------
-
-        if(savedInstanceState == null){
-            drawerWidth = getNavDrawWidth();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
-        }else {
-            drawerWidth = savedInstanceState.getInt("drawerWidth");
+        if (checkPlayServices()) {
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
         }
-
-        findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
-
     }
 
-    private void toolbarInit(){
+    private void toolbarInit() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -121,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Navigation Drawer
-    public void NDController(View view) {
+    public void NDController(final View view) {
         int id = view.getId();
-        switch (id){
+        switch (id) {
             case R.id.item_feed:
                 //Work here
                 drawerLayout.closeDrawers();
@@ -145,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
                 break;
             case R.id.item_choose_account:
-                Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+               Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                         false, null, null, null, null);
                 startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
         }
@@ -167,6 +175,22 @@ public class MainActivity extends AppCompatActivity {
         File image = File.createTempFile(timeStamp, ".jpg", storageDir);
         photoPath = image.getAbsolutePath();
         return image;
+    }
+
+    //bakaev
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i("---", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     //Starting camera app to take photo
@@ -213,7 +237,6 @@ public class MainActivity extends AppCompatActivity {
     public void spda(View view) {
         startActivity(new Intent(this, PostDetails.class));
     }
-
 
 
 }

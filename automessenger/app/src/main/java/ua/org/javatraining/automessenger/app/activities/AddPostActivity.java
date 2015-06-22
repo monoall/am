@@ -1,12 +1,9 @@
 package ua.org.javatraining.automessenger.app.activities;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +20,6 @@ import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
-
-import java.util.Date;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -122,7 +117,7 @@ public class AddPostActivity extends AppCompatActivity {
 
             onBackPressed();
         }else{
-            Toast.makeText(this, R.string.validation_error, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, R.string.validation_error, Toast.LENGTH_LONG).show();
         }
     }
 }

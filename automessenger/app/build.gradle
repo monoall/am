@@ -8,6 +8,7 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 //noinspection GradleDeprecated
 apply plugin: 'android'
 
@@ -49,17 +50,18 @@ android {
     }
 }
 
-apply plugin: 'robolectric'
-
-robolectric {
-    include '**/robolectric/**/*Test.class'
-}
+//apply plugin: 'robolectric'
+//
+//robolectric {
+//    include '**/robolectric/**/*Test.class'
+//}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.google.android.gms:play-services-identity:7.5.0'
