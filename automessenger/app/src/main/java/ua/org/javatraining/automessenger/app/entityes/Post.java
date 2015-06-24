@@ -4,7 +4,7 @@ public class Post {
 
     private long id;
     private String postText;
-    private int postDate;
+    private long postDate;
     private String postLocation;
     private String nameUser;
     private String nameTag;
@@ -41,11 +41,11 @@ public class Post {
         this.postLocation = postLocation;
     }
 
-    public int getPostDate() {
+    public long getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(int postDate) {
+    public void setPostDate(long postDate) {
         this.postDate = postDate;
     }
 

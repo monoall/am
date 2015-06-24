@@ -29,7 +29,6 @@ public class AddPostActivity extends AppCompatActivity {
     Toolbar toolbar;
     ImageView imageView;
     String photoURI;
-    String selectedImageURI;
     EditText tagText;
     EditText postText;
     ImageLoader imageLoader = ImageLoader.getInstance();
@@ -70,12 +69,12 @@ public class AddPostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        switch(requestCode) {
+        switch (requestCode) {
             case SELECT_PHOTO:
-                if(resultCode == RESULT_OK){
-                    selectedImageURI = imageReturnedIntent.getData().toString();
-                    Log.i("",selectedImageURI);
-                    imageLoader.displayImage(selectedImageURI, imageView);
+                if (resultCode == RESULT_OK) {
+                    photoURI = imageReturnedIntent.getData().toString();
+                    Log.i("", photoURI);
+                    imageLoader.displayImage(photoURI, imageView);
                 }
         }
     }
@@ -91,9 +90,7 @@ public class AddPostActivity extends AppCompatActivity {
         String tag = tagText.getText().toString();
         String text = postText.getText().toString();
 
-        System.currentTimeMillis();
-
-        if(ValidationUtils.checkTag(tag) && !text.equals("")) { // Validating car number
+        if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) { // Validating car number
             Toast.makeText(this, "Ok", Toast.LENGTH_LONG).show();
             SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
             PostService postService = new PostService(sqLiteAdapter);
@@ -102,22 +99,35 @@ public class AddPostActivity extends AppCompatActivity {
 
             Post post = new Post();
             Photo photo = new Photo();
-            Tag ctag = new Tag();
 
-            ctag.setTagName(tag);
-            tagService.insertTag(ctag);
+            if (tagService.getTag(tag) != null) {
+                Tag ctag = new Tag();
+                ctag.setTagName(tag);
+                tagService.insertTag(ctag);
+            }
 
             post.setPostText(text);
             post.setNameTag(tag);
             post.setNameUser(username);
-            post.setPostDate(11111);//todo Change type of Date field to long in Post() class and replace "11111" with real timestamp
+            post.setPostDate((int)System.currentTimeMillis());
             post.setPostLocation("mk.ua");
 
-            postService.insertPost(post);
+            //Inserting Post object to DB and getting id
+            long postId = postService.insertPost(post).getId();
+
+            photo.setPhotoLink(photoURI);
+            photo.setIdPost((int)postId);//todo must be long
+
+            //Inserting Photo object to DB and getting id
+            long photoId = photoService.insertPhoto(photo).getId();
+
+            Log.i("myTag", "User: " + username.toString());
+            Log.i("myTag", "Post ID: " + Long.toString(postId));
+            Log.i("myTag", "Photo ID: " + Long.toString(photoId));
 
             onBackPressed();
-        }else{
-            //Toast.makeText(this, R.string.validation_error, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, R.string.validation_error, Toast.LENGTH_LONG).show();
         }
     }
 }

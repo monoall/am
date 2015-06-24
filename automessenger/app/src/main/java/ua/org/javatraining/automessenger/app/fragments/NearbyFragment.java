@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import ua.org.javatraining.automessenger.app.PostsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
+import ua.org.javatraining.automessenger.app.database.PhotoService;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
+import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 
 import java.util.ArrayList;
@@ -21,11 +24,16 @@ public class NearbyFragment extends Fragment {
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager myLM;
 
+    SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(getActivity());
+    PhotoService photoService = new PhotoService(sqLiteAdapter);
+
     NearbyFragmentInterface activityCommands;
 
     public interface NearbyFragmentInterface{
         List<Post> getNearbyPosts();
+        void update();
     }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,6 +57,8 @@ public class NearbyFragment extends Fragment {
         mainActivity.toolbar.setTitle(R.string.nearby);
 
         initRecyclerView(view);
+        activityCommands.update();
+
     }
 
     private void initRecyclerView(View v) {
@@ -56,7 +66,7 @@ public class NearbyFragment extends Fragment {
         myRV.setHasFixedSize(true);
         myLM = new LinearLayoutManager(getActivity().getApplicationContext());
         myRV.setLayoutManager(myLM);
-        myAdapter = new PostsAdapter(activityCommands.getNearbyPosts());
+        myAdapter = new PostsAdapter(activityCommands.getNearbyPosts(), photoService, getActivity().getApplicationContext());
         myRV.setAdapter(myAdapter);
     }
 

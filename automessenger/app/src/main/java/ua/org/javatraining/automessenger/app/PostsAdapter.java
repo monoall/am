@@ -1,21 +1,30 @@
 package ua.org.javatraining.automessenger.app;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
     List<Post> dataset;
+    PhotoService photoService;
+    ImageLoader imageLoader = ImageLoader.getInstance();
+    Context context;
 
-    public PostsAdapter(List<Post> dataset) {
+    public PostsAdapter(List<Post> dataset, PhotoService photoService, Context context) {
         this.dataset = dataset;
+        this.photoService = photoService;
+        this.context = context;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -32,6 +41,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             description = (TextView) itemView.findViewById(R.id.text_description);
             date = (TextView) itemView.findViewById(R.id.text_date);
         }
+
     }
 
     @Override
@@ -44,11 +54,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(PostsAdapter.ViewHolder holder, int position) {
-        //todo Реализовать загрузку фото на форму
-        holder.description.setText(dataset.get(position).getPostText());
-        holder.date.setText(Integer.toString(dataset.get(position).getPostDate()));//todo доделать форматирование даты
-        //holder.tag.setText(Integer.toString(dataset.get(position).getIdTag()));
-        holder.photo.setImageResource(R.drawable.myimg);
+        Post post = dataset.get(position);
+
+        holder.description.setText(post.getPostText());
+        holder.date.setText(DateFormatUtil.toReadable(context, post.getPostDate()));
+        holder.tag.setText(post.getNameTag());
+        imageLoader.displayImage(photoService.getPhoto((int) post.getId()).getPhotoLink(), holder.photo);
+
     }
 
     @Override

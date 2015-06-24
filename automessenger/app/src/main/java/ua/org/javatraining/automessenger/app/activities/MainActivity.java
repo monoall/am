@@ -22,7 +22,17 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.database.PhotoService;
+import ua.org.javatraining.automessenger.app.database.PostService;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
+import ua.org.javatraining.automessenger.app.database.UserService;
+import ua.org.javatraining.automessenger.app.entityes.Photo;
+import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
@@ -34,9 +44,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NearbyFragment.NearbyFragmentInterface {
 
     //bakaev
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
@@ -48,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
     ImageButton imageButton;
     int drawerWidth;
     String photoPath;
+    String username;
+    SQLiteAdapter sqLiteAdapter;
+    UserService userService;
+    PostService postService;
+    PhotoService photoService;
+    List<Post> nearbyPost;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -64,12 +81,29 @@ public class MainActivity extends AppCompatActivity {
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
 
+        username = "user_test";
+
+        sqLiteAdapter = SQLiteAdapter.initInstance(this);
+        userService = new UserService(sqLiteAdapter);
+        postService = new PostService(sqLiteAdapter);
+        photoService = new PhotoService(sqLiteAdapter);
+
+        if (userService.getUser(username) == null) {
+            User user = new User();
+            user.setName(username);
+            userService.insertUser(user);
+        }
+
         if (savedInstanceState == null) {
+            initUIL();
+
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
         } else {
+
             drawerWidth = savedInstanceState.getInt("drawerWidth");
         }
+
         findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
 
         String lastUser = Authentication.getLastUser(this);
@@ -122,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 relativeLayout.setVisibility(View.INVISIBLE);
                 //Work here
                 Intent intent = new Intent(this, AddPostActivity.class);
+                intent.putExtra("username", username);
                 startActivity(intent);
                 break;
         }
@@ -129,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Navigation Drawer
-    public void NDController(final View view) {
+    public void NDController(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.item_feed:
@@ -153,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
                 break;
             case R.id.item_choose_account:
-               Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+                Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                         false, null, null, null, null);
                 startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
         }
@@ -210,6 +245,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void initUIL() {
+        DisplayImageOptions displayImageOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .resetViewBeforeLoading(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+                .defaultDisplayImageOptions(displayImageOptions)
+                .build();
+        ImageLoader.getInstance().init(config);
+    }
+
     //If photo taken successfully open AddPostActivity() and pass photo path to it
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -217,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, AddPostActivity.class);
             intent.putExtra("photoPath", photoPath);
+            intent.putExtra("username", username);
             startActivity(intent);
         }
         if (requestCode == Authentication.ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -233,10 +280,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Временный метод для проверки активности
-    public void spda(View view) {
-        startActivity(new Intent(this, PostDetails.class));
+    private void updateData(){
+        nearbyPost = postService.getPostsFromSubscribes(username);
+        //todo Other updates
     }
 
+    @Override
+    public List<Post> getNearbyPosts() {
+        updateData();
+        return nearbyPost;
+    }
 
+    @Override
+    public void update() {
+        updateData();
+    }
 }
