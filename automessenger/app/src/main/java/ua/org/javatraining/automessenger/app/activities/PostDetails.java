@@ -7,13 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.database.PhotoService;
+import ua.org.javatraining.automessenger.app.database.PostService;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.entityes.Comment;
+import ua.org.javatraining.automessenger.app.entityes.Photo;
+import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +31,21 @@ public class PostDetails extends AppCompatActivity {
     Toolbar toolbar;
     TextView descriptionTextView;
     ImageView photo;
+    TextView dateTextView;
     View postDetails;
-
     RecyclerView myRV;
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager myLM;
-
+    ImageLoader imageLoader = ImageLoader.getInstance();
     int postDetailsHeight;
-
     List<Comment> comments;
+    long postId;
+    SQLiteAdapter sqLiteAdapter;
+    PostService postService;
+    PhotoService photoService;
+    Post postObj;
+    Photo photoObj;
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -45,15 +59,39 @@ public class PostDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_details);
-
         photo = (ImageView) findViewById(R.id.photo);
         postDetails = findViewById(R.id.post_details);
+        descriptionTextView = (TextView) findViewById(R.id.description_text);
+        dateTextView = (TextView) findViewById(R.id.date_text);
 
         initToolbar();
         initTestData();
-        justForTest();
         initCommentsList();
+        loadPost();
+    }
 
+    private void loadPost() {
+        postId = getIntent().getLongExtra("POST_ID", 0);
+        if (postId != 0) {
+            sqLiteAdapter = SQLiteAdapter.initInstance(this);
+            postService = new PostService(sqLiteAdapter);
+            photoService = new PhotoService(sqLiteAdapter);
+
+            List<Post> posts = postService.getPostsFromSubscribes("user_test");  //Здесь все очень не правильно,
+            for(int i = 0; i<posts.size(); i++){                                 //но работает.
+                if (posts.get(i).getId() == postId)                              //Это временная мера,
+                    postObj = posts.get(i);                                      //пока не напишется метод
+            }                                                                    //получения поста по ID поста.
+
+            photoObj = photoService.getPhoto((int) postId);
+
+            Log.i("myTag", "postObf is: " + postObj.toString() + " | " + "photoObj is: " + photoObj.toString());
+
+            toolbar.setTitle(postObj.getNameTag());
+            imageLoader.displayImage(photoObj.getPhotoLink(), photo);
+            descriptionTextView.setText(postObj.getPostText());
+            dateTextView.setText(DateFormatUtil.toReadable(this, postObj.getPostDate()));
+        }
     }
 
     private void initCommentsList() {
@@ -88,27 +126,6 @@ public class PostDetails extends AppCompatActivity {
                 postDetails.setTranslationY(-distance);
             }
         });
-    }
-
-
-    //Временный метод. Заполняем случайными данными для проверки разметки
-    private void justForTest() {
-
-        ImageView imageView = (ImageView) findViewById(R.id.photo);
-        descriptionTextView = (TextView) findViewById(R.id.description_text);
-        TextView dateTextView = (TextView) findViewById(R.id.date_text);
-
-        toolbar.setTitle("BE0000AA");
-
-        imageView.setImageResource(R.drawable.myimg);
-        descriptionTextView.setText("Cowards die many times before their deaths; the valiant never taste of death but once.");
-        dateTextView.setText("10 march 2015");
-
-    }
-
-    //Обрабатываем нажатие кнопки "subscribe"
-    public void actionSubscribe(MenuItem item) {
-
     }
 
     //Нажата кнопка "share"
@@ -148,5 +165,8 @@ public class PostDetails extends AppCompatActivity {
             c.setCommentText("Comment " + Integer.toString(i));
             comments.add(c);
         }
+    }
+
+    public void actionSubscribe(MenuItem item) {
     }
 }

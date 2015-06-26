@@ -1,6 +1,7 @@
 package ua.org.javatraining.automessenger.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import ua.org.javatraining.automessenger.app.activities.PostDetails;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
@@ -32,16 +34,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private TextView tag;
         private TextView description;
         private TextView date;
+        private View frame;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            frame = itemView.findViewById(R.id.cardview);
             photo = (ImageView) itemView.findViewById(R.id.card_image_view);
             tag = (TextView) itemView.findViewById(R.id.text_tag);
             description = (TextView) itemView.findViewById(R.id.text_description);
             date = (TextView) itemView.findViewById(R.id.text_date);
         }
-
     }
 
     @Override
@@ -53,14 +56,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(PostsAdapter.ViewHolder holder, int position) {
-        Post post = dataset.get(position);
+    public void onBindViewHolder(final PostsAdapter.ViewHolder holder, int position) {
+        final Post post = dataset.get(position);
+
 
         holder.description.setText(post.getPostText());
         holder.date.setText(DateFormatUtil.toReadable(context, post.getPostDate()));
         holder.tag.setText(post.getNameTag());
         imageLoader.displayImage(photoService.getPhoto((int) post.getId()).getPhotoLink(), holder.photo);
 
+        holder.frame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), PostDetails.class);
+                intent.putExtra("POST_ID", post.getId());
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

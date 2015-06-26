@@ -14,9 +14,7 @@ public class ValidationUtils {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(tag);
 
-        if (!m.matches()) return false;
-
-        return true;
+        return m.matches();
     }
 
 }
