@@ -30,7 +30,6 @@ import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.database.PostService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.database.UserService;
-import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
@@ -39,19 +38,23 @@ import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.user.Authentication;
+import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NearbyFragment.NearbyFragmentInterface {
+public class MainActivity extends AppCompatActivity implements FeedFragment.FeedFragmentInterface {
 
     //bakaev
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    private static final int TAKE_PHOTO_REQUEST = 100;
 
     public Toolbar toolbar;
     DrawerLayout drawerLayout;
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
     UserService userService;
     PostService postService;
     PhotoService photoService;
-    List<Post> nearbyPost;
+    List<FullPost> feedPost = new ArrayList<FullPost>();
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -240,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
             }
             if (photoFile != null) {
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                startActivityForResult(cameraIntent, 1);
+                startActivityForResult(cameraIntent, TAKE_PHOTO_REQUEST);
             }
         }
     }
@@ -260,9 +263,10 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, AddPostActivity.class);
-            intent.putExtra("photoPath", photoPath);
+            Log.i("myTag", "Photo path (MainActivity): " + photoPath);
+            intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
             startActivity(intent);
         }
@@ -280,19 +284,27 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
         }
     }
 
-    private void updateData(){
-        nearbyPost = postService.getPostsFromSubscribes(username);
-        //todo Other updates
+    private void updateFeedPosts() {
+        List<Post> posts = postService.getPostsFromSubscribes(username);
+        if (posts != null) {
+            feedPost.clear();
+            for (Post p : posts) {
+                FullPost fp = new FullPost();
+                fp.setPostLocation(p.getPostLocation());
+                fp.setAuthor(p.getNameUser());
+                fp.setDate(p.getPostDate());
+                fp.setPostID(p.getId());
+                fp.setTag(p.getNameTag());
+                fp.setText(p.getPostText());
+                fp.getPhotos().add(photoService.getPhoto((int) p.getId()).getPhotoLink());//todo remove cast to int after DB fix
+                feedPost.add(fp);
+            }
+        }
     }
 
     @Override
-    public List<Post> getNearbyPosts() {
-        updateData();
-        return nearbyPost;
-    }
-
-    @Override
-    public void update() {
-        updateData();
+    public List<FullPost> getFeedPosts() {
+        updateFeedPosts();
+        return feedPost;
     }
 }
