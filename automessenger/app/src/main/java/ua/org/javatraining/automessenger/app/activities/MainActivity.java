@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
 
         if (savedInstanceState == null) {
             initUIL();
-
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
         } else {
@@ -278,8 +277,6 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
             SharedPreferences.Editor editor = userSettings.edit();
             editor.putString(Authentication.USERNAME, accountName);
             editor.commit();
-
-
             app.userAuth(this);
         }
     }
@@ -289,13 +286,7 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
         if (posts != null) {
             feedPost.clear();
             for (Post p : posts) {
-                FullPost fp = new FullPost();
-                fp.setPostLocation(p.getPostLocation());
-                fp.setAuthor(p.getNameUser());
-                fp.setDate(p.getPostDate());
-                fp.setPostID(p.getId());
-                fp.setTag(p.getNameTag());
-                fp.setText(p.getPostText());
+                FullPost fp = new FullPost(p);
                 fp.getPhotos().add(photoService.getPhoto((int) p.getId()).getPhotoLink());//todo remove cast to int after DB fix
                 feedPost.add(fp);
             }

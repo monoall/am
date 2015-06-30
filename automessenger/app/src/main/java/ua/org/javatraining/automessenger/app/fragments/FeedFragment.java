@@ -2,7 +2,6 @@ package ua.org.javatraining.automessenger.app.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +54,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        data = activityCommands.getFeedPosts();
+        activityCommands.getFeedPosts();
     }
 
     private void initRecyclerView(View v) {

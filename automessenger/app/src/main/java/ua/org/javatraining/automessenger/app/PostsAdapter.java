@@ -18,7 +18,7 @@ import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.List;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
+public class    PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
     List<FullPost> dataset;
     ImageLoader imageLoader = ImageLoader.getInstance();

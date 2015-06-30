@@ -26,6 +26,7 @@ import ua.org.javatraining.automessenger.app.entityes.Comment;
 import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
+import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,40 +36,22 @@ public class PostDetails extends AppCompatActivity {
     Toolbar toolbar;
     TextView descriptionTextView;
     EditText addCommentField;
-    ImageView photo;
-    TextView dateTextView;
     ImageButton submit;
-    View postDetails;
     RecyclerView myRV;
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager myLM;
-    ImageLoader imageLoader = ImageLoader.getInstance();
-    int postDetailsHeight;
     List<Comment> comments = new ArrayList<Comment>();
     long postId;
     SQLiteAdapter sqLiteAdapter;
     PostService postService;
     PhotoService photoService;
-    Post postObj;
     Photo photoObj;
-
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        postDetailsHeight = postDetails.getHeight();
-        myRV.setPadding(0, postDetailsHeight, 0, 0);
-        myLM.scrollToPosition(0);
-    }
+    FullPost fullPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_details);
-        photo = (ImageView) findViewById(R.id.photo);
-        postDetails = findViewById(R.id.post_details);
-        descriptionTextView = (TextView) findViewById(R.id.description_text);
-        dateTextView = (TextView) findViewById(R.id.date_text);
         addCommentField = (EditText) findViewById(R.id.add_comment_field);
         postId = getIntent().getLongExtra("POST_ID", 0);
         sqLiteAdapter = SQLiteAdapter.initInstance(this);
@@ -87,11 +70,12 @@ public class PostDetails extends AppCompatActivity {
 
         initToolbar();
         updateCommentsDataset();
+        loadPostForList();
         initCommentsList();
-        loadPost();
     }
 
-    private void loadPost() {
+
+    private void loadPostForList(){
         if (postId != 0) {
             postService = new PostService(sqLiteAdapter);
             photoService = new PhotoService(sqLiteAdapter);
@@ -99,17 +83,12 @@ public class PostDetails extends AppCompatActivity {
             List<Post> posts = postService.getPostsFromSubscribes("user_test");  //Здесь все очень не правильно,
             for (Post post : posts) {                                            //но работает.
                 if (post.getId() == postId)                                      //Это временная мера,
-                    postObj = post;                                              //пока не напишется метод
+                    fullPost = new FullPost(post);                               //пока не напишется метод
             }                                                                    //получения поста по ID поста.
 
             photoObj = photoService.getPhoto((int) postId);
-
-            Log.i("myTag", "postObf is: " + postObj.toString() + " | " + "photoObj is: " + photoObj.toString());
-
-            toolbar.setTitle(postObj.getNameTag());
-            imageLoader.displayImage(photoObj.getPhotoLink(), photo);
-            descriptionTextView.setText(postObj.getPostText());
-            dateTextView.setText(DateFormatUtil.toReadable(this, postObj.getPostDate()));
+            fullPost.getPhotos().add(photoObj.getPhotoLink());
+            toolbar.setTitle(fullPost.getTag());
         }
     }
 
@@ -117,42 +96,16 @@ public class PostDetails extends AppCompatActivity {
         myRV = (RecyclerView) findViewById(R.id.comment_rv);
         myLM = new LinearLayoutManager(this);
         myRV.setLayoutManager(myLM);
-        myAdapter = new CommentsAdapter(this.getApplicationContext(), comments);
+        myAdapter = new CommentsAdapter(this.getApplicationContext(), fullPost, comments);
         myRV.setAdapter(myAdapter);
-
-        myRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private int mOffset = 0;
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                clipOffset();
-                onMoved(mOffset);
-                if ((mOffset < postDetailsHeight && dy > 0) || (mOffset > 0 && dy < 0)) {
-                    mOffset += dy;
-                }
-            }
-
-            private void clipOffset() {
-                if (mOffset > postDetailsHeight) {
-                    mOffset = postDetailsHeight;
-                } else if (mOffset < 0) {
-                    mOffset = 0;
-                }
-            }
-
-            public void onMoved(int distance) {
-                postDetails.setTranslationY(-distance);
-            }
-        });
     }
 
     //Нажата кнопка "share"
     public void actionShare(View view) {
-        String extraText = descriptionTextView.getText().toString();
+        String extraText = fullPost.getText();
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, extraText);
-        Uri uri = Uri.parse(photoObj.getPhotoLink());
+        Uri uri = Uri.parse(fullPost.getPhotos().get(0));
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, "Share"));
@@ -174,7 +127,6 @@ public class PostDetails extends AppCompatActivity {
     public void actionSetRate(View view) {
     }
 
-    //initialize dataset with test data
     private void updateCommentsDataset() {
         if (postId != 0) {
             CommentService commentService = new CommentService(sqLiteAdapter);

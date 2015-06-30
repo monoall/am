@@ -1,5 +1,7 @@
 package ua.org.javatraining.automessenger.app.vo;
 
+import ua.org.javatraining.automessenger.app.entityes.Post;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,16 @@ public class FullPost {
     private String author;
     private String tag;
     private List<String> photos;
+
+    public FullPost(Post post) {
+        this.postID = post.getId();
+        this.author = post.getNameUser();
+        this.date = post.getPostDate();
+        this.postLocation = post.getPostLocation();
+        this.tag = post.getNameTag();
+        this.text = post.getPostText();
+        photos = new ArrayList<String>();
+    }
 
     public FullPost() {
         photos = new ArrayList<String>();
