@@ -26,10 +26,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.PhotoService;
-import ua.org.javatraining.automessenger.app.database.PostService;
-import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.database.UserService;
+import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
@@ -67,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
     UserService userService;
     PostService postService;
     PhotoService photoService;
-    List<FullPost> feedPost = new ArrayList<FullPost>();
+    CommentService commentService;
+    List<FullPost> feedPost = new ArrayList<>();
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -90,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
         userService = new UserService(sqLiteAdapter);
         postService = new PostService(sqLiteAdapter);
         photoService = new PhotoService(sqLiteAdapter);
+        commentService = new CommentService(sqLiteAdapter);
 
         if (userService.getUser(username) == null) {
             User user = new User();
@@ -288,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
             for (Post p : posts) {
                 FullPost fp = new FullPost(p);
                 fp.getPhotos().add(photoService.getPhoto((int) p.getId()).getPhotoLink());//todo remove cast to int after DB fix
+                fp.setCommentCount(commentService.getAllComments((int) p.getId()).size());
                 feedPost.add(fp);
             }
         }

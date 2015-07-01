@@ -14,6 +14,7 @@ public class FullPost {
     private String author;
     private String tag;
     private List<String> photos;
+    private int commentCount;
 
     public FullPost(Post post) {
         this.postID = post.getId();
@@ -22,11 +23,11 @@ public class FullPost {
         this.postLocation = post.getPostLocation();
         this.tag = post.getNameTag();
         this.text = post.getPostText();
-        photos = new ArrayList<String>();
+        photos = new ArrayList<>();
     }
 
     public FullPost() {
-        photos = new ArrayList<String>();
+        photos = new ArrayList<>();
     }
 
     public long getPostID() {
@@ -85,5 +86,11 @@ public class FullPost {
         this.photos = photos;
     }
 
+    public int getCommentCount() {
+        return commentCount;
+    }
 
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
 }

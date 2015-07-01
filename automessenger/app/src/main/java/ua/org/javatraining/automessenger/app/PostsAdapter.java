@@ -34,16 +34,20 @@ public class    PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolde
         private TextView tag;
         private TextView description;
         private TextView date;
+        private TextView location;
+        private TextView commentNumber;
         private View frame;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            location = (TextView) itemView.findViewById(R.id.location_filed);
             frame = itemView.findViewById(R.id.cardview);
             photo = (ImageView) itemView.findViewById(R.id.card_image_view);
             tag = (TextView) itemView.findViewById(R.id.text_tag);
             description = (TextView) itemView.findViewById(R.id.text_description);
             date = (TextView) itemView.findViewById(R.id.text_date);
+            commentNumber = (TextView) itemView.findViewById(R.id.comment_count);
         }
     }
 
@@ -59,10 +63,11 @@ public class    PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolde
     public void onBindViewHolder(final PostsAdapter.ViewHolder holder, int position) {
         final FullPost fullPost = dataset.get(position);
 
-
+        holder.location.setText(fullPost.getPostLocation());
         holder.description.setText(fullPost.getText());
         holder.date.setText(DateFormatUtil.toReadable(context, fullPost.getDate()));
         holder.tag.setText(fullPost.getTag());
+        holder.commentNumber.setText(Integer.toString(fullPost.getCommentCount()));
         imageLoader.displayImage(fullPost.getPhotos().get(0), holder.photo);
 
         holder.frame.setOnClickListener(new View.OnClickListener() {

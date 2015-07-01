@@ -105,7 +105,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             cm.descriptionField.setText(dataset.get(i-1).getCommentText());
             cm.dateField.setText(DateFormatUtil.toReadable(context, dataset.get(i-1).getCommentDate()));
             //todo разобратся с обработкой рейтинга комментария
-            cm.ratingField.setText("666");// <- случайные данные для проверки разметки
             cm.curView.setOnClickListener(cm);
         }
     }

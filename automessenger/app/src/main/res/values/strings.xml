@@ -48,5 +48,7 @@
     <string name="short_weeks">w</string>
     <string name="short_months">M</string>
     <string name="short_years">y</string>
+    <string name="default_number_value">0</string>
+    <string name="default_location_filed">Location...</string>
 
 </resources>

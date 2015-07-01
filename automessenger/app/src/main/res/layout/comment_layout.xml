@@ -37,14 +37,20 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
+        <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
         <TextView
-                android:layout_gravity="center"
                 android:id="@+id/rating_field"
                 android:padding="8dp"
+                android:layout_margin="8dp"
+                android:text="@string/default_number_value"
                 android:textColor="@color/black54"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
 
         <ImageButton
                 android:id="@+id/comment_thumb_up"
@@ -52,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:src="@drawable/ic_thumb_up_grey600_24dp"
+                android:src="@drawable/ic_thumb_up_grey600_18dp"
                 android:contentDescription="@string/thumb_up"/>
 
         <ImageButton
@@ -61,8 +67,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:src="@drawable/ic_thumb_down_grey600_24dp"
+                android:src="@drawable/ic_thumb_down_grey600_18dp"
                 android:contentDescription="@string/thumb_down"/>
+
     </LinearLayout>
     <View
             android:background="@color/grey26"
