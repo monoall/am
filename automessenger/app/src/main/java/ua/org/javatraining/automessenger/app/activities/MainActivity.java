@@ -3,7 +3,6 @@ package ua.org.javatraining.automessenger.app.activities;
 
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -27,7 +26,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
@@ -35,21 +33,18 @@ import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.user.Authentication;
-import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements FeedFragment.FeedFragmentInterface {
+public class MainActivity
+        extends AppCompatActivity
+        implements FeedFragment.FeedFragmentInterface {
 
-    //bakaev
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     private static final int TAKE_PHOTO_REQUEST = 100;
 
@@ -59,13 +54,12 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
     ImageButton imageButton;
     int drawerWidth;
     String photoPath;
-    String username;
+    String username = "user_test";
     SQLiteAdapter sqLiteAdapter;
     UserService userService;
     PostService postService;
     PhotoService photoService;
     CommentService commentService;
-    List<FullPost> feedPost = new ArrayList<>();
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -78,11 +72,10 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbarInit();
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
-
-        username = "user_test";
 
         sqLiteAdapter = SQLiteAdapter.initInstance(this);
         userService = new UserService(sqLiteAdapter);
@@ -213,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
         return image;
     }
 
-    //bakaev
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
@@ -280,22 +272,8 @@ public class MainActivity extends AppCompatActivity implements FeedFragment.Feed
         }
     }
 
-    private void updateFeedPosts() {
-        List<Post> posts = postService.getPostsFromSubscribes(username);
-        if (posts != null) {
-            feedPost.clear();
-            for (Post p : posts) {
-                FullPost fp = new FullPost(p);
-                fp.getPhotos().add(photoService.getPhoto((int) p.getId()).getPhotoLink());//todo remove cast to int after DB fix
-                fp.setCommentCount(commentService.getAllComments((int) p.getId()).size());
-                feedPost.add(fp);
-            }
-        }
-    }
-
     @Override
-    public List<FullPost> getFeedPosts() {
-        updateFeedPosts();
-        return feedPost;
+    public String getUsername() {
+        return username;
     }
 }

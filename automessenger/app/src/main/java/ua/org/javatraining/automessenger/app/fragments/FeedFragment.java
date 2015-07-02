@@ -3,28 +3,56 @@ package ua.org.javatraining.automessenger.app.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ua.org.javatraining.automessenger.app.PostsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
+import ua.org.javatraining.automessenger.app.loaders.PostLoader;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class FeedFragment extends Fragment {
+public class FeedFragment
+        extends Fragment
+        implements LoaderManager.LoaderCallbacks<List<FullPost>> {
+
+    private static  final int LOADER_ID = 1;
+
     RecyclerView myRV;
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager myLM;
-    List<FullPost> data;
+    List<FullPost> data = new ArrayList<FullPost>();
+    private Loader<List<FullPost>> mLoader;
 
     FeedFragmentInterface activityCommands;
 
-    public interface FeedFragmentInterface{
-        List<FullPost> getFeedPosts();
+    @Override
+    public Loader<List<FullPost>> onCreateLoader(int id, Bundle args) {
+        return new PostLoader(getActivity().getApplicationContext(), activityCommands.getUsername());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<FullPost>> loader, List<FullPost> data) {
+        Log.i("myTag", "onLoadFinished, data size: " + Integer.toString(data.size()));
+        this.data.clear();
+        this.data.addAll(data);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<FullPost>> loader) {
+    }
+
+    public interface FeedFragmentInterface {
+        String getUsername();
     }
 
     @Override
@@ -39,22 +67,27 @@ public class FeedFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i("myTag", "onCreateView");
         return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.i("myTag", "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.toolbar.setTitle(R.string.feed);
-        data = activityCommands.getFeedPosts();
+        mLoader = getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        Log.i("myTag", mLoader.toString());
+        mLoader.onContentChanged();
         initRecyclerView(view);
     }
 
     @Override
     public void onResume() {
+        Log.i("myTag", "onResume");
         super.onResume();
-        activityCommands.getFeedPosts();
+        mLoader.onContentChanged();
     }
 
     private void initRecyclerView(View v) {

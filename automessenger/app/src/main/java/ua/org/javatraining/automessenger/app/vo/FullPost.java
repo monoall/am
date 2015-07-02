@@ -1,5 +1,6 @@
 package ua.org.javatraining.automessenger.app.vo;
 
+import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 
 import java.util.ArrayList;
@@ -23,11 +24,11 @@ public class FullPost {
         this.postLocation = post.getPostLocation();
         this.tag = post.getNameTag();
         this.text = post.getPostText();
-        photos = new ArrayList<>();
+        photos = new ArrayList<String>();
     }
 
     public FullPost() {
-        photos = new ArrayList<>();
+        photos = new ArrayList<String>();
     }
 
     public long getPostID() {
