@@ -30,7 +30,6 @@ import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.database.PostService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.database.UserService;
-import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
@@ -274,8 +273,6 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
             SharedPreferences.Editor editor = userSettings.edit();
             editor.putString(Authentication.USERNAME, accountName);
             editor.commit();
-
-
             app.userAuth(this);
         }
     }

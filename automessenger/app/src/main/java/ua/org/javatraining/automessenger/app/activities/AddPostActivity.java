@@ -19,6 +19,7 @@ import ua.org.javatraining.automessenger.app.database.TagService;
 import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
+import ua.org.javatraining.automessenger.app.services.SendToDriveService;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 
 public class AddPostActivity extends AppCompatActivity {
@@ -91,6 +92,7 @@ public class AddPostActivity extends AppCompatActivity {
         String text = postText.getText().toString();
 
         if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) { // Validating car number
+            googleDriveServiceStart(photoURI);
             Toast.makeText(this, "Ok", Toast.LENGTH_LONG).show();
             SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
             PostService postService = new PostService(sqLiteAdapter);
@@ -129,5 +131,11 @@ public class AddPostActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.validation_error, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void googleDriveServiceStart(String photoPath){
+        Intent intent = new Intent(this, SendToDriveService.class);
+        intent.putExtra(SendToDriveService.PHOTOPATH, photoPath);
+        startService(intent);
     }
 }

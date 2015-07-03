@@ -68,6 +68,10 @@
                 android:name="ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService"
                 android:exported="false">
         </service>
+        <service
+                android:name="ua.org.javatraining.automessenger.app.services.SendToDriveService"
+                android:exported="false">
+        </service>
     </application>
 
 </manifest>
