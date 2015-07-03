@@ -24,7 +24,7 @@ public class FeedFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<List<FullPost>> {
 
-    private static  final int LOADER_ID = 1;
+    private static final int POST_LOADER_ID = 1;
 
     RecyclerView myRV;
     RecyclerView.Adapter myAdapter;
@@ -41,7 +41,6 @@ public class FeedFragment
 
     @Override
     public void onLoadFinished(Loader<List<FullPost>> loader, List<FullPost> data) {
-        Log.i("myTag", "onLoadFinished, data size: " + Integer.toString(data.size()));
         this.data.clear();
         this.data.addAll(data);
         myAdapter.notifyDataSetChanged();
@@ -67,25 +66,26 @@ public class FeedFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i("myTag", "onCreateView");
         return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i("myTag", "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.toolbar.setTitle(R.string.feed);
-        mLoader = getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
-        Log.i("myTag", mLoader.toString());
-        mLoader.onContentChanged();
+        mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
         initRecyclerView(view);
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().getSupportLoaderManager().destroyLoader(POST_LOADER_ID);
+    }
+
+    @Override
     public void onResume() {
-        Log.i("myTag", "onResume");
         super.onResume();
         mLoader.onContentChanged();
     }

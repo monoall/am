@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +17,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.CommentService;
@@ -25,16 +26,19 @@ import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.entityes.Comment;
 import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
-import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
+import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostDetails extends AppCompatActivity {
+public class PostDetails
+        extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<List<Comment>>{
+
+    private static final int COMMENT_LOADER_ID = 2;
 
     Toolbar toolbar;
-    TextView descriptionTextView;
     EditText addCommentField;
     ImageButton submit;
     RecyclerView myRV;
@@ -47,6 +51,7 @@ public class PostDetails extends AppCompatActivity {
     PhotoService photoService;
     Photo photoObj;
     FullPost fullPost;
+    private Loader<List<Comment>> mLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +74,22 @@ public class PostDetails extends AppCompatActivity {
         });
 
         initToolbar();
-        updateCommentsDataset();
         loadPostForList();
+        mLoader = getSupportLoaderManager().initLoader(COMMENT_LOADER_ID, null, this);
         initCommentsList();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getSupportLoaderManager().destroyLoader(COMMENT_LOADER_ID);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLoader.onContentChanged();
+    }
 
     private void loadPostForList(){
         if (postId != 0) {
@@ -127,14 +143,6 @@ public class PostDetails extends AppCompatActivity {
     public void actionSetRate(View view) {
     }
 
-    private void updateCommentsDataset() {
-        if (postId != 0) {
-            CommentService commentService = new CommentService(sqLiteAdapter);
-            comments.clear();
-            comments.addAll(commentService.getAllComments((int) postId)); //todo remove cast to int when DB will be OK
-        }
-    }
-
     public void actionSubscribe(MenuItem item) {
 
     }
@@ -153,7 +161,24 @@ public class PostDetails extends AppCompatActivity {
             imm.hideSoftInputFromWindow(addCommentField.getWindowToken(), 0);
             Log.i("myTag", "comment added. id: " + Long.toString(id));
             addCommentField.setText("");
-            updateCommentsDataset();
+            mLoader.onContentChanged();
         }
+    }
+
+    @Override
+    public Loader<List<Comment>> onCreateLoader(int id, Bundle args) {
+        return new CommentLoader(this,postId);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Comment>> loader, List<Comment> data) {
+        comments.clear();
+        comments.addAll(data);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Comment>> loader) {
+
     }
 }
