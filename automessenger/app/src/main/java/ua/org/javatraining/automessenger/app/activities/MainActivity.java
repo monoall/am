@@ -91,6 +91,7 @@ public class MainActivity
 
         setUsername(Authentication.getLastUser(this));
 
+
         if (userService.getUser(username) == null) {
             User user = new User();
             user.setName(username);

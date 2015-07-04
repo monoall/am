@@ -127,7 +127,7 @@ public class AddPostActivity extends AppCompatActivity {
             post.setPostText(text);
             post.setNameTag(tag);
             post.setNameUser(username);
-            post.setPostDate((int) System.currentTimeMillis());
+            post.setPostDate(System.currentTimeMillis());
             if (statusGEO) post.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
 
             //Inserting Post object to DB and getting id

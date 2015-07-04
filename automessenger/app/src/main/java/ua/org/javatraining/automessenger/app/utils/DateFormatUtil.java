@@ -1,6 +1,7 @@
 package ua.org.javatraining.automessenger.app.utils;
 
 import android.content.Context;
+import android.util.Log;
 import ua.org.javatraining.automessenger.app.R;
 
 public class DateFormatUtil {
@@ -8,6 +9,7 @@ public class DateFormatUtil {
     public static String toReadable(Context context, long stamp) {
 
         if (context != null) {
+
             long cut = (System.currentTimeMillis() - stamp) / 1000; //cut off milliseconds
 
             if (cut < 60) return Long.toString(cut) + context.getString(R.string.short_seconds);
