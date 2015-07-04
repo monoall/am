@@ -7,11 +7,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import ua.org.javatraining.automessenger.app.PostsAdapter;
+import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.loaders.PostLoader;
@@ -36,7 +35,7 @@ public class FeedFragment
 
     @Override
     public Loader<List<FullPost>> onCreateLoader(int id, Bundle args) {
-        return new PostLoader(getActivity().getApplicationContext(), activityCommands.getUsername());
+        return new PostLoader(getActivity().getApplicationContext());
     }
 
     @Override

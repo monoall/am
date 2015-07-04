@@ -1,7 +1,12 @@
 package ua.org.javatraining.automessenger.app.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +29,7 @@ import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
+
 import java.io.IOException;
 
 public class AddPostActivity extends AppCompatActivity {
@@ -37,7 +43,6 @@ public class AddPostActivity extends AppCompatActivity {
     EditText tagText;
     EditText postText;
     ImageLoader imageLoader = ImageLoader.getInstance();
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -71,6 +76,7 @@ public class AddPostActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
     }
 
     @Override
@@ -114,8 +120,9 @@ public class AddPostActivity extends AppCompatActivity {
                 tagService.insertTag(ctag);
             }
 
-            float[] loc = new float[2];
-            boolean statusGEO = getGEOfromURI(Uri.parse(photoURI), loc);
+            float[] loc = getGEOfromURI(Uri.parse(photoURI));
+
+            boolean statusGEO = loc != null;
 
             post.setPostText(text);
             post.setNameTag(tag);
@@ -144,16 +151,13 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     //getting GPS coordinates from photo
-    private boolean getGEOfromURI(Uri uri, float[] result) {
+    private float[] getGEOfromURI(Uri uri) {
+        float[] result = new float[2];
         String filename = null;
         try {
-            Log.i("myTag geowork", "-Begin-");
-
             if (uri.getScheme().equals("file")) {
-                Log.i("myTag geowork", "URI Scheme: file");
                 filename = uri.getHost() + uri.getPath();
             } else {
-                Log.i("myTag geowork", "URI Scheme: content");
                 String[] proj = {MediaStore.Images.Media.DATA};
                 Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
                 if (cursor.moveToFirst()) {
@@ -162,16 +166,21 @@ public class AddPostActivity extends AppCompatActivity {
                 }
                 cursor.close();
             }
-            Log.i("myTag geowork", "filename: " + filename);
             ExifInterface exif = new ExifInterface(filename);
-            boolean check = exif.getLatLong(result);
-            Log.i("myTag geowork", "result: " + Boolean.toString(check) +
-                    ", " + Float.toString(result[0]) + ", " + Float.toString(result[1]));
-            Log.i("myTag geowork", "-End-");
+            boolean check = exif.getLatLong(result = new float[2]);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return !(filename == null);
+
+        if (result[0] == 0 && result[1] == 0) {
+            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            result[0] = (float) location.getLatitude();
+            result[1] = (float) location.getLongitude();
+        }
+
+        return result;
     }
 
 }

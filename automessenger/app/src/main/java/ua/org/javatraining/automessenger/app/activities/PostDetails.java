@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import ua.org.javatraining.automessenger.app.CommentsAdapter;
+import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.CommentService;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
@@ -27,6 +27,7 @@ import ua.org.javatraining.automessenger.app.entityes.Comment;
 import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
+import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class PostDetails
         loadPostForList();
         mLoader = getSupportLoaderManager().initLoader(COMMENT_LOADER_ID, null, this);
         initCommentsList();
+
     }
 
     @Override
@@ -96,11 +98,11 @@ public class PostDetails
             postService = new PostService(sqLiteAdapter);
             photoService = new PhotoService(sqLiteAdapter);
 
-            List<Post> posts = postService.getPostsFromSubscribes("user_test");  //Здесь все очень не правильно,
-            for (Post post : posts) {                                            //но работает.
-                if (post.getId() == postId)                                      //Это временная мера,
-                    fullPost = new FullPost(post);                               //пока не напишется метод
-            }                                                                    //получения поста по ID поста.
+            List<Post> posts = postService.getPostsFromSubscribes(Authentication.getLastUser(this));  //Здесь все очень не правильно,
+            for (Post post : posts) {                                                                 //но работает.
+                if (post.getId() == postId)                                                           //Это временная мера,
+                    fullPost = new FullPost(post);                                                    //пока не напишется метод
+            }                                                                                         //получения поста по ID поста.
 
             photoObj = photoService.getPhoto((int) postId);
             fullPost.getPhotos().add(photoObj.getPhotoLink());

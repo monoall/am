@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.app;
+package ua.org.javatraining.automessenger.app.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.entityes.Comment;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 import ua.org.javatraining.automessenger.app.vo.FullPost;

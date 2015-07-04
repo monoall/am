@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -32,6 +34,8 @@ import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
+import ua.org.javatraining.automessenger.app.loaders.PostLoader;
+import ua.org.javatraining.automessenger.app.loaders.PostLoaderObserver;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -54,12 +58,13 @@ public class MainActivity
     ImageButton imageButton;
     int drawerWidth;
     String photoPath;
-    String username = "user_test";
+    String username;
     SQLiteAdapter sqLiteAdapter;
     UserService userService;
     PostService postService;
     PhotoService photoService;
     CommentService commentService;
+    LocalBroadcastManager localBroadcastManager;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -82,6 +87,9 @@ public class MainActivity
         postService = new PostService(sqLiteAdapter);
         photoService = new PhotoService(sqLiteAdapter);
         commentService = new CommentService(sqLiteAdapter);
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
+        setUsername(Authentication.getLastUser(this));
 
         if (userService.getUser(username) == null) {
             User user = new User();
@@ -101,6 +109,7 @@ public class MainActivity
         findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
 
         String lastUser = Authentication.getLastUser(this);
+        Log.i("myTag", "last user: " + lastUser);
         if (lastUser.equals("")) {
             Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                     false, null, null, null, null);
@@ -110,6 +119,12 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+    }
+
+    private void setUsername(String username){
+        this.username = username;
+        localBroadcastManager.sendBroadcast(new Intent(PostLoaderObserver.POST_UPDATED_INTENT));
+        Log.i("myTag", "Message sent");
     }
 
     private void toolbarInit() {
@@ -185,6 +200,7 @@ public class MainActivity
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                         false, null, null, null, null);
                 startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
+
         }
     }
 
@@ -267,8 +283,9 @@ public class MainActivity
             SharedPreferences userSettings = getSharedPreferences(Authentication.USERNAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = userSettings.edit();
             editor.putString(Authentication.USERNAME, accountName);
-            editor.commit();
+            editor.apply();
             app.userAuth(this);
+            setUsername(Authentication.getLastUser(this));
         }
     }
 
