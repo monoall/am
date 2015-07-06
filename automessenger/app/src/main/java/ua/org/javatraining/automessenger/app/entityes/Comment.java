@@ -3,10 +3,10 @@ package ua.org.javatraining.automessenger.app.entityes;
 public class Comment {
 
     private long id;
-    private int commentDate;
+    private long commentDate;
     private String commentText;
     private String nameUser;
-    private int idPost;
+    private long idPost;
 
     public long getId() {
         return id;
@@ -16,11 +16,11 @@ public class Comment {
         this.id = id;
     }
 
-    public int getCommentDate() {
+    public long getCommentDate() {
         return commentDate;
     }
 
-    public void setCommentDate(int commentDate) {
+    public void setCommentDate(long commentDate) {
         this.commentDate = commentDate;
     }
 
@@ -40,11 +40,11 @@ public class Comment {
         this.nameUser = nameUser;
     }
 
-    public int getIdPost() {
+    public long getIdPost() {
         return idPost;
     }
 
-    public void setIdPost(int idPost) {
+    public void setIdPost(long idPost) {
         this.idPost = idPost;
     }
 }

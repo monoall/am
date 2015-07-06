@@ -154,10 +154,10 @@ public class PostDetails
         if (!comment.equals("")) {
             CommentService commentService = new CommentService(sqLiteAdapter);
             Comment commentObj = new Comment();
-            commentObj.setCommentDate((int) System.currentTimeMillis()); //todo remove cast to int when DB will be OK
+            commentObj.setCommentDate(System.currentTimeMillis());
             commentObj.setCommentText(comment);
-            commentObj.setIdPost((int) postId); //todo remove cast to int when DB will be OK
-            commentObj.setNameUser("user_test");
+            commentObj.setIdPost(postId);
+            commentObj.setNameUser(Authentication.getLastUser(this));
             long id = commentService.insertComment(commentObj).getId();
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(addCommentField.getWindowToken(), 0);

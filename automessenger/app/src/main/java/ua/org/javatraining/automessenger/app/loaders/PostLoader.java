@@ -1,9 +1,12 @@
 package ua.org.javatraining.automessenger.app.loaders;
 
+import android.location.Address;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.location.Geocoder;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import ua.org.javatraining.automessenger.app.database.CommentService;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
@@ -13,8 +16,10 @@ import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
 
@@ -24,6 +29,8 @@ public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
     PhotoService photoService;
     CommentService commentService;
     PostLoaderObserver postObserver;
+    Geocoder geocoder;
+    SwipeRefreshLayout refreshLayout;
 
     public PostLoader(Context context) {
         super(context);
@@ -32,6 +39,19 @@ public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
         postService = new PostService(sqLiteAdapter);
         photoService = new PhotoService(sqLiteAdapter);
         commentService = new CommentService(sqLiteAdapter);
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+    }
+
+    public void registerRefreshLayout(SwipeRefreshLayout srl) {
+        refreshLayout = srl;
+    }
+
+    @Override
+    public void deliverResult(List<FullPost> data) {
+        super.deliverResult(data);
+        if (refreshLayout != null) {
+            refreshLayout.setRefreshing(false);
+        }
     }
 
     @Override
@@ -70,6 +90,20 @@ public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
         if (posts != null) {
             for (Post p : posts) {
                 FullPost fp = new FullPost(p);
+
+                float latitude, longitude;
+                int separatorPosition;
+                String coordinates = p.getPostLocation();
+                separatorPosition = coordinates.indexOf(" ");
+                latitude = Float.valueOf(coordinates.substring(0, separatorPosition));
+                longitude = Float.valueOf(coordinates.substring(separatorPosition, coordinates.length()));
+                try {
+                    Address address = geocoder.getFromLocation(latitude, longitude, 1).get(0);
+                    fp.setPostLocation(address.getCountryName() + ", " + address.getAdminArea() + ", " + address.getLocality());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 fp.getPhotos().add(photoService.getPhoto((int) p.getId()).getPhotoLink());//todo remove cast to int after DB fix
                 fp.setCommentCount(commentService.getAllComments((int) p.getId()).size());
                 data.add(fp);

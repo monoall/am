@@ -41,14 +41,9 @@
     <string name="account_type">com.automessenger.app</string>
     <string name="validation_error">Incorrect data</string>
 
-    <string name="short_seconds">s</string>
-    <string name="short_minutes">m</string>
-    <string name="short_hours">h</string>
-    <string name="short_days">d</string>
-    <string name="short_weeks">w</string>
-    <string name="short_months">M</string>
-    <string name="short_years">y</string>
     <string name="default_number_value">0</string>
     <string name="default_location_filed">Location...</string>
+    <string name="post">Post</string>
+    <string name="today">today</string>
 
 </resources>

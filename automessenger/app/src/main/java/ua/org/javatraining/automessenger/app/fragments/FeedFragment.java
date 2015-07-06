@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ public class FeedFragment
     RecyclerView myRV;
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager myLM;
+    SwipeRefreshLayout refreshLayout;
     List<FullPost> data = new ArrayList<FullPost>();
     private Loader<List<FullPost>> mLoader;
 
@@ -73,6 +76,16 @@ public class FeedFragment
         super.onViewCreated(view, savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.toolbar.setTitle(R.string.feed);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((PostLoader) mLoader).registerRefreshLayout(refreshLayout);
+                mLoader.onContentChanged();
+            }
+        });
+
         mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
         initRecyclerView(view);
     }

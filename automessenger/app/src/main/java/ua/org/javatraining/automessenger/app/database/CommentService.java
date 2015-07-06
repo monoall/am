@@ -77,10 +77,10 @@ public class CommentService implements DbConstants {
     private Comment buildComment(Cursor c){
         Comment com = new Comment();
         com.setId(c.getLong(c.getColumnIndex(ID)));
-        com.setCommentDate(c.getInt(c.getColumnIndex(COMMENT_DATE)));
+        com.setCommentDate(c.getLong(c.getColumnIndex(COMMENT_DATE)));
         com.setCommentText(c.getString(c.getColumnIndex(COMMENT_TEXT)));
         com.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
-        com.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
+        com.setIdPost(c.getLong(c.getColumnIndex(ID_POST)));
         return com;
     }
 

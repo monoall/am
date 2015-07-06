@@ -19,7 +19,7 @@ public class CommentLoaderObserver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int intentPostID = intent.getIntExtra(Post.POST_ID, -1);
-        if(intentPostID == loader.getPostID()) {
+        if(intentPostID == loader.getPostID() || intentPostID == -1) {
             Log.i("myTag", "Message received " + this.toString());
             loader.onContentChanged();
         }

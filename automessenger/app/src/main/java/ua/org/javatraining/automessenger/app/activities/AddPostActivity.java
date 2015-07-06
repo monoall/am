@@ -3,9 +3,8 @@ package ua.org.javatraining.automessenger.app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.location.Address;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
@@ -31,6 +31,8 @@ import ua.org.javatraining.automessenger.app.entityes.Tag;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -77,6 +79,19 @@ public class AddPostActivity extends AppCompatActivity {
             }
         });
 
+        float testLoc[] = getLocation(null);
+/*
+        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(testLoc[0], testLoc[1], 1);
+            Log.i("mytag geocod","getAdminArea(): " + addresses.get(0).getAdminArea());
+            Log.i("mytag geocod","getLocality(): " + addresses.get(0).getLocality());
+            Log.i("mytag geocod","getCountryName(): " + addresses.get(0).getCountryName());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("mytag", "!geocoder faild!");
+        }
+  */
     }
 
     @Override
@@ -120,7 +135,7 @@ public class AddPostActivity extends AppCompatActivity {
                 tagService.insertTag(ctag);
             }
 
-            float[] loc = getGEOfromURI(Uri.parse(photoURI));
+            float[] loc = getLocation(Uri.parse(photoURI));
 
             boolean statusGEO = loc != null;
 
@@ -151,27 +166,28 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     //getting GPS coordinates from photo
-    private float[] getGEOfromURI(Uri uri) {
+    private float[] getLocation(Uri uri) {
         float[] result = new float[2];
         String filename = null;
-        try {
-            if (uri.getScheme().equals("file")) {
-                filename = uri.getHost() + uri.getPath();
-            } else {
-                String[] proj = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
-                if (cursor.moveToFirst()) {
-                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    filename = cursor.getString(column_index);
+        if (uri != null) {
+            try {
+                if (uri.getScheme().equals("file")) {
+                    filename = uri.getHost() + uri.getPath();
+                } else {
+                    String[] proj = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+                    if (cursor.moveToFirst()) {
+                        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                        filename = cursor.getString(column_index);
+                    }
+                    cursor.close();
                 }
-                cursor.close();
+                ExifInterface exif = new ExifInterface(filename);
+                boolean check = exif.getLatLong(result);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            ExifInterface exif = new ExifInterface(filename);
-            boolean check = exif.getLatLong(result = new float[2]);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
         if (result[0] == 0 && result[1] == 0) {
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
