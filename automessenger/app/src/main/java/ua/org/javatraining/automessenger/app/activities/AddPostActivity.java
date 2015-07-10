@@ -80,18 +80,6 @@ public class AddPostActivity extends AppCompatActivity {
         });
 
         float testLoc[] = getLocation(null);
-/*
-        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
-        try {
-            List<Address> addresses = geocoder.getFromLocation(testLoc[0], testLoc[1], 1);
-            Log.i("mytag geocod","getAdminArea(): " + addresses.get(0).getAdminArea());
-            Log.i("mytag geocod","getLocality(): " + addresses.get(0).getLocality());
-            Log.i("mytag geocod","getCountryName(): " + addresses.get(0).getCountryName());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("mytag", "!geocoder faild!");
-        }
-  */
     }
 
     @Override
@@ -116,7 +104,7 @@ public class AddPostActivity extends AppCompatActivity {
 
 
     public void donePressed(MenuItem item) {
-        String tag = tagText.getText().toString();
+        String tag = tagText.getText().toString().replaceAll(" ","").toUpperCase();
         String text = postText.getText().toString();
 
         if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) { // Validating car number

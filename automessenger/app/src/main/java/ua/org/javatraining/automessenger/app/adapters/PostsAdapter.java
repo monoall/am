@@ -16,7 +16,7 @@ import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.List;
 
-public class    PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
     List<FullPost> dataset;
     ImageLoader imageLoader = ImageLoader.getInstance();
@@ -54,7 +54,6 @@ public class    PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolde
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_layout, parent, false);
 
         return new ViewHolder(v);
-
     }
 
     @Override

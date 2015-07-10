@@ -19,13 +19,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.CommentService;
-import ua.org.javatraining.automessenger.app.database.PhotoService;
-import ua.org.javatraining.automessenger.app.database.PostService;
-import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.entityes.Comment;
-import ua.org.javatraining.automessenger.app.entityes.Photo;
-import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.database.*;
+import ua.org.javatraining.automessenger.app.entityes.*;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
@@ -35,7 +30,7 @@ import java.util.List;
 
 public class PostDetails
         extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Comment>>{
+        implements LoaderManager.LoaderCallbacks<List<Comment>> {
 
     private static final int COMMENT_LOADER_ID = 2;
 
@@ -50,6 +45,8 @@ public class PostDetails
     SQLiteAdapter sqLiteAdapter;
     PostService postService;
     PhotoService photoService;
+    SubscriptionService subscriptionService;
+    Subscription subscription;
     Photo photoObj;
     FullPost fullPost;
     private Loader<List<Comment>> mLoader;
@@ -62,6 +59,9 @@ public class PostDetails
         postId = getIntent().getLongExtra("POST_ID", 0);
         sqLiteAdapter = SQLiteAdapter.initInstance(this);
         submit = (ImageButton) findViewById(R.id.submit);
+        subscriptionService = new SubscriptionService(sqLiteAdapter);
+        postService = new PostService(sqLiteAdapter);
+        photoService = new PhotoService(sqLiteAdapter);
 
         addCommentField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -74,11 +74,28 @@ public class PostDetails
             }
         });
 
-        initToolbar();
+
         loadPostForList();
+        initSubscription();
+        initToolbar();
         mLoader = getSupportLoaderManager().initLoader(COMMENT_LOADER_ID, null, this);
         initCommentsList();
 
+    }
+
+    private boolean initSubscription() {
+        boolean status = false;
+        User user = new User();
+        user.setName(Authentication.getLastUser(this));
+        List<Subscription> subs = subscriptionService.getSubscriptionsList(user);
+        for (Subscription s : subs) {
+            if (s.getNameTag().equals(fullPost.getTag())) {
+                subscription = s;
+                status = true;
+                break;
+            }
+        }
+        return status;
     }
 
     @Override
@@ -93,10 +110,8 @@ public class PostDetails
         mLoader.onContentChanged();
     }
 
-    private void loadPostForList(){
+    private void loadPostForList() {
         if (postId != 0) {
-            postService = new PostService(sqLiteAdapter);
-            photoService = new PhotoService(sqLiteAdapter);
 
             List<Post> posts = postService.getPostsFromSubscribes(Authentication.getLastUser(this));  //Здесь все очень не правильно,
             for (Post post : posts) {                                                                 //но работает.
@@ -106,7 +121,7 @@ public class PostDetails
 
             photoObj = photoService.getPhoto((int) postId);
             fullPost.getPhotos().add(photoObj.getPhotoLink());
-            toolbar.setTitle(fullPost.getTag());
+
         }
     }
 
@@ -133,6 +148,10 @@ public class PostDetails
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_post_details);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
+        toolbar.setTitle(fullPost.getTag());
+        if (subscription != null) {
+            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_star_rate_white_24dp);
+        }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,7 +165,24 @@ public class PostDetails
     }
 
     public void actionSubscribe(MenuItem item) {
-
+        if (subscription == null) {
+            subscription = new Subscription();
+            subscription.setNameUser(Authentication.getLastUser(this));
+            subscription.setNameTag(fullPost.getTag());
+            subscription.setId(subscriptionService.insertSubscription(subscription).getId());
+            if (!(subscription.getId() >= 1)) {
+                subscription = null;
+                Log.i("mytag", "postDetails, subscription failed!");
+            }else{
+                Log.i("mytag", "postDetails, subscription added!");
+                item.setIcon(R.drawable.ic_star_rate_white_24dp);
+            }
+        } else {
+            subscriptionService.deleteSubscription(subscription);
+            subscription = null;
+            item.setIcon(R.drawable.ic_star_outline_white_24dp);
+            Log.i("mytag", "postDetails, unsubscribed!");
+        }
     }
 
     public void actionCommentSend(View view) {
@@ -169,7 +205,7 @@ public class PostDetails
 
     @Override
     public Loader<List<Comment>> onCreateLoader(int id, Bundle args) {
-        return new CommentLoader(this,postId);
+        return new CommentLoader(this, postId);
     }
 
     @Override
@@ -183,4 +219,5 @@ public class PostDetails
     public void onLoaderReset(Loader<List<Comment>> loader) {
 
     }
+
 }

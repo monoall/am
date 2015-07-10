@@ -1,7 +1,6 @@
 package ua.org.javatraining.automessenger.app.database;
 
 public interface DbConstants {
-
     String MYDATABASE_NAME = "autoMessenger";
     int MYDATABASE_VERSION = 1;
     //Запросы создания таблиц
@@ -97,5 +96,4 @@ public interface DbConstants {
     String QUERY_GRADE_POST_BY_ID_POST = "SELECT " + "*" + " from " + GRADE_POST_TABLE + " where " + ID_POST + " = ?";
     String QUERY_GRADE_COMMENT_BY_ID_COMMENT = "SELECT " + "*" + " from " + GRADE_COMMENT_TABLE + " where " + ID_COMMENT + " = ?";
     String QUERY_PHOTO_BY_ID_POST = "SELECT " + "*" + " from " + PHOTO_TABLE + " where " + ID_POST + " = ?";
-
 }

@@ -8,11 +8,13 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.widget.Switch;
 import ua.org.javatraining.automessenger.app.database.CommentService;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.database.PostService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.fragments.PostByTagFragment;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
@@ -23,23 +25,38 @@ import java.util.Locale;
 
 public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
 
+    //Loader can be reused for different needs.
+    private static final int FEED_POSTS = 10;    //Load post from feed
+    public static final int POSTS_BY_TAG = 11;  //Load posts only with specified tagname
+    public static final int NEARBY_POSTS = 12;  //Load posts from nearby
 
-    SQLiteAdapter sqLiteAdapter;
-    PostService postService;
-    PhotoService photoService;
-    CommentService commentService;
-    PostLoaderObserver postObserver;
-    Geocoder geocoder;
-    SwipeRefreshLayout refreshLayout;
+    private SQLiteAdapter sqLiteAdapter;
+    private PostService postService;
+    private PhotoService photoService;
+    private CommentService commentService;
+    private FeedPostLoaderObserver postObserver;
+    private Geocoder geocoder;
+    private SwipeRefreshLayout refreshLayout;
+    private int mode = FEED_POSTS; //Mode we will work (default value)
+    private String tagname = null; //Will use it only in POST_BY_TAG mode
 
+    //Use this constructor if we need feed posts
     public PostLoader(Context context) {
         super(context);
-        Log.i("myTag", "PostLoader constructor");
         sqLiteAdapter = SQLiteAdapter.initInstance(context);
-        postService = new PostService(sqLiteAdapter);
-        photoService = new PhotoService(sqLiteAdapter);
-        commentService = new CommentService(sqLiteAdapter);
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
+        mode = FEED_POSTS;
+    }
+
+    //Use this constructor if we need posts by tagname
+    public PostLoader(Context context, String tag) {
+        super(context);
+        sqLiteAdapter = SQLiteAdapter.initInstance(context);
+        tagname = tag;
+        mode = POSTS_BY_TAG;
+    }
+
+    public void setTag(String tag) {
+        this.tagname = tag;
     }
 
     public void registerRefreshLayout(SwipeRefreshLayout srl) {
@@ -62,12 +79,29 @@ public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
+
+        postService = new PostService(sqLiteAdapter);
+        photoService = new PhotoService(sqLiteAdapter);
+        commentService = new CommentService(sqLiteAdapter);
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        //Define what observer we must use depends on mode
         if (postObserver == null) {
-            postObserver = new PostLoaderObserver(this);
-            LocalBroadcastManager
-                    .getInstance(getContext())
-                    .registerReceiver(postObserver, new IntentFilter(PostLoaderObserver.POST_UPDATED_INTENT));
-            Log.i("myTag", "PostLoaderObserver registered: " + postObserver.toString());
+            switch (mode) {
+                case FEED_POSTS:
+                    postObserver = new FeedPostLoaderObserver(this);
+                    break;
+            }
+
+            //Register observer
+            if (postObserver != null) {
+                LocalBroadcastManager
+                        .getInstance(getContext())
+                        .registerReceiver(postObserver, new IntentFilter(FeedPostLoaderObserver.POST_UPDATED_INTENT));
+            }
+        }
+        if (refreshLayout != null) {
+            refreshLayout.setRefreshing(true);
         }
     }
 
@@ -78,14 +112,22 @@ public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
             LocalBroadcastManager
                     .getInstance(getContext())
                     .unregisterReceiver(postObserver);
-            Log.i("myTag", "PostLoaderObserver unregistered: " + postObserver.toString());
             postObserver = null;
         }
     }
 
     private List<FullPost> updateData() {
-        Log.i("myTag", "updateData " + Authentication.getLastUser(getContext()));
-        List<Post> posts = postService.getPostsFromSubscribes(Authentication.getLastUser(getContext()));
+        List<Post> posts = null;
+
+        switch (mode) {
+            case FEED_POSTS:
+                posts = postService.getPostsFromSubscribes(Authentication.getLastUser(getContext()));
+                break;
+            case POSTS_BY_TAG:
+                posts = postService.getPostsByTag(tagname);
+                break;
+        }
+
         List<FullPost> data = new ArrayList<FullPost>();
         if (posts != null) {
             for (Post p : posts) {
@@ -109,7 +151,6 @@ public class PostLoader extends AsyncTaskLoader<List<FullPost>> {
                 data.add(fp);
             }
         }
-        Log.i("myTag", "data from loader: " + Integer.toString(data.size()));
         return data;
     }
 }

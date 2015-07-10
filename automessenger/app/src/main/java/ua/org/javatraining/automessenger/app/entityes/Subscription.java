@@ -30,5 +30,8 @@ public class Subscription {
         this.nameTag = nameTag;
     }
 
-
+    @Override
+    public String toString() {
+        return nameTag;
+    }
 }

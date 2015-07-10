@@ -59,6 +59,7 @@ public class SubscriptionService implements DbConstants {
         return al;
     }
 
+
     /**
      * Удаляет подписку
      * @param subscription объект Subscription
@@ -67,7 +68,7 @@ public class SubscriptionService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ?", new String[]{subscription.getNameUser()});
+            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{subscription.getNameUser(), subscription.getNameTag()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();

@@ -22,20 +22,15 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entityes.User;
-import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
-import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
-import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
-import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
+import ua.org.javatraining.automessenger.app.fragments.*;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
-import ua.org.javatraining.automessenger.app.loaders.PostLoader;
-import ua.org.javatraining.automessenger.app.loaders.PostLoaderObserver;
+import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -46,7 +41,8 @@ import java.util.Locale;
 
 public class MainActivity
         extends AppCompatActivity
-        implements FeedFragment.FeedFragmentInterface {
+        implements SubscriptionsFragment.CallbackInterface,
+        PostByTagFragment.CallbackInterface {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
 
@@ -65,11 +61,14 @@ public class MainActivity
     PhotoService photoService;
     CommentService commentService;
     LocalBroadcastManager localBroadcastManager;
+    String tag;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("drawerWidth", drawerWidth);
+        outState.putString("tag", tag);
+
     }
 
     @Override
@@ -103,7 +102,7 @@ public class MainActivity
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
         } else {
-
+            tag = savedInstanceState.getString("tag");
             drawerWidth = savedInstanceState.getInt("drawerWidth");
         }
 
@@ -122,10 +121,9 @@ public class MainActivity
         }
     }
 
-    private void setUsername(String username){
+    private void setUsername(String username) {
         this.username = username;
-        localBroadcastManager.sendBroadcast(new Intent(PostLoaderObserver.POST_UPDATED_INTENT));
-        Log.i("myTag", "Message sent");
+        localBroadcastManager.sendBroadcast(new Intent(FeedPostLoaderObserver.POST_UPDATED_INTENT));
     }
 
     private void toolbarInit() {
@@ -175,6 +173,7 @@ public class MainActivity
 
     //Navigation Drawer
     public void NDController(View view) {
+        getSupportFragmentManager().popBackStack();
         int id = view.getId();
         switch (id) {
             case R.id.item_feed:
@@ -272,7 +271,6 @@ public class MainActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
             Intent intent = new Intent(this, AddPostActivity.class);
-            Log.i("myTag", "Photo path (MainActivity): " + photoPath);
             intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
             startActivity(intent);
@@ -291,7 +289,17 @@ public class MainActivity
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public void showPostsByTag(String tag) {
+        this.tag = tag;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new PostByTagFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public String getTag() {
+        return tag == null ? "" : tag;
     }
 }
