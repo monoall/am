@@ -43,7 +43,7 @@ import java.util.Locale;
 
 public class MainActivity
         extends AppCompatActivity
-        implements FeedFragment.FeedFragmentInterface {
+        {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
 
@@ -279,8 +279,5 @@ public class MainActivity
         }
     }
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
+   
 }

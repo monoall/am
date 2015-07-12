@@ -3,7 +3,6 @@ package ua.org.javatraining.automessenger.app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.location.Address;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
@@ -31,8 +29,6 @@ import ua.org.javatraining.automessenger.app.entityes.Tag;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 public class AddPostActivity extends AppCompatActivity {
 
