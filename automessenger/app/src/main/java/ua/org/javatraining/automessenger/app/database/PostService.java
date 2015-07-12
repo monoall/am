@@ -3,6 +3,7 @@ package ua.org.javatraining.automessenger.app.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 
 import java.util.ArrayList;
@@ -143,7 +144,7 @@ public class PostService implements DbConstants {
         Post p =  new Post();
         p.setId(c.getLong(c.getColumnIndex(ID)));
         p.setPostText(c.getString(c.getColumnIndex(POST_TEXT)));
-        p.setPostDate(c.getInt(c.getColumnIndex(POST_DATE)));
+        p.setPostDate(c.getLong(c.getColumnIndex(POST_DATE)));
         p.setPostLocation(c.getString(c.getColumnIndex(POST_LOCATION)));
         p.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
         p.setNameTag(c.getString(c.getColumnIndex(TAG_NAME)));

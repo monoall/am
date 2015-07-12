@@ -2,6 +2,8 @@ package ua.org.javatraining.automessenger.app.entityes;
 
 public class Post {
 
+    public static final String POST_ID = "ua.org.javatraining.automessenger.app.entityes.POST_ID";
+
     private long id;
     private String postText;
     private long postDate;

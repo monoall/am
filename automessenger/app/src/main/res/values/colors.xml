@@ -5,8 +5,10 @@
     <item name="white54" type="color">#8affffff</item>
     <item name="black87" type="color">#de000000</item>
     <item name="black54" type="color">#8a000000</item>
+    <item name="red54" type="color">#8aD50000</item>
     <item name="app_blue" type="color">#2196F3</item>
     <item name="blue_dark" type="color">#1976D2</item>
+    <item name="light_blue" type="color">#8a2196F3</item>
     <item name="shadow" type="color">#24000000</item>
     <item name="grey" type="color">#BDBDBD</item>
     <item name="grey26" type="color">#42BDBDBD</item>
