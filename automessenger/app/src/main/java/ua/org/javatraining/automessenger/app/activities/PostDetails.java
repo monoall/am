@@ -1,124 +1,127 @@
 package ua.org.javatraining.automessenger.app.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 import ua.org.javatraining.automessenger.app.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.database.CommentService;
+import ua.org.javatraining.automessenger.app.database.PhotoService;
+import ua.org.javatraining.automessenger.app.database.PostService;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.entityes.Comment;
+import ua.org.javatraining.automessenger.app.entityes.Photo;
+import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
+import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostDetails extends AppCompatActivity {
+public class PostDetails
+        extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<List<Comment>>{
+
+    private static final int COMMENT_LOADER_ID = 2;
 
     Toolbar toolbar;
-    TextView descriptionTextView;
-    ImageView photo;
-    View postDetails;
-
+    EditText addCommentField;
+    ImageButton submit;
     RecyclerView myRV;
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager myLM;
-
-    int postDetailsHeight;
-
-    List<Comment> comments;
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        postDetailsHeight = postDetails.getHeight();
-        myRV.setPadding(0, postDetailsHeight, 0, 0);
-        myLM.scrollToPosition(0);
-    }
+    List<Comment> comments = new ArrayList<Comment>();
+    long postId;
+    SQLiteAdapter sqLiteAdapter;
+    PostService postService;
+    PhotoService photoService;
+    Photo photoObj;
+    FullPost fullPost;
+    private Loader<List<Comment>> mLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_details);
+        addCommentField = (EditText) findViewById(R.id.add_comment_field);
+        postId = getIntent().getLongExtra("POST_ID", 0);
+        sqLiteAdapter = SQLiteAdapter.initInstance(this);
+        submit = (ImageButton) findViewById(R.id.submit);
 
-        photo = (ImageView) findViewById(R.id.photo);
-        postDetails = findViewById(R.id.post_details);
+        addCommentField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    submit.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         initToolbar();
-        initTestData();
-        justForTest();
+        loadPostForList();
+        mLoader = getSupportLoaderManager().initLoader(COMMENT_LOADER_ID, null, this);
         initCommentsList();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getSupportLoaderManager().destroyLoader(COMMENT_LOADER_ID);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLoader.onContentChanged();
+    }
+
+    private void loadPostForList(){
+        if (postId != 0) {
+            postService = new PostService(sqLiteAdapter);
+            photoService = new PhotoService(sqLiteAdapter);
+
+            List<Post> posts = postService.getPostsFromSubscribes("user_test");  //Здесь все очень не правильно,
+            for (Post post : posts) {                                            //но работает.
+                if (post.getId() == postId)                                      //Это временная мера,
+                    fullPost = new FullPost(post);                               //пока не напишется метод
+            }                                                                    //получения поста по ID поста.
+
+            photoObj = photoService.getPhoto((int) postId);
+            fullPost.getPhotos().add(photoObj.getPhotoLink());
+            toolbar.setTitle(fullPost.getTag());
+        }
     }
 
     private void initCommentsList() {
         myRV = (RecyclerView) findViewById(R.id.comment_rv);
-        myRV.setHasFixedSize(true);
         myLM = new LinearLayoutManager(this);
         myRV.setLayoutManager(myLM);
-        myAdapter = new CommentsAdapter(comments);
+        myAdapter = new CommentsAdapter(this.getApplicationContext(), fullPost, comments);
         myRV.setAdapter(myAdapter);
-        myRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private int mOffset = 0;
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                clipOffset();
-                onMoved(mOffset);
-                if ((mOffset < postDetailsHeight && dy > 0) || (mOffset > 0 && dy < 0)) {
-                    mOffset += dy;
-                }
-            }
-
-            private void clipOffset() {
-                if (mOffset > postDetailsHeight) {
-                    mOffset = postDetailsHeight;
-                } else if (mOffset < 0) {
-                    mOffset = 0;
-                }
-            }
-
-            public void onMoved(int distance) {
-                postDetails.setTranslationY(-distance);
-            }
-        });
-    }
-
-
-    //Временный метод. Заполняем случайными данными для проверки разметки
-    private void justForTest() {
-
-        ImageView imageView = (ImageView) findViewById(R.id.photo);
-        descriptionTextView = (TextView) findViewById(R.id.description_text);
-        TextView dateTextView = (TextView) findViewById(R.id.date_text);
-
-        toolbar.setTitle("BE0000AA");
-
-        imageView.setImageResource(R.drawable.myimg);
-        descriptionTextView.setText("Cowards die many times before their deaths; the valiant never taste of death but once.");
-        dateTextView.setText("10 march 2015");
-
-    }
-
-    //Обрабатываем нажатие кнопки "subscribe"
-    public void actionSubscribe(MenuItem item) {
-
     }
 
     //Нажата кнопка "share"
     public void actionShare(View view) {
-        String extraText = descriptionTextView.getText().toString();
+        String extraText = fullPost.getText();
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, extraText);
-        // В качестве примера используем картинку из ресурсов приложения
-        // todo В конечном варианте c рабочай базой данных должны брать изображение из поста
-        Uri uri = Uri.parse("android.resource://ua.org.javatraining.automessenger.app/drawable/myimg");
+        Uri uri = Uri.parse(fullPost.getPhotos().get(0));
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, "Share"));
@@ -140,13 +143,42 @@ public class PostDetails extends AppCompatActivity {
     public void actionSetRate(View view) {
     }
 
-    //initialize dataset with test data
-    private void initTestData() {
-        comments = new ArrayList<Comment>();
-        for (int i = 0; i <= 10; i++) {
-            Comment c = new Comment();
-            c.setCommentText("Comment " + Integer.toString(i));
-            comments.add(c);
+    public void actionSubscribe(MenuItem item) {
+
+    }
+
+    public void actionCommentSend(View view) {
+        String comment = addCommentField.getText().toString();
+        if (!comment.equals("")) {
+            CommentService commentService = new CommentService(sqLiteAdapter);
+            Comment commentObj = new Comment();
+            commentObj.setCommentDate((int) System.currentTimeMillis()); //todo remove cast to int when DB will be OK
+            commentObj.setCommentText(comment);
+            commentObj.setIdPost((int) postId); //todo remove cast to int when DB will be OK
+            commentObj.setNameUser("user_test");
+            long id = commentService.insertComment(commentObj).getId();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(addCommentField.getWindowToken(), 0);
+            Log.i("myTag", "comment added. id: " + Long.toString(id));
+            addCommentField.setText("");
+            mLoader.onContentChanged();
         }
+    }
+
+    @Override
+    public Loader<List<Comment>> onCreateLoader(int id, Bundle args) {
+        return new CommentLoader(this,postId);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Comment>> loader, List<Comment> data) {
+        comments.clear();
+        comments.addAll(data);
+        myAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Comment>> loader) {
+
     }
 }

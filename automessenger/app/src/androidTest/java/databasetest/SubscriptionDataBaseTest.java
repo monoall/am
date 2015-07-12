@@ -2,7 +2,6 @@ package databasetest;
 
 import android.database.Cursor;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -16,11 +15,9 @@ import ua.org.javatraining.automessenger.app.entityes.User;
 
 import java.util.ArrayList;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
-@Ignore
+//@Ignore
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class SubscriptionDataBaseTest extends DBITest implements DbConstants {
@@ -68,7 +65,7 @@ public class SubscriptionDataBaseTest extends DBITest implements DbConstants {
         subscription.setNameUser("John");
         subscriptionService.deleteSubscription(subscription);
         Cursor c = db.query(SUBSCRIPTION_TABLE, null,
-                USER_NAME + " = ?", new String[]{"John"}, null, null, null);
+                USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{"John", "BE 0102"}, null, null, null);
         assertFalse(c.moveToFirst());
         c.close();
     }

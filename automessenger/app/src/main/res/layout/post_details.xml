@@ -14,7 +14,6 @@
         <include
                 layout="@layout/toolbar"
                 android:id="@+id/toolbar"/>
-
         <FrameLayout
                 android:id="@+id/frame"
                 android:layout_below="@+id/toolbar"
@@ -23,92 +22,9 @@
             <android.support.v7.widget.RecyclerView
                     android:id="@+id/comment_rv"
                     android:scrollbars="vertical"
-                    android:clipToPadding="false"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
             </android.support.v7.widget.RecyclerView>
-            <LinearLayout
-                    android:id="@+id/post_details"
-                    android:orientation="vertical"
-                    android:layout_width="fill_parent"
-                    android:background="@color/white"
-                    android:layout_height="wrap_content">
-                <ImageView
-                        android:scaleType="centerCrop"
-                        android:id="@+id/photo"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:contentDescription="@string/photo"/>
-                <LinearLayout
-                        android:id="@+id/data_area"
-                        android:orientation="vertical"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
-                    <TextView
-                            android:id="@+id/description_text"
-                            android:padding="16dp"
-                            android:textColor="@color/black87"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
-                    <TextView
-                            android:id="@+id/date_text"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp"
-                            android:paddingBottom="16dp"
-                            android:textColor="@color/black54"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            tools:ignore="RtlHardcoded"/>
-                    <RelativeLayout
-                            android:padding="8dp"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content">
-
-                        <ImageButton
-                                android:id="@+id/up_button"
-                                android:padding="16dp"
-                                android:layout_toLeftOf="@+id/down_button"
-                                android:layout_toStartOf="@+id/down_button"
-                                android:background="@drawable/nav_item_selected_back"
-                                android:src="@drawable/ic_thumb_up_grey600_24dp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:onClick="actionSetRate"
-                                android:contentDescription="@string/thumb_up"/>
-
-                        <ImageButton
-                                android:id="@+id/share_button"
-                                android:padding="16dp"
-                                android:layout_alignParentStart="true"
-                                android:layout_alignParentLeft="true"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/nav_item_selected_back"
-                                android:src="@drawable/ic_share_grey600_24dp"
-                                android:onClick="actionShare"
-                                android:contentDescription="@string/share"/>
-
-                        <ImageButton
-                                android:id="@+id/down_button"
-                                android:layout_alignParentEnd="true"
-                                android:layout_alignParentRight="true"
-                                android:padding="16dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginEnd="8dp"
-                                android:background="@drawable/nav_item_selected_back"
-                                android:src="@drawable/ic_thumb_down_grey600_24dp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:onClick="actionSetRate"
-                                android:contentDescription="@string/thumb_down"/>
-                    </RelativeLayout>
-                    <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="2dp"
-                            android:background="@drawable/light_shadow"/>
-                </LinearLayout>
-            </LinearLayout>
-
         </FrameLayout>
         <View
                 android:layout_below="@+id/toolbar"
@@ -117,25 +33,28 @@
                 android:background="@drawable/shadow"/>
     </RelativeLayout>
     <LinearLayout
-            android:id="@+id/add_comment_field"
             android:background="@color/white"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
         <EditText
+                android:id="@+id/add_comment_field"
                 android:hint="@string/add_comment_hint"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:padding="16dp"
                 android:textColor="@color/black87"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:singleLine="true"/>
         <ImageButton
+                android:id="@+id/submit"
                 android:background="@drawable/nav_item_selected_back"
                 android:padding="16dp"
                 android:layout_width="wrap_content"
                 android:src="@drawable/ic_send_grey600_24dp"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/post_comment"/>
+                android:contentDescription="@string/post_comment"
+                android:onClick="actionCommentSend"/>
     </LinearLayout>
 
 </LinearLayout>

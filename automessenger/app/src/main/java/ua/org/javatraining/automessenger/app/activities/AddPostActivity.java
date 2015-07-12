@@ -1,7 +1,11 @@
 package ua.org.javatraining.automessenger.app.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,8 +23,8 @@ import ua.org.javatraining.automessenger.app.database.TagService;
 import ua.org.javatraining.automessenger.app.entityes.Photo;
 import ua.org.javatraining.automessenger.app.entityes.Post;
 import ua.org.javatraining.automessenger.app.entityes.Tag;
-import ua.org.javatraining.automessenger.app.services.SendToDriveService;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
+import java.io.IOException;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -41,6 +45,9 @@ public class AddPostActivity extends AppCompatActivity {
         //Выводим уменьшеный вариант фотографии в ImageView
         if (photoURI != null) {
             imageLoader.displayImage(photoURI, imageView);
+            Log.i("myTag", "Photo path (AddPost...): " + photoURI);
+        } else {
+            Log.i("myTag", "photoURI = null");
         }
     }
 
@@ -48,7 +55,7 @@ public class AddPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
-        photoURI = getIntent().getStringExtra("photoURI");
+        photoURI = getIntent().getStringExtra("photoPath");
         username = getIntent().getStringExtra("username");
 
         imageView = (ImageView) findViewById(R.id.photo);
@@ -92,7 +99,6 @@ public class AddPostActivity extends AppCompatActivity {
         String text = postText.getText().toString();
 
         if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) { // Validating car number
-            googleDriveServiceStart(photoURI);
             Toast.makeText(this, "Ok", Toast.LENGTH_LONG).show();
             SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
             PostService postService = new PostService(sqLiteAdapter);
@@ -108,24 +114,28 @@ public class AddPostActivity extends AppCompatActivity {
                 tagService.insertTag(ctag);
             }
 
+            float[] loc = new float[2];
+            boolean statusGEO = getGEOfromURI(Uri.parse(photoURI), loc);
+
             post.setPostText(text);
             post.setNameTag(tag);
             post.setNameUser(username);
-            post.setPostDate((int)System.currentTimeMillis());
-            post.setPostLocation("mk.ua");
+            post.setPostDate((int) System.currentTimeMillis());
+            if (statusGEO) post.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
 
             //Inserting Post object to DB and getting id
             long postId = postService.insertPost(post).getId();
 
             photo.setPhotoLink(photoURI);
-            photo.setIdPost((int)postId);//todo must be long
+            photo.setIdPost((int) postId);//todo must be long
 
             //Inserting Photo object to DB and getting id
             long photoId = photoService.insertPhoto(photo).getId();
 
-            Log.i("myTag", "User: " + username.toString());
+            Log.i("myTag", "User: " + username);
             Log.i("myTag", "Post ID: " + Long.toString(postId));
             Log.i("myTag", "Photo ID: " + Long.toString(photoId));
+            Log.i("myTag", "Photo GEO: " + Float.toString(loc[0]) + " " + Float.toString(loc[1]));
 
             onBackPressed();
         } else {
@@ -133,9 +143,35 @@ public class AddPostActivity extends AppCompatActivity {
         }
     }
 
-    private void googleDriveServiceStart(String photoPath){
-        Intent intent = new Intent(this, SendToDriveService.class);
-        intent.putExtra(SendToDriveService.PHOTOPATH, photoPath);
-        startService(intent);
+    //getting GPS coordinates from photo
+    private boolean getGEOfromURI(Uri uri, float[] result) {
+        String filename = null;
+        try {
+            Log.i("myTag geowork", "-Begin-");
+
+            if (uri.getScheme().equals("file")) {
+                Log.i("myTag geowork", "URI Scheme: file");
+                filename = uri.getHost() + uri.getPath();
+            } else {
+                Log.i("myTag geowork", "URI Scheme: content");
+                String[] proj = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+                if (cursor.moveToFirst()) {
+                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    filename = cursor.getString(column_index);
+                }
+                cursor.close();
+            }
+            Log.i("myTag geowork", "filename: " + filename);
+            ExifInterface exif = new ExifInterface(filename);
+            boolean check = exif.getLatLong(result);
+            Log.i("myTag geowork", "result: " + Boolean.toString(check) +
+                    ", " + Float.toString(result[0]) + ", " + Float.toString(result[1]));
+            Log.i("myTag geowork", "-End-");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return !(filename == null);
     }
+
 }

@@ -2,14 +2,15 @@ package ua.org.javatraining.automessenger.app.user;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 
-public class Authentication extends Application {
+public class Authentication extends MultiDexApplication {
     public static final String USERNAME = "username";
     public static final int ACCOUNT_REQUEST_CODE = 3141;
     private String user;
@@ -33,6 +34,12 @@ public class Authentication extends Application {
         super.onCreate();
     }
 
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     private Account findAccount(Context context, String searchingAccount, String accountType) {
         AccountManager am = AccountManager.get(context);
@@ -68,7 +75,7 @@ public class Authentication extends Application {
 //accountManager.
         PackageManager pm = context.getPackageManager();
 
-       // PackageInfo pkgInfo = getPackageManager().getPackageInfo("packageName", 0);
+        // PackageInfo pkgInfo = getPackageManager().getPackageInfo("packageName", 0);
 
         try {
             Log.i("MyActivity", String.valueOf(pm.getApplicationInfo("ua.org.javatraining.automessenger.app", PackageManager.GET_META_DATA)));
@@ -87,14 +94,14 @@ public class Authentication extends Application {
     }
 
     public String userAuth(Context context) {
-          String user = getLastUser(context);
+        String user = getLastUser(context);
 
 
-      //  if (findAccount(context, user, String.valueOf(R.string.account_type)) != null) {
-      //      user = this.getLastUser(context);
-      //  } else {
+        //  if (findAccount(context, user, String.valueOf(R.string.account_type)) != null) {
+        //      user = this.getLastUser(context);
+        //  } else {
 //            addAccount(user, "ua.org.javatraining.automessenger", context);
-      //  }
+        //  }
 
         return user;
     }

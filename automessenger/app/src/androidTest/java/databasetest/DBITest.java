@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.reflection.Whitebox.setInternalState;
 
-@Ignore
+//@Ignore
 @RunWith(RobolectricTestRunner.class)
 public abstract class DBITest {
     private static final File TMP_DB_FILE = new File(String.format("%s%stest.db", System.getProperty("java.io.tmpdir"), File.separator));

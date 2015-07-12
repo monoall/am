@@ -3,7 +3,6 @@ package ua.org.javatraining.automessenger.app.activities;
 
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -26,31 +25,29 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.PhotoService;
-import ua.org.javatraining.automessenger.app.database.PostService;
-import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.database.UserService;
-import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entityes.User;
 import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
+import ua.org.javatraining.automessenger.app.services.SendToDriveService;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NearbyFragment.NearbyFragmentInterface {
+public class MainActivity
+        extends AppCompatActivity
+        implements FeedFragment.FeedFragmentInterface {
 
-    //bakaev
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    private static final int TAKE_PHOTO_REQUEST = 100;
 
     public Toolbar toolbar;
     DrawerLayout drawerLayout;
@@ -58,12 +55,12 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
     ImageButton imageButton;
     int drawerWidth;
     String photoPath;
-    String username;
+    String username = "user_test";
     SQLiteAdapter sqLiteAdapter;
     UserService userService;
     PostService postService;
     PhotoService photoService;
-    List<Post> nearbyPost;
+    CommentService commentService;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -76,16 +73,16 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbarInit();
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
-
-        username = "user_test";
 
         sqLiteAdapter = SQLiteAdapter.initInstance(this);
         userService = new UserService(sqLiteAdapter);
         postService = new PostService(sqLiteAdapter);
         photoService = new PhotoService(sqLiteAdapter);
+        commentService = new CommentService(sqLiteAdapter);
 
         if (userService.getUser(username) == null) {
             User user = new User();
@@ -95,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
 
         if (savedInstanceState == null) {
             initUIL();
-
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
         } else {
@@ -208,10 +204,10 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(timeStamp, ".jpg", storageDir);
         photoPath = image.getAbsolutePath();
+        Log.i("log", "actvity photopath " + photoPath);
         return image;
     }
 
-    //bakaev
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
@@ -239,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
             }
             if (photoFile != null) {
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                startActivityForResult(cameraIntent, 1);
+                startActivityForResult(cameraIntent, TAKE_PHOTO_REQUEST);
             }
         }
     }
@@ -259,9 +255,15 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
+            Intent serviceIntent = new Intent(this, SendToDriveService.class);
+            Log.i("log", "onActivityResult photopath " + photoPath);
+            serviceIntent.putExtra(SendToDriveService.PHOTOPATH, photoPath);
+            startService(serviceIntent);
+
             Intent intent = new Intent(this, AddPostActivity.class);
-            intent.putExtra("photoPath", photoPath);
+            Log.i("myTag", "Photo path (MainActivity): " + photoPath);
+            intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
             startActivity(intent);
         }
@@ -277,19 +279,8 @@ public class MainActivity extends AppCompatActivity implements NearbyFragment.Ne
         }
     }
 
-    private void updateData(){
-        nearbyPost = postService.getPostsFromSubscribes(username);
-        //todo Other updates
-    }
-
     @Override
-    public List<Post> getNearbyPosts() {
-        updateData();
-        return nearbyPost;
-    }
-
-    @Override
-    public void update() {
-        updateData();
+    public String getUsername() {
+        return username;
     }
 }

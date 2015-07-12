@@ -209,7 +209,8 @@
                             android:padding="16dp"
                             android:src="@drawable/ic_google_grey600_24dp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/change_account"/>
                     <TextView
                             android:padding="16dp"
                             android:textSize="14sp"
