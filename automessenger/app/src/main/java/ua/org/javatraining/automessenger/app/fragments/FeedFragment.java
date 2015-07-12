@@ -1,5 +1,6 @@
 package ua.org.javatraining.automessenger.app.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -7,13 +8,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.google.android.gms.cast.CastRemoteDisplayLocalService;
 import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
-import ua.org.javatraining.automessenger.app.loaders.PostLoader;
+import ua.org.javatraining.automessenger.app.loaders.PostLoaderFeed;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
@@ -24,17 +27,34 @@ public class FeedFragment
         implements LoaderManager.LoaderCallbacks<List<FullPost>> {
 
     private static final int POST_LOADER_ID = 1;
+    public static final int FEED_FRAGMENT = 3369;
 
-    RecyclerView myRV;
-    RecyclerView.Adapter myAdapter;
-    RecyclerView.LayoutManager myLM;
-    SwipeRefreshLayout refreshLayout;
-    List<FullPost> data = new ArrayList<FullPost>();
+    private RecyclerView myRV;
+    private RecyclerView.Adapter myAdapter;
+    private RecyclerView.LayoutManager myLM;
+    private SwipeRefreshLayout refreshLayout;
+    private List<FullPost> data = new ArrayList<FullPost>();
     private Loader<List<FullPost>> mLoader;
+    private CallBacks activity;
+
+    public interface CallBacks{
+        void setDrawerItemState(boolean isHighlighted, int title);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            this.activity = (CallBacks) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement CallBacks interface!");
+        }
+    }
 
     @Override
     public Loader<List<FullPost>> onCreateLoader(int id, Bundle args) {
-        return new PostLoader(getActivity().getApplicationContext());
+        return new PostLoaderFeed(getActivity().getApplicationContext());
     }
 
     @Override
@@ -71,7 +91,7 @@ public class FeedFragment
 
         mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
         initRecyclerView(view);
-        ((PostLoader) mLoader).registerRefreshLayout(refreshLayout);
+        ((PostLoaderFeed) mLoader).registerRefreshLayout(refreshLayout);
     }
 
     @Override
@@ -81,8 +101,17 @@ public class FeedFragment
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        activity.setDrawerItemState(false, FEED_FRAGMENT);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+
+        activity.setDrawerItemState(true, FEED_FRAGMENT);
         mLoader.onContentChanged();
     }
 

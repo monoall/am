@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.database.CommentService;
 import ua.org.javatraining.automessenger.app.database.DbConstants;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.entityes.Comment;
+import ua.org.javatraining.automessenger.app.entities.Comment;
 
 import java.util.ArrayList;
 

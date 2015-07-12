@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.app.entityes;
+package ua.org.javatraining.automessenger.app.entities;
 
 public class Comment {
 

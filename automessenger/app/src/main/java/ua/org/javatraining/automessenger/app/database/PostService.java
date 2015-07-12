@@ -3,8 +3,7 @@ package ua.org.javatraining.automessenger.app.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.entities.Post;
 
 import java.util.ArrayList;
 
@@ -80,6 +79,18 @@ public class PostService implements DbConstants {
             }
         }
         return al;
+    }
+
+
+    public Post getPostByID(long postID){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POST_BY_ID, new String[]{Long.toString(postID)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        cursor.moveToFirst();
+        Post post = buildPost(cursor);
+        return post;
     }
 
     /**

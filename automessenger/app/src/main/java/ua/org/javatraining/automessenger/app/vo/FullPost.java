@@ -1,7 +1,6 @@
 package ua.org.javatraining.automessenger.app.vo;
 
-import ua.org.javatraining.automessenger.app.entityes.Photo;
-import ua.org.javatraining.automessenger.app.entityes.Post;
+import ua.org.javatraining.automessenger.app.entities.Post;
 
 import java.util.ArrayList;
 import java.util.List;

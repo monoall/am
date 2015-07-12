@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
@@ -26,12 +28,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.User;
-import ua.org.javatraining.automessenger.app.fragments.FeedFragment;
-import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
-import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
-import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
+import ua.org.javatraining.automessenger.app.entities.User;
+import ua.org.javatraining.automessenger.app.fragments.*;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
+import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.services.SendToDriveService;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
@@ -42,8 +42,14 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity
-        extends AppCompatActivity
-        {
+        extends
+        AppCompatActivity
+        implements
+        SubscriptionsFragment.CallBacks,
+        PostByTagFragment.CallbackInterface,
+        FeedFragment.CallBacks,
+        SearchFragment.CallBacks,
+        NearbyFragment.CallBacks {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
 
@@ -55,17 +61,21 @@ public class MainActivity
     ImageButton imageButton;
     int drawerWidth;
     String photoPath;
-    String username = "user_test";
+    String username;
     SQLiteAdapter sqLiteAdapter;
     UserService userService;
     PostService postService;
     PhotoService photoService;
     CommentService commentService;
+    LocalBroadcastManager localBroadcastManager;
+    String tag;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("drawerWidth", drawerWidth);
+        outState.putString("tag", tag);
+
     }
 
     @Override
@@ -83,6 +93,10 @@ public class MainActivity
         postService = new PostService(sqLiteAdapter);
         photoService = new PhotoService(sqLiteAdapter);
         commentService = new CommentService(sqLiteAdapter);
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
+        setUsername(Authentication.getLastUser(this));
+
 
         if (userService.getUser(username) == null) {
             User user = new User();
@@ -95,7 +109,7 @@ public class MainActivity
             drawerWidth = getNavDrawWidth();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
         } else {
-
+            tag = savedInstanceState.getString("tag");
             drawerWidth = savedInstanceState.getInt("drawerWidth");
         }
 
@@ -111,6 +125,11 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+    }
+
+    private void setUsername(String username) {
+        this.username = username;
+        localBroadcastManager.sendBroadcast(new Intent(FeedPostLoaderObserver.POST_UPDATED_INTENT));
     }
 
     private void toolbarInit() {
@@ -160,24 +179,25 @@ public class MainActivity
 
     //Navigation Drawer
     public void NDController(View view) {
+        getSupportFragmentManager().popBackStack();
         int id = view.getId();
         switch (id) {
-            case R.id.item_feed:
+            case R.id.feed_item:
                 //Work here
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
                 break;
-            case R.id.item_nearby:
+            case R.id.nearby_item:
                 //Work here
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NearbyFragment()).commit();
                 break;
-            case R.id.item_subscriptions:
+            case R.id.subscriptions_item:
                 //Work here
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SubscriptionsFragment()).commit();
                 break;
-            case R.id.item_search:
+            case R.id.search_item:
                 //Work here
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
@@ -204,7 +224,6 @@ public class MainActivity
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(timeStamp, ".jpg", storageDir);
         photoPath = image.getAbsolutePath();
-        Log.i("log", "actvity photopath " + photoPath);
         return image;
     }
 
@@ -262,7 +281,6 @@ public class MainActivity
             startService(serviceIntent);
 
             Intent intent = new Intent(this, AddPostActivity.class);
-            Log.i("myTag", "Photo path (MainActivity): " + photoPath);
             intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
             startActivity(intent);
@@ -276,8 +294,57 @@ public class MainActivity
             editor.putString(Authentication.USERNAME, accountName);
             editor.commit();
             app.userAuth(this);
+            setUsername(Authentication.getLastUser(this));
         }
     }
 
+    @Override
+    public void showPostsByTag(String tag) {
+        this.tag = tag;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new PostByTagFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public String getTag() {
+        return tag == null ? "" : tag;
+    }
+
+    @Override
+    public void setDrawerItemState(boolean isHighlighted, int title) {
+        View rootView = null;
+        ImageView iv = null;
+
+        switch (title) {
+            case FeedFragment.FEED_FRAGMENT:
+                rootView = findViewById(R.id.feed_item);
+                iv = (ImageView) findViewById(R.id.feed_icon);
+                break;
+            case NearbyFragment.NEARBY_FRAGMENT:
+                rootView = findViewById(R.id.nearby_item);
+                iv = (ImageView) findViewById(R.id.nearby_icon);
+                break;
+            case SubscriptionsFragment.SUBSCRIPTIONS_FRAGMENT:
+                rootView = findViewById(R.id.subscriptions_item);
+                iv = (ImageView) findViewById(R.id.subscriptions_icon);
+                break;
+            case SearchFragment.SEARCH_FRAGMENT:
+                rootView = findViewById(R.id.search_item);
+                iv = (ImageView) findViewById(R.id.search_icon);
+                break;
+        }
+
+        if (rootView != null && iv != null) {
+            rootView.setSelected(isHighlighted);
+            if (isHighlighted) {
+                iv.setColorFilter(getResources().getColor(R.color.app_blue));
+            } else {
+                iv.clearColorFilter();
+            }
+        }
+    }
    
 }

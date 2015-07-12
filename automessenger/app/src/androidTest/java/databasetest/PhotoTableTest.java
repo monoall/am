@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.database.DbConstants;
 import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.entityes.Photo;
+import ua.org.javatraining.automessenger.app.entities.Photo;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;

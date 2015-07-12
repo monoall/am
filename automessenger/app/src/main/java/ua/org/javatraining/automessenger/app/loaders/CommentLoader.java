@@ -8,7 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import ua.org.javatraining.automessenger.app.database.CommentService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.entityes.Comment;
+import ua.org.javatraining.automessenger.app.entities.Comment;
 
 import java.util.List;
 

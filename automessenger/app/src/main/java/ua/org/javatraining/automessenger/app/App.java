@@ -1,9 +1,5 @@
 package ua.org.javatraining.automessenger.app;
 
-/**
- * Created by berkut on 29.05.15.
- */
-
 import android.app.Application;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 

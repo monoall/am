@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.database.SubscriptionService;
-import ua.org.javatraining.automessenger.app.entityes.Subscription;
-import ua.org.javatraining.automessenger.app.entityes.User;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
+import ua.org.javatraining.automessenger.app.entities.User;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.util.List;

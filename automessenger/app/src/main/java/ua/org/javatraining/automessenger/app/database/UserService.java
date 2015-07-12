@@ -3,7 +3,7 @@ package ua.org.javatraining.automessenger.app.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import ua.org.javatraining.automessenger.app.entityes.User;
+import ua.org.javatraining.automessenger.app.entities.User;
 
 public class UserService implements DbConstants{
     private SQLiteAdapter sqLiteAdapter;

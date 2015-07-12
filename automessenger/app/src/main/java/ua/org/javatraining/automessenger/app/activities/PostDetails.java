@@ -20,7 +20,7 @@ import android.widget.*;
 import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.*;
+import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
@@ -112,16 +112,9 @@ public class PostDetails
 
     private void loadPostForList() {
         if (postId != 0) {
-
-            List<Post> posts = postService.getPostsFromSubscribes(Authentication.getLastUser(this));  //Здесь все очень не правильно,
-            for (Post post : posts) {                                                                 //но работает.
-                if (post.getId() == postId)                                                           //Это временная мера,
-                    fullPost = new FullPost(post);                                                    //пока не напишется метод
-            }                                                                                         //получения поста по ID поста.
-
+            fullPost = new FullPost(postService.getPostByID(postId));
             photoObj = photoService.getPhoto((int) postId);
             fullPost.getPhotos().add(photoObj.getPhotoLink());
-
         }
     }
 

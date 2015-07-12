@@ -2,6 +2,7 @@ package ua.org.javatraining.automessenger.app.user;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -52,7 +53,6 @@ public class Authentication extends MultiDexApplication {
         return null;
     }
 
-    //+++++++++
     public static String getLastUser(Context context) {
         SharedPreferences userSettings = context.getSharedPreferences(USERNAME, 0);
         String username = userSettings.getString(USERNAME, "");
@@ -72,10 +72,7 @@ public class Authentication extends MultiDexApplication {
     private boolean addAccount(String user, String accountType, Context context) {
         Account account = new Account(user, accountType);
         AccountManager accountManager = AccountManager.get(context);
-//accountManager.
         PackageManager pm = context.getPackageManager();
-
-        // PackageInfo pkgInfo = getPackageManager().getPackageInfo("packageName", 0);
 
         try {
             Log.i("MyActivity", String.valueOf(pm.getApplicationInfo("ua.org.javatraining.automessenger.app", PackageManager.GET_META_DATA)));
@@ -95,16 +92,6 @@ public class Authentication extends MultiDexApplication {
 
     public String userAuth(Context context) {
         String user = getLastUser(context);
-
-
-        //  if (findAccount(context, user, String.valueOf(R.string.account_type)) != null) {
-        //      user = this.getLastUser(context);
-        //  } else {
-//            addAccount(user, "ua.org.javatraining.automessenger", context);
-        //  }
-
         return user;
     }
-
-
 }

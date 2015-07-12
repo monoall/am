@@ -11,7 +11,7 @@ import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.database.DbConstants;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.database.TagService;
-import ua.org.javatraining.automessenger.app.entityes.Tag;
+import ua.org.javatraining.automessenger.app.entities.Tag;
 
 import static junit.framework.Assert.*;
 

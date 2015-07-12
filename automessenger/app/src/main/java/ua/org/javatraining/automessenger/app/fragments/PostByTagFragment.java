@@ -5,17 +5,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
-import ua.org.javatraining.automessenger.app.loaders.PostLoader;
+import ua.org.javatraining.automessenger.app.loaders.PostLoaderByTag;
+import ua.org.javatraining.automessenger.app.loaders.PostLoaderFeed;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
@@ -27,11 +26,10 @@ public class PostByTagFragment
 
     private static final int POST_LOADER_ID = 2;
 
-    RecyclerView myRV;
-    RecyclerView.Adapter myAdapter;
-    RecyclerView.LayoutManager myLM;
-    SwipeRefreshLayout refreshLayout;
-    List<FullPost> data = new ArrayList<FullPost>();
+    private RecyclerView myRV;
+    private RecyclerView.Adapter myAdapter;
+    private RecyclerView.LayoutManager myLM;
+    private List<FullPost> data = new ArrayList<FullPost>();
     private Loader<List<FullPost>> mLoader;
     private CallbackInterface activity;
 
@@ -42,6 +40,7 @@ public class PostByTagFragment
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
         try {
             this.activity = (CallbackInterface) activity;
         } catch (ClassCastException e) {
@@ -51,13 +50,14 @@ public class PostByTagFragment
 
     @Override
     public Loader<List<FullPost>> onCreateLoader(int id, Bundle args) {
-        return new PostLoader(getActivity().getApplicationContext(), activity.getTag());
+        return new PostLoaderByTag(getActivity().getApplicationContext(), activity.getTag());
     }
 
     @Override
     public void onLoadFinished(Loader<List<FullPost>> loader, List<FullPost> data) {
         this.data.clear();
         this.data.addAll(data);
+
         if (myAdapter != null) {
             myAdapter.notifyDataSetChanged();
         }
@@ -69,35 +69,32 @@ public class PostByTagFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_posts, container, false);
+        return inflater.inflate(R.layout.fragment_posts_by_tag, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         ((MainActivity) activity).toolbar.setTitle(activity.getTag());
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mLoader.onContentChanged();
-            }
-        });
+
         mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
+
         initRecyclerView(view);
-        ((PostLoader) mLoader).registerRefreshLayout(refreshLayout);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         getActivity().getSupportLoaderManager().destroyLoader(POST_LOADER_ID);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((PostLoader)mLoader).setTag(activity.getTag());
+
+        ((PostLoaderByTag) mLoader).setTag(activity.getTag());
         mLoader.onContentChanged();
     }
 

@@ -3,7 +3,7 @@ package ua.org.javatraining.automessenger.app.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import ua.org.javatraining.automessenger.app.entityes.GradeComment;
+import ua.org.javatraining.automessenger.app.entities.GradeComment;
 
 public class GradeCommentService implements DbConstants {
 

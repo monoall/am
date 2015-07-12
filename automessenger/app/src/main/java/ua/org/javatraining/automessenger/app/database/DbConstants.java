@@ -90,6 +90,7 @@ public interface DbConstants {
     String QUERY_ALL_POST_BY_USER_NAME_AND_TAG_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_NAME + " = ?" + " and " + TAG_NAME + " = ?";
     String QUERY_ALL_POST_BY_TAG_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + TAG_NAME + " = ?";
     String QUERY_ALL_POST_BY_USER_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_NAME + " = ?";
+    String QUERY_POST_BY_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + ID + " = ?";
     String QUERY_ALL_POST_BY_LOCATION = "SELECT " + "*" + " from " + POST_TABLE + " where " + POST_LOCATION + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID_POST + " = ?";
     String QUERY_ID_USER_BY_NAME = "SELECT " + "ID" + " from " + USER_TABLE + " where " + USER_NAME + " = ?";

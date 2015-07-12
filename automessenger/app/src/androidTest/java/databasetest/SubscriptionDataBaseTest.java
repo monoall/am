@@ -10,8 +10,8 @@ import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.database.DbConstants;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.database.SubscriptionService;
-import ua.org.javatraining.automessenger.app.entityes.Subscription;
-import ua.org.javatraining.automessenger.app.entityes.User;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
+import ua.org.javatraining.automessenger.app.entities.User;
 
 import java.util.ArrayList;
 

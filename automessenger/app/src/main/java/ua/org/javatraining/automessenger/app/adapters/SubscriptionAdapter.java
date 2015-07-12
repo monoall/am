@@ -1,6 +1,5 @@
 package ua.org.javatraining.automessenger.app.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.entityes.Subscription;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
 import ua.org.javatraining.automessenger.app.fragments.SubscriptionsFragment;
 
 import java.util.List;

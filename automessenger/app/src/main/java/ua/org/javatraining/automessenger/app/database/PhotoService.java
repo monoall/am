@@ -3,7 +3,7 @@ package ua.org.javatraining.automessenger.app.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import ua.org.javatraining.automessenger.app.entityes.Photo;
+import ua.org.javatraining.automessenger.app.entities.Photo;
 
 public class PhotoService implements DbConstants {
 

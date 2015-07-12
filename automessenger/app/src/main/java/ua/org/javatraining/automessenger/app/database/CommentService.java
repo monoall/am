@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import ua.org.javatraining.automessenger.app.entityes.Comment;
+import ua.org.javatraining.automessenger.app.entities.Comment;
 
 import java.util.ArrayList;
 

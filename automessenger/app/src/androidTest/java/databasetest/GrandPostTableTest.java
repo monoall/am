@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.database.DbConstants;
 import ua.org.javatraining.automessenger.app.database.GradePostService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.entityes.GradePost;
+import ua.org.javatraining.automessenger.app.entities.GradePost;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;

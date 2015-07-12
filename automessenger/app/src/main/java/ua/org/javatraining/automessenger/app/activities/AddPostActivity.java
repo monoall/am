@@ -23,9 +23,9 @@ import ua.org.javatraining.automessenger.app.database.PhotoService;
 import ua.org.javatraining.automessenger.app.database.PostService;
 import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
 import ua.org.javatraining.automessenger.app.database.TagService;
-import ua.org.javatraining.automessenger.app.entityes.Photo;
-import ua.org.javatraining.automessenger.app.entityes.Post;
-import ua.org.javatraining.automessenger.app.entityes.Tag;
+import ua.org.javatraining.automessenger.app.entities.Photo;
+import ua.org.javatraining.automessenger.app.entities.Post;
+import ua.org.javatraining.automessenger.app.entities.Tag;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 
 import java.io.IOException;

@@ -8,8 +8,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entityes.Tag;
-import ua.org.javatraining.automessenger.app.entityes.User;
+import ua.org.javatraining.automessenger.app.entities.Tag;
+import ua.org.javatraining.automessenger.app.entities.User;
 
 import static junit.framework.Assert.assertEquals;
 

@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.entityes.Comment;
+import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
