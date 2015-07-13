@@ -2,12 +2,17 @@ package ua.org.javatraining.automessenger.app.services;
 
 import android.content.Context;
 import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entities.Post;
+import ua.org.javatraining.automessenger.app.entities.Comment;
+import ua.org.javatraining.automessenger.app.entities.GradeComment;
+import ua.org.javatraining.automessenger.app.entities.GradePost;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
+import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
+import ua.org.javatraining.automessenger.app.vo.PostGrades;
 
 import java.util.List;
 
-public class LocalService implements IService {
+public class LocalDataSource implements DataSourceInterface {
 
     private CommentService commentService;
     private PostService postService;
@@ -18,7 +23,7 @@ public class LocalService implements IService {
     private GradeCommentService gradeCommentService;
     private GradePostService gradePostService;
 
-    public LocalService(Context context) {
+    public LocalDataSource(Context context) {
         SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(context);
         commentService = new CommentService(sqLiteAdapter);
         postService = new PostService(sqLiteAdapter);
@@ -63,6 +68,71 @@ public class LocalService implements IService {
     @Override
     public List<FullPost> getPostsByTagName(String tagName, long timestamp) {
         return null;
+    }
+
+    @Override
+    public long addPost(FullPost fullPost) {
+        return 0;
+    }
+
+    @Override
+    public List<Comment> getComments(long postID) {
+        return null;
+    }
+
+    @Override
+    public List<Comment> getComments(long postID, long timestamp) {
+        return null;
+    }
+
+    @Override
+    public long addComment(Comment comment) {
+        return 0;
+    }
+
+    @Override
+    public List<Subscription> getSubscribtions() {
+        return null;
+    }
+
+    @Override
+    public long addSubscription(String tag) {
+        return 0;
+    }
+
+    @Override
+    public void removeSubscription(Subscription subscription) {
+
+    }
+
+    @Override
+    public PostGrades getPostGrades(long postID) {
+        return null;
+    }
+
+    @Override
+    public GradePost getCurrentUserPostGrade(long postID) {
+        return null;
+    }
+
+    @Override
+    public long setCurrentUserPostGrade(long postID, int grade) {
+        return 0;
+    }
+
+    @Override
+    public CommentGrades getCommentGrades(long commentID) {
+        return null;
+    }
+
+    @Override
+    public GradeComment getCurrentUserCommentGrade(long commentID) {
+        return null;
+    }
+
+    @Override
+    public long setCurrentUserCommentGrade(long commentID, int grade) {
+        return 0;
     }
 }
 
