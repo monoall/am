@@ -1,5 +1,7 @@
 package ua.org.javatraining.automessenger.app.vo;
 
+import android.util.Log;
+import ua.org.javatraining.automessenger.app.entities.Photo;
 import ua.org.javatraining.automessenger.app.entities.Post;
 
 import java.util.ArrayList;
@@ -17,13 +19,30 @@ public class FullPost {
     private int commentCount;
 
     public FullPost(Post post) {
-        this.postID = post.getId();
-        this.author = post.getNameUser();
-        this.date = post.getPostDate();
-        this.postLocation = post.getPostLocation();
-        this.tag = post.getNameTag();
-        this.text = post.getPostText();
-        photos = new ArrayList<String>();
+        if (post != null) {
+            this.postID = post.getId();
+            this.author = post.getNameUser();
+            this.date = post.getPostDate();
+            this.postLocation = post.getPostLocation();
+            this.tag = post.getNameTag();
+            this.text = post.getPostText();
+            photos = new ArrayList<String>();
+        }
+    }
+
+    public void separate(Post post, Photo photo) {
+        if (post != null) {
+            post.setId(this.postID);
+            post.setPostText(this.text);
+            post.setPostDate(this.date);
+            post.setPostLocation(this.postLocation);
+            post.setNameUser(this.author);
+            post.setNameTag(this.tag);
+        }
+
+        if (photo != null) {
+            photo.setPhotoLink(this.photos.get(0));
+        }
     }
 
     public FullPost() {

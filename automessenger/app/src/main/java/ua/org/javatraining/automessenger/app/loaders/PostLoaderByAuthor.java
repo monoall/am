@@ -1,25 +1,32 @@
 package ua.org.javatraining.automessenger.app.loaders;
 
-import android.location.Address;
 import android.content.Context;
+import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import ua.org.javatraining.automessenger.app.database.CommentService;
+import ua.org.javatraining.automessenger.app.database.PhotoService;
+import ua.org.javatraining.automessenger.app.database.PostService;
+import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
+import ua.org.javatraining.automessenger.app.entities.Post;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class PostLoaderFeed extends AsyncTaskLoader<List<FullPost>> {
+public class PostLoaderByAuthor extends AsyncTaskLoader<List<FullPost>> {
 
     private Geocoder geocoder;
     private SwipeRefreshLayout refreshLayout;
     private DataSource source;
 
-    public PostLoaderFeed(Context context) {
+    public PostLoaderByAuthor(Context context) {
         super(context);
 
         geocoder = new Geocoder(getContext(), Locale.getDefault());
@@ -41,7 +48,7 @@ public class PostLoaderFeed extends AsyncTaskLoader<List<FullPost>> {
 
     @Override
     public List<FullPost> loadInBackground() {
-        List<FullPost> fps = source.getPostsFromSubscriptions();
+        List<FullPost> fps = source.getPostsByAuthor();
 
         for (FullPost fp : fps) {
             float latitude, longitude;

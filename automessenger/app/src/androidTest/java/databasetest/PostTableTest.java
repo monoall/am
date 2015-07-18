@@ -41,7 +41,7 @@ public class PostTableTest extends DBITest implements DbConstants {
         Post post = new Post();
         post.setPostText("Post text1");
         post.setPostDate(120215);
-        post.setPostLocation("location");
+        post.setPostLocation("ShortLocation");
         post.setNameUser("Yum");
         post.setNameTag("BE 120515");
         postService.insertPost(post);
@@ -63,13 +63,13 @@ public class PostTableTest extends DBITest implements DbConstants {
 
     @Test
     public void testGetPostsFromSubscribes(){
-        ArrayList<Post> al = postService.getPostsFromSubscribes("User");
+        ArrayList<Post> al = postService.getPostsByAuthor("User");
         assertEquals(4, al.size());
     }
 
     @Test
     public void testGetPostsFromNearby(){
-        ArrayList<Post> al = postService.getPostsFromNearby("location");
+        ArrayList<Post> al = postService.getPostsFromNearby("ShortLocation");
         assertEquals(4, al.size());
     }
 

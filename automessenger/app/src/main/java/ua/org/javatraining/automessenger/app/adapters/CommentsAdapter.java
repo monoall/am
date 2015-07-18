@@ -6,13 +6,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.activities.PostDetails;
 import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
+import ua.org.javatraining.automessenger.app.vo.PostGrades;
 
 import java.util.List;
 
@@ -22,16 +25,20 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     static View listItem;
     private Context context;
     private FullPost post;
-    ImageLoader imageLoader = ImageLoader.getInstance();
+    private PostGrades postGrades;
+    private PostDetails outerActivity;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    public CommentsAdapter(Context context, FullPost post, List<Comment> dataset) {
+    public CommentsAdapter(Context context, FullPost post, List<Comment> dataset, PostGrades grades, PostDetails outerActivity) {
         this.dataset = dataset;
         this.post = post;
         this.context = context;
+        this.postGrades = grades;
+        this.outerActivity = outerActivity;
     }
 
     public static class CommentHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -63,9 +70,16 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView descriptionField;
         public TextView dateField;
         public ImageView photo;
+        public TextView gradeNumber;
+        public ImageButton thumbsUp;
+        public ImageButton thumbsDown;
 
         public HeaderHolder(View itemView) {
             super(itemView);
+
+            gradeNumber = (TextView) itemView.findViewById(R.id.grade_number);
+            thumbsDown = (ImageButton) itemView.findViewById(R.id.down_button);
+            thumbsUp = (ImageButton) itemView.findViewById(R.id.up_button);
             photo = (ImageView) itemView.findViewById(R.id.photo);
             descriptionField = (TextView) itemView.findViewById(R.id.description_text);
             dateField = (TextView) itemView.findViewById(R.id.date_text);
@@ -97,14 +111,62 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         if (viewHolder instanceof HeaderHolder) {
-            HeaderHolder hh = (HeaderHolder) viewHolder;
+            final HeaderHolder hh = (HeaderHolder) viewHolder;
             hh.dateField.setText(DateFormatUtil.toReadable(context, post.getDate()));
             hh.descriptionField.setText(post.getText());
+            hh.gradeNumber.setText(String.valueOf(postGrades.getSumGrade() + postGrades.getUserGrade()));
+
+            switch (postGrades.getUserGrade()) {
+                case -1:
+                    hh.thumbsDown.setImageResource(R.drawable.ic_thumb_down_black_18dp);
+                    break;
+                case 1:
+                    hh.thumbsUp.setImageResource(R.drawable.ic_thumb_up_black_18dp);
+                    break;
+            }
+
+            hh.thumbsDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (postGrades.getUserGrade() == -1) {
+                        outerActivity.setPostRate(0);
+                        postGrades = outerActivity.getPostGrades();
+                        hh.gradeNumber.setText(String.valueOf(postGrades.getSumGrade()));
+                        hh.thumbsDown.setImageResource(R.drawable.ic_thumb_down_grey600_18dp);
+                    } else {
+                        outerActivity.setPostRate(-1);
+                        postGrades = outerActivity.getPostGrades();
+                        hh.gradeNumber.setText(String.valueOf(postGrades.getSumGrade() - 1));
+                        hh.thumbsUp.setImageResource(R.drawable.ic_thumb_up_grey600_18dp);
+                        hh.thumbsDown.setImageResource(R.drawable.ic_thumb_down_black_18dp);
+                    }
+                }
+            });
+
+            hh.thumbsUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (postGrades.getUserGrade() == 1) {
+                        outerActivity.setPostRate(0);
+                        postGrades = outerActivity.getPostGrades();
+                        hh.gradeNumber.setText(String.valueOf(postGrades.getSumGrade()));
+                        hh.thumbsUp.setImageResource(R.drawable.ic_thumb_up_grey600_18dp);
+                    } else {
+                        outerActivity.setPostRate(+1);
+                        postGrades = outerActivity.getPostGrades();
+                        hh.gradeNumber.setText(String.valueOf(postGrades.getSumGrade() + 1));
+                        hh.thumbsUp.setImageResource(R.drawable.ic_thumb_up_black_18dp);
+                        hh.thumbsDown.setImageResource(R.drawable.ic_thumb_down_grey600_18dp);
+                    }
+                }
+            });
+
+
             imageLoader.displayImage(post.getPhotos().get(0), hh.photo);
         } else if (viewHolder instanceof CommentHolder) {
             CommentHolder cm = (CommentHolder) viewHolder;
-            cm.descriptionField.setText(dataset.get(i-1).getCommentText());
-            cm.dateField.setText(DateFormatUtil.toReadable(context, dataset.get(i-1).getCommentDate()));
+            cm.descriptionField.setText(dataset.get(i - 1).getCommentText());
+            cm.dateField.setText(DateFormatUtil.toReadable(context, dataset.get(i - 1).getCommentDate()));
             //todo разобратся с обработкой рейтинга комментария
             cm.curView.setOnClickListener(cm);
         }

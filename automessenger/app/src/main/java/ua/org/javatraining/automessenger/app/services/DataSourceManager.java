@@ -1,13 +1,9 @@
 package ua.org.javatraining.automessenger.app.services;
 
-import ua.org.javatraining.automessenger.app.database.*;
+import android.content.Context;
 
 public class DataSourceManager {
-
-    public DataSourceManager() {
+    public static DataSource getSource(Context context){
+        return new LocalDataSource(context);
     }
-
-    //public static DataSourceInterface getService(){
-    //    return new LocalDataSource();
-    //}
 }

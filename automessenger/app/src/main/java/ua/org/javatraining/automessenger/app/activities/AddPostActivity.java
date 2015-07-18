@@ -26,7 +26,10 @@ import ua.org.javatraining.automessenger.app.database.TagService;
 import ua.org.javatraining.automessenger.app.entities.Photo;
 import ua.org.javatraining.automessenger.app.entities.Post;
 import ua.org.javatraining.automessenger.app.entities.Tag;
+import ua.org.javatraining.automessenger.app.services.DataSource;
+import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
+import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.io.IOException;
 
@@ -35,22 +38,20 @@ public class AddPostActivity extends AppCompatActivity {
     private static final int SELECT_PHOTO = 100;
 
     private String username;
-    Toolbar toolbar;
-    ImageView imageView;
-    String photoURI;
-    EditText tagText;
-    EditText postText;
-    ImageLoader imageLoader = ImageLoader.getInstance();
+    private Toolbar toolbar;
+    private ImageView imageView;
+    private String photoURI;
+    private EditText tagText;
+    private EditText postText;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
+    private DataSource source;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        //Выводим уменьшеный вариант фотографии в ImageView
+
         if (photoURI != null) {
             imageLoader.displayImage(photoURI, imageView);
-            Log.i("myTag", "Photo path (AddPost...): " + photoURI);
-        } else {
-            Log.i("myTag", "photoURI = null");
         }
     }
 
@@ -64,6 +65,8 @@ public class AddPostActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.photo);
         tagText = (EditText) findViewById(R.id.car_number);
         postText = (EditText) findViewById(R.id.post_description);
+
+        source = DataSourceManager.getSource(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_add_post);
@@ -103,49 +106,21 @@ public class AddPostActivity extends AppCompatActivity {
         String tag = tagText.getText().toString().replaceAll(" ","").toUpperCase();
         String text = postText.getText().toString();
 
-        if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) { // Validating car number
-            Toast.makeText(this, "Ok", Toast.LENGTH_LONG).show();
-            SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(this);
-            PostService postService = new PostService(sqLiteAdapter);
-            PhotoService photoService = new PhotoService(sqLiteAdapter);
-            TagService tagService = new TagService(sqLiteAdapter);
-
-            Post post = new Post();
-            Photo photo = new Photo();
-
-            if (tagService.getTag(tag) != null) {
-                Tag ctag = new Tag();
-                ctag.setTagName(tag);
-                tagService.insertTag(ctag);
-            }
+        if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) {
+            FullPost fPost = new FullPost();
 
             float[] loc = getLocation(Uri.parse(photoURI));
-
             boolean statusGEO = loc != null;
 
-            post.setPostText(text);
-            post.setNameTag(tag);
-            post.setNameUser(username);
-            post.setPostDate(System.currentTimeMillis());
-            if (statusGEO) post.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
+            fPost.setText(text);
+            fPost.setTag(tag);
+            fPost.setDate(System.currentTimeMillis());
+            fPost.getPhotos().add(photoURI);
+            if (statusGEO) fPost.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
 
-            //Inserting Post object to DB and getting id
-            long postId = postService.insertPost(post).getId();
-
-            photo.setPhotoLink(photoURI);
-            photo.setIdPost((int) postId);//todo must be long
-
-            //Inserting Photo object to DB and getting id
-            long photoId = photoService.insertPhoto(photo).getId();
-
-            Log.i("myTag", "User: " + username);
-            Log.i("myTag", "Post ID: " + Long.toString(postId));
-            Log.i("myTag", "Photo ID: " + Long.toString(photoId));
-            Log.i("myTag", "Photo GEO: " + Float.toString(loc[0]) + " " + Float.toString(loc[1]));
+            source.addPost(fPost);
 
             onBackPressed();
-        } else {
-            Toast.makeText(this, R.string.validation_error, Toast.LENGTH_LONG).show();
         }
     }
 

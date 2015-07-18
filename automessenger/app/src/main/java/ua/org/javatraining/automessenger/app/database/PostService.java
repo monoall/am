@@ -11,12 +11,13 @@ public class PostService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
 
-    public  PostService(SQLiteAdapter sqLiteAdapter) {
+    public PostService(SQLiteAdapter sqLiteAdapter) {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
     /**
      * Вставляет пост в таблицу Post
+     *
      * @param post объект Post
      * @return вставленный объект
      */
@@ -24,7 +25,7 @@ public class PostService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
         sqLiteDatabase.beginTransaction();
-        try{
+        try {
             ContentValues cv = new ContentValues();
             cv.put(POST_TEXT, post.getPostText());
             cv.put(POST_DATE, post.getPostDate());
@@ -33,20 +34,21 @@ public class PostService implements DbConstants {
             cv.put(TAG_NAME, post.getNameTag());
             id = sqLiteDatabase.insert(POST_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
-        }finally {
+        } finally {
             sqLiteDatabase.endTransaction();
         }
         post.setId(id);
         return post;
     }
 
-  /**
+    /**
      * Возвращает все посты юзера по тегу
+     *
      * @param userName имя юзера
-     * @param tagName имя тега
+     * @param tagName  имя тега
      * @return Список постов
      */
-    public ArrayList<Post> getAllPosts(String userName, String tagName){
+    public ArrayList<Post> getAllPosts(String userName, String tagName) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_POST_BY_USER_NAME_AND_TAG_NAME, new String[]{userName, tagName});
@@ -60,34 +62,68 @@ public class PostService implements DbConstants {
 
     /**
      * Возвращает последние 50 постов юзера
+     *
      * @param userName имя юзера
      * @return Список постов
      */
-    public ArrayList<Post> getPostsFromSubscribes(String userName){
+    public ArrayList<Post> getPostsByAuthor(String userName) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_POST_BY_USER_NAME, new String[]{userName});
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if(count < 50){
+            if (count < 10) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
-            }else {
+            } else {
                 break;
             }
         }
         return al;
     }
 
+    public ArrayList<Post> getPostsFromSubscribes(String userName) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POST_BY_SUBSCRIPTIONS, new String[]{userName, userName});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 10) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
 
-    public Post getPostByID(long postID){
+    public ArrayList<Post> getPostsFromSubscribesNextPage(String userName, long timestamp) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POST_BY_SUBSCRIPTIONS_NEXT_PAGE, new String[]{userName, userName, Long.toString(timestamp)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 10) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public Post getPostByID(long postID) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_POST_BY_ID, new String[]{Long.toString(postID)});
-        ArrayList<Post> al = new ArrayList<Post>();
-        int count = 0;
         cursor.moveToFirst();
         Post post = buildPost(cursor);
         return post;
@@ -95,21 +131,22 @@ public class PostService implements DbConstants {
 
     /**
      * Возвращает последние 50 постов по локации
+     *
      * @param location локация
      * @return Список постов
      */
-    public ArrayList <Post> getPostsFromNearby(String location){
+    public ArrayList<Post> getPostsFromNearby(String location) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_POST_BY_LOCATION, new String[]{location});
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if(count < 50){
+            if (count < 10) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
-            }else {
+            } else {
                 break;
             }
         }
@@ -119,40 +156,64 @@ public class PostService implements DbConstants {
 
     /**
      * Возвращает все посты по тегу
+     *
      * @param tagName имя тега
      * @return Список постов
      */
-    public ArrayList <Post> getPostsByTag(String tagName){
+    public ArrayList<Post> getPostsByTag(String tagName) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_POST_BY_TAG_NAME, new String[]{tagName});
         ArrayList<Post> al = new ArrayList<Post>();
-        for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
-            Post post = buildPost(cursor);
-            al.add(post);
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 10) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
         }
         return al;
     }
 
-
+    public ArrayList<Post> getPostsByTagNextPage(String tagName, long timestamp) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_ALL_POST_BY_TAG_NAME_NEXT_PAGE, new String[]{tagName, Long.toString(timestamp)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 10) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
 
     /**
      * Удаляет пост
+     *
      * @param post объект Post
      */
-    public void deletePost(Post post){
+    public void deletePost(Post post) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         sqLiteDatabase.beginTransaction();
-        try{
+        try {
             sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?" + " and " + USER_NAME + " = ?", new String[]{post.getPostText(), post.getNameUser()});
             sqLiteDatabase.setTransactionSuccessful();
-        }finally {
+        } finally {
             sqLiteDatabase.endTransaction();
         }
     }
 
-    private Post buildPost(Cursor c){
-        Post p =  new Post();
+    private Post buildPost(Cursor c) {
+        Post p = new Post();
         p.setId(c.getLong(c.getColumnIndex(ID)));
         p.setPostText(c.getString(c.getColumnIndex(POST_TEXT)));
         p.setPostDate(c.getLong(c.getColumnIndex(POST_DATE)));

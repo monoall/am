@@ -5,7 +5,15 @@ public class PostGrades {
     private int sumGrade;
     private int userGrade = 0;
     private long postID;
-    private long userID;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public int getSumGrade() {
         return sumGrade;
@@ -17,10 +25,6 @@ public class PostGrades {
 
     public long getPostID() {
         return postID;
-    }
-
-    public long getUserID() {
-        return userID;
     }
 
     public void setSumGrade(int sumGrade) {
@@ -35,7 +39,5 @@ public class PostGrades {
         this.postID = postID;
     }
 
-    public void setUserID(long userID) {
-        this.userID = userID;
-    }
+
 }

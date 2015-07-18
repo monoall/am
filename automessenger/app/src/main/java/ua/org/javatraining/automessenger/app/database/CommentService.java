@@ -12,12 +12,13 @@ public class CommentService implements DbConstants {
 
     private SQLiteAdapter sqLiteAdapter;
 
-    public  CommentService(SQLiteAdapter sqLiteAdapter) {
+    public CommentService(SQLiteAdapter sqLiteAdapter) {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
     /**
      * Вставляет в таблицу Comment
+     *
      * @param comment объект Comment
      * @return вставленный объект
      */
@@ -25,7 +26,7 @@ public class CommentService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         long id;
         sqLiteDatabase.beginTransaction();
-        try{
+        try {
             ContentValues cv = new ContentValues();
             cv.put(COMMENT_DATE, comment.getCommentDate());
             cv.put(COMMENT_TEXT, comment.getCommentText());
@@ -33,7 +34,7 @@ public class CommentService implements DbConstants {
             cv.put(ID_POST, comment.getIdPost());
             id = sqLiteDatabase.insert(COMMENT_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
-        }finally {
+        } finally {
             sqLiteDatabase.endTransaction();
         }
         comment.setId(id);
@@ -42,39 +43,74 @@ public class CommentService implements DbConstants {
 
     /**
      * Возвращает все комментарии к посту
+     *
      * @param postId id поста
      * @return Список комментариев
      */
-    public ArrayList<Comment> getAllComments(int postId){
-
+    public ArrayList<Comment> getAllComments(int postId) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase
-                .rawQuery(QUERY_ALL_COMMENTS_BY_POST_ID , new String[]{String.valueOf(postId)});
+                .rawQuery(QUERY_ALL_COMMENTS_BY_POST_ID, new String[]{String.valueOf(postId)});
         ArrayList<Comment> al = new ArrayList<Comment>();
+        int count = 0;
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
-            Comment comment = buildComment(cursor);
-            al.add(comment);
+            if (count < 10) {
+                Comment comment = buildComment(cursor);
+                al.add(comment);
+                count++;
+            } else {
+                break;
+            }
         }
         return al;
     }
 
+    public ArrayList<Comment> getAllCommentsNextPage(int postId, long timestamp) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_ALL_COMMENTS_BY_POST_ID_NEXT_PAGE, new String[]{String.valueOf(postId), Long.toString(timestamp)});
+        ArrayList<Comment> al = new ArrayList<Comment>();
+        int count = 0;
+        for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
+            if (count < 10) {
+                Comment comment = buildComment(cursor);
+                al.add(comment);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public int getCommentCountByPostID(int postId) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        @SuppressLint("Recycle")
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_COMMENT_COUNT_BY_POST_ID, new String[]{String.valueOf(postId)});
+
+        cursor.moveToFirst();
+
+        return cursor.getInt(0);
+    }
+
     /**
-     *
      * Удаляет комментарии
+     *
      * @param comment объект Comment
      */
-    public void deleteComment(Comment comment){
+    public void deleteComment(Comment comment) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         sqLiteDatabase.beginTransaction();
-        try{
+        try {
             sqLiteDatabase.delete(COMMENT_TABLE, COMMENT_TEXT + " = ?", new String[]{comment.getCommentText()});
             sqLiteDatabase.setTransactionSuccessful();
-        }finally {
+        } finally {
             sqLiteDatabase.endTransaction();
         }
     }
 
-    private Comment buildComment(Cursor c){
+    private Comment buildComment(Cursor c) {
         Comment com = new Comment();
         com.setId(c.getLong(c.getColumnIndex(ID)));
         com.setCommentDate(c.getLong(c.getColumnIndex(COMMENT_DATE)));

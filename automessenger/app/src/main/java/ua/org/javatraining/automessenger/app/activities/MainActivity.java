@@ -27,11 +27,11 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.*;
-import ua.org.javatraining.automessenger.app.entities.User;
 import ua.org.javatraining.automessenger.app.fragments.*;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
+import ua.org.javatraining.automessenger.app.services.DataSource;
+import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.services.SendToDriveService;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
@@ -56,19 +56,15 @@ public class MainActivity
     private static final int TAKE_PHOTO_REQUEST = 100;
 
     public Toolbar toolbar;
-    DrawerLayout drawerLayout;
-    RelativeLayout relativeLayout;
-    ImageButton imageButton;
-    int drawerWidth;
-    String photoPath;
-    String username;
-    SQLiteAdapter sqLiteAdapter;
-    UserService userService;
-    PostService postService;
-    PhotoService photoService;
-    CommentService commentService;
-    LocalBroadcastManager localBroadcastManager;
-    String tag;
+    private DrawerLayout drawerLayout;
+    private RelativeLayout relativeLayout;
+    private ImageButton imageButton;
+    private int drawerWidth;
+    private String photoPath;
+    private String username;
+    private DataSource source;
+    private LocalBroadcastManager localBroadcastManager;
+    private String tag;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -82,27 +78,17 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbarInit();
 
+        toolbarInit();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
-
-        sqLiteAdapter = SQLiteAdapter.initInstance(this);
-        userService = new UserService(sqLiteAdapter);
-        postService = new PostService(sqLiteAdapter);
-        photoService = new PhotoService(sqLiteAdapter);
-        commentService = new CommentService(sqLiteAdapter);
+        source = DataSourceManager.getSource(this);
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         setUsername(Authentication.getLastUser(this));
 
-
-        if (userService.getUser(username) == null) {
-            User user = new User();
-            user.setName(username);
-            userService.insertUser(user);
-        }
+        source.setUser(username);
 
         if (savedInstanceState == null) {
             initUIL();
@@ -125,6 +111,7 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+
     }
 
     private void setUsername(String username) {

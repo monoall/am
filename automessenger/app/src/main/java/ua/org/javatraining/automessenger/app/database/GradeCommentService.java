@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entities.GradeComment;
+import ua.org.javatraining.automessenger.app.entities.GradePost;
+
+import java.util.ArrayList;
 
 public class GradeCommentService implements DbConstants {
 
@@ -11,6 +14,31 @@ public class GradeCommentService implements DbConstants {
 
     public GradeCommentService(SQLiteAdapter sqLiteAdapter) {
         this.sqLiteAdapter = sqLiteAdapter;
+    }
+
+    public ArrayList<GradeComment> getCommentGrades(long commentID) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_GRADE_COMMENT_BY_ID_COMMENT, new String[]{String.valueOf(commentID)});
+        ArrayList<GradeComment> al = new ArrayList<GradeComment>();
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            GradeComment gradeComment = buildGradeComment(cursor);
+            al.add(gradeComment);
+        }
+        return al;
+    }
+
+    public GradeComment getCommentGrade(long commentID, String username) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_GRADE_COMMENT_BY_ID_COMMENT_AND_USER, new String[]{String.valueOf(commentID), username});
+        GradeComment gradeComment = null;
+
+        if (cursor.moveToFirst()) {
+            gradeComment = buildGradeComment(cursor);
+        }
+
+        return gradeComment;
     }
 
     /**

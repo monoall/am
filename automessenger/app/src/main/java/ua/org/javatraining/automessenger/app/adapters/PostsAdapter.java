@@ -3,6 +3,7 @@ package ua.org.javatraining.automessenger.app.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         holder.date.setText(DateFormatUtil.toReadable(context, fullPost.getDate()));
         holder.tag.setText(fullPost.getTag());
         holder.commentNumber.setText(Integer.toString(fullPost.getCommentCount()));
+        Log.i("mytag","onBindViewHolder " + fullPost.getPhotos().get(0));
         imageLoader.displayImage(fullPost.getPhotos().get(0), holder.photo);
 
         holder.frame.setOnClickListener(new View.OnClickListener() {

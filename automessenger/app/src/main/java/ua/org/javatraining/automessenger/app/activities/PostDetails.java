@@ -19,11 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
-import ua.org.javatraining.automessenger.app.user.Authentication;
+import ua.org.javatraining.automessenger.app.services.DataSource;
+import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
+import ua.org.javatraining.automessenger.app.vo.PostGrades;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,21 +35,22 @@ public class PostDetails
 
     private static final int COMMENT_LOADER_ID = 2;
 
-    Toolbar toolbar;
-    EditText addCommentField;
-    ImageButton submit;
-    RecyclerView myRV;
-    RecyclerView.Adapter myAdapter;
-    RecyclerView.LayoutManager myLM;
-    List<Comment> comments = new ArrayList<Comment>();
-    long postId;
-    SQLiteAdapter sqLiteAdapter;
-    PostService postService;
-    PhotoService photoService;
-    SubscriptionService subscriptionService;
-    Subscription subscription;
-    Photo photoObj;
-    FullPost fullPost;
+    private Toolbar toolbar;
+    private EditText addCommentField;
+    private ImageButton submit;
+    private RecyclerView myRV;
+    private RecyclerView.Adapter myAdapter;
+    private RecyclerView.LayoutManager myLM;
+    private List<Comment> comments = new ArrayList<Comment>();
+    private long postId;
+    private DataSource source;
+    private Subscription subscription;
+    private FullPost fullPost;
+    private PostGrades postGrades;
+    private TextView gradeNumber;
+    private ImageButton gradeUp;
+    private ImageButton gradeDown;
+
     private Loader<List<Comment>> mLoader;
 
     @Override
@@ -57,11 +59,12 @@ public class PostDetails
         setContentView(R.layout.post_details);
         addCommentField = (EditText) findViewById(R.id.add_comment_field);
         postId = getIntent().getLongExtra("POST_ID", 0);
-        sqLiteAdapter = SQLiteAdapter.initInstance(this);
         submit = (ImageButton) findViewById(R.id.submit);
-        subscriptionService = new SubscriptionService(sqLiteAdapter);
-        postService = new PostService(sqLiteAdapter);
-        photoService = new PhotoService(sqLiteAdapter);
+        gradeNumber = (TextView) findViewById(R.id.grade_number);
+        gradeDown = (ImageButton) findViewById(R.id.down_button);
+        gradeUp = (ImageButton) findViewById(R.id.up_button);
+
+        source = DataSourceManager.getSource(this);
 
         addCommentField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -74,7 +77,6 @@ public class PostDetails
             }
         });
 
-
         loadPostForList();
         initSubscription();
         initToolbar();
@@ -85,9 +87,9 @@ public class PostDetails
 
     private boolean initSubscription() {
         boolean status = false;
-        User user = new User();
-        user.setName(Authentication.getLastUser(this));
-        List<Subscription> subs = subscriptionService.getSubscriptionsList(user);
+
+        List<Subscription> subs = source.getSubscriptions();
+
         for (Subscription s : subs) {
             if (s.getNameTag().equals(fullPost.getTag())) {
                 subscription = s;
@@ -112,9 +114,8 @@ public class PostDetails
 
     private void loadPostForList() {
         if (postId != 0) {
-            fullPost = new FullPost(postService.getPostByID(postId));
-            photoObj = photoService.getPhoto((int) postId);
-            fullPost.getPhotos().add(photoObj.getPhotoLink());
+            fullPost = source.getPostByID(postId);
+            postGrades = source.getPostGrades(postId);
         }
     }
 
@@ -122,7 +123,7 @@ public class PostDetails
         myRV = (RecyclerView) findViewById(R.id.comment_rv);
         myLM = new LinearLayoutManager(this);
         myRV.setLayoutManager(myLM);
-        myAdapter = new CommentsAdapter(this.getApplicationContext(), fullPost, comments);
+        myAdapter = new CommentsAdapter(this.getApplicationContext(), fullPost, comments, postGrades, this);
         myRV.setAdapter(myAdapter);
     }
 
@@ -153,41 +154,39 @@ public class PostDetails
         });
     }
 
-    //нажата кнопка оценки
-    public void actionSetRate(View view) {
+    public void setPostRate(int rate){
+        source.setCurrentUserPostGrade(postId, rate);
+    }
+
+    public PostGrades getPostGrades(){
+        return source.getPostGrades(postId);
     }
 
     public void actionSubscribe(MenuItem item) {
         if (subscription == null) {
-            subscription = new Subscription();
-            subscription.setNameUser(Authentication.getLastUser(this));
-            subscription.setNameTag(fullPost.getTag());
-            subscription.setId(subscriptionService.insertSubscription(subscription).getId());
+            subscription = source.addSubscription(fullPost.getTag());
             if (!(subscription.getId() >= 1)) {
                 subscription = null;
-                Log.i("mytag", "postDetails, subscription failed!");
             }else{
-                Log.i("mytag", "postDetails, subscription added!");
                 item.setIcon(R.drawable.ic_star_rate_white_24dp);
             }
+
+
         } else {
-            subscriptionService.deleteSubscription(subscription);
+            source.removeSubscription(subscription);
             subscription = null;
             item.setIcon(R.drawable.ic_star_outline_white_24dp);
-            Log.i("mytag", "postDetails, unsubscribed!");
         }
     }
 
     public void actionCommentSend(View view) {
         String comment = addCommentField.getText().toString();
         if (!comment.equals("")) {
-            CommentService commentService = new CommentService(sqLiteAdapter);
             Comment commentObj = new Comment();
             commentObj.setCommentDate(System.currentTimeMillis());
             commentObj.setCommentText(comment);
             commentObj.setIdPost(postId);
-            commentObj.setNameUser(Authentication.getLastUser(this));
-            long id = commentService.insertComment(commentObj).getId();
+            long id = source.addComment(commentObj);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(addCommentField.getWindowToken(), 0);
             Log.i("myTag", "comment added. id: " + Long.toString(id));

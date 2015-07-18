@@ -3,6 +3,7 @@ package ua.org.javatraining.automessenger.app.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import ua.org.javatraining.automessenger.app.entities.Photo;
 
 public class PhotoService implements DbConstants {
@@ -43,11 +44,14 @@ public class PhotoService implements DbConstants {
      */
      public Photo getPhoto(int idPost){
        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-       Cursor cursor = sqLiteDatabase.query(PHOTO_TABLE, null, "ID_POST = ?", new String[]{String.valueOf(idPost)}, null,null,null);
+       Cursor cursor = sqLiteDatabase.rawQuery(QUERY_PHOTO_BY_ID_POST, new String[]{String.valueOf(idPost)});
        Photo photo = null;
        if(cursor.moveToFirst()){
            photo = buildPhoto(cursor);
+       }else {
+           Log.i("mytag", "getPhoto, photo = null ");
        }
+
        return photo;
      }
 

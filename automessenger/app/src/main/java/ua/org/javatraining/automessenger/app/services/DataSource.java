@@ -1,16 +1,21 @@
 package ua.org.javatraining.automessenger.app.services;
 
-import ua.org.javatraining.automessenger.app.entities.Comment;
-import ua.org.javatraining.automessenger.app.entities.GradeComment;
-import ua.org.javatraining.automessenger.app.entities.GradePost;
-import ua.org.javatraining.automessenger.app.entities.Subscription;
+import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
+import ua.org.javatraining.automessenger.app.vo.ShortLocation;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
 
 import java.util.List;
 
-public interface DataSourceInterface {
+public interface DataSource {
+
+    /**
+     * Check if current user exists in DB and add new if it doesnt
+     *
+     * @param username user name
+     */
+    void setUser(String username);
 
     /**
      * Get post by post ID
@@ -21,7 +26,15 @@ public interface DataSourceInterface {
     FullPost getPostByID(long postID);
 
     /**
-     * Get last 10 posts from user subscribes
+     * Get last posts by author
+     *
+     * @return List with Post objects
+     */
+    List<FullPost> getPostsByAuthor();
+
+
+    /**
+     * Get last 10 posts from user subscribes with user own posts
      *
      * @return List with Post objects
      */
@@ -29,7 +42,7 @@ public interface DataSourceInterface {
 
     /**
      * Method required for pagination.
-     * Get 10 posts from user subscribes older than specified date(represented as Timestamp)
+     * Get 10 posts from user subscribes with user own posts older than specified date(represented as Timestamp)
      *
      * @param timestamp timestamp from last post we have for that moment
      * @return List with Post objects
@@ -39,24 +52,20 @@ public interface DataSourceInterface {
     /**
      * Get 10 posts from specified area
      *
-     * @param country   target country
-     * @param adminArea state (Oblast')
-     * @param locality  city/district
+     * @param shortLocation Representation location in three fields
      * @return List with Post objects
      */
-    List<FullPost> getPostsByLocation(String country, String adminArea, String locality);
+    List<FullPost> getPostsByLocation(ShortLocation shortLocation);
 
     /**
      * Method required for pagination.
      * Get 10 posts from specified area older than specified date(represented as Timestamp)
      *
-     * @param country   target country
-     * @param adminArea state (Oblast')
-     * @param locality  city/district
-     * @param timestamp timestamp from last post we have for that moment
+     * @param shortLocation Representation location in three fields
+     * @param timestamp     timestamp from last post we have for that moment
      * @return List with Post objects
      */
-    List<FullPost> getPostsByLocation(String country, String adminArea, String locality, long timestamp);
+    List<FullPost> getPostsByLocation(ShortLocation shortLocation, long timestamp);
 
     /**
      * Get 10 posts by tag name
@@ -115,15 +124,15 @@ public interface DataSourceInterface {
      *
      * @return list with subscription objects
      */
-    List<Subscription> getSubscribtions();
+    List<Subscription> getSubscriptions();
 
     /**
      * Add new subscription
      *
      * @param tag tag name
-     * @return subscription id if successfully added
+     * @return subscription object if successfully added
      */
-    long addSubscription(String tag);
+    Subscription addSubscription(String tag);
 
     /**
      * delete subscription
@@ -153,10 +162,10 @@ public interface DataSourceInterface {
      * Set grade for post
      *
      * @param postID post id
-     * @param grade grade value, should be in range(-1,0,1)
+     * @param grade  grade value, should be in range(-1,0,1)
      * @return grade id if successfully added
      */
-    long setCurrentUserPostGrade(long postID, int grade);
+    void setCurrentUserPostGrade(long postID, int grade);
 
     /**
      * Get object that contains sum of all grades of specified comment in one int field,
@@ -179,10 +188,16 @@ public interface DataSourceInterface {
      * Set grade for comment
      *
      * @param commentID comment id
-     * @param grade grade value, should be in range(-1,0,1)
+     * @param grade     grade value, should be in range(-1,0,1)
      * @return grade id if successfully added
      */
-    long setCurrentUserCommentGrade(long commentID, int grade);
+    void setCurrentUserCommentGrade(long commentID, int grade);
 
-    //TODO methods for search feature
+    /**
+     * Search tags in database
+     *
+     * @param request String that contain our search request
+     * @return List with search results
+     */
+    List<Tag> findSomeTags(String request);
 }
