@@ -1,10 +1,7 @@
 package ua.org.javatraining.automessenger.app.services;
 
 import ua.org.javatraining.automessenger.app.entities.*;
-import ua.org.javatraining.automessenger.app.vo.CommentGrades;
-import ua.org.javatraining.automessenger.app.vo.FullPost;
-import ua.org.javatraining.automessenger.app.vo.PostGrades;
-import ua.org.javatraining.automessenger.app.vo.ShortLocation;
+import ua.org.javatraining.automessenger.app.vo.*;
 
 import java.util.List;
 
@@ -60,12 +57,12 @@ public class RemoteDataSource implements DataSource {
     }
 
     @Override
-    public List<Comment> getComments(long postID) {
+    public List<SuperComment> getComments(long postID) {
         return null;
     }
 
     @Override
-    public List<Comment> getComments(long postID, long timestamp) {
+    public List<SuperComment> getComments(long postID, long timestamp) {
         return null;
     }
 

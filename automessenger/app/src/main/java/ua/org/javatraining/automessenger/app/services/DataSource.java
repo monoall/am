@@ -1,10 +1,7 @@
 package ua.org.javatraining.automessenger.app.services;
 
 import ua.org.javatraining.automessenger.app.entities.*;
-import ua.org.javatraining.automessenger.app.vo.CommentGrades;
-import ua.org.javatraining.automessenger.app.vo.FullPost;
-import ua.org.javatraining.automessenger.app.vo.ShortLocation;
-import ua.org.javatraining.automessenger.app.vo.PostGrades;
+import ua.org.javatraining.automessenger.app.vo.*;
 
 import java.util.List;
 
@@ -99,7 +96,7 @@ public interface DataSource {
      * @param postID post id
      * @return List with comments objects
      */
-    List<Comment> getComments(long postID);
+    List<SuperComment> getComments(long postID);
 
     /**
      * Method required for pagination.
@@ -109,7 +106,7 @@ public interface DataSource {
      * @param timestamp timestamp from last post we have for that moment
      * @return List with comments objects
      */
-    List<Comment> getComments(long postID, long timestamp);
+    List<SuperComment> getComments(long postID, long timestamp);
 
     /**
      * Add comment

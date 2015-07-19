@@ -23,35 +23,31 @@ import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
+import ua.org.javatraining.automessenger.app.vo.SuperComment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostDetails
         extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Comment>> {
+        implements LoaderManager.LoaderCallbacks<List<SuperComment>> {
 
     private static final int COMMENT_LOADER_ID = 2;
 
-    private Toolbar toolbar;
     private EditText addCommentField;
     private ImageButton submit;
-    private RecyclerView myRV;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLM;
-    private List<Comment> comments = new ArrayList<Comment>();
+    private List<SuperComment> comments = new ArrayList<SuperComment>();
     private long postId;
     private DataSource source;
     private Subscription subscription;
     private FullPost fullPost;
     private PostGrades postGrades;
-    private TextView gradeNumber;
-    private ImageButton gradeUp;
-    private ImageButton gradeDown;
 
-    private Loader<List<Comment>> mLoader;
+    private Loader<List<SuperComment>> mLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +56,6 @@ public class PostDetails
         addCommentField = (EditText) findViewById(R.id.add_comment_field);
         postId = getIntent().getLongExtra("POST_ID", 0);
         submit = (ImageButton) findViewById(R.id.submit);
-        gradeNumber = (TextView) findViewById(R.id.grade_number);
-        gradeDown = (ImageButton) findViewById(R.id.down_button);
-        gradeUp = (ImageButton) findViewById(R.id.up_button);
 
         source = DataSourceManager.getSource(this);
 
@@ -120,8 +113,8 @@ public class PostDetails
     }
 
     private void initCommentsList() {
-        myRV = (RecyclerView) findViewById(R.id.comment_rv);
-        myLM = new LinearLayoutManager(this);
+        RecyclerView myRV = (RecyclerView) findViewById(R.id.comment_rv);
+        RecyclerView.LayoutManager myLM = new LinearLayoutManager(this);
         myRV.setLayoutManager(myLM);
         myAdapter = new CommentsAdapter(this.getApplicationContext(), fullPost, comments, postGrades, this);
         myRV.setAdapter(myAdapter);
@@ -139,7 +132,7 @@ public class PostDetails
     }
 
     private void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_post_details);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
         toolbar.setTitle(fullPost.getTag());
@@ -156,6 +149,15 @@ public class PostDetails
 
     public void setPostRate(int rate){
         source.setCurrentUserPostGrade(postId, rate);
+    }
+
+
+    public void setCommentRate(long commentID, int grade) {
+        source.setCurrentUserCommentGrade(commentID, grade);
+    }
+
+    public CommentGrades getCommentGrades(int id){
+        return source.getCommentGrades(id);
     }
 
     public PostGrades getPostGrades(){
@@ -196,19 +198,19 @@ public class PostDetails
     }
 
     @Override
-    public Loader<List<Comment>> onCreateLoader(int id, Bundle args) {
+    public Loader<List<SuperComment>> onCreateLoader(int id, Bundle args) {
         return new CommentLoader(this, postId);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Comment>> loader, List<Comment> data) {
+    public void onLoadFinished(Loader<List<SuperComment>> loader, List<SuperComment> data) {
         comments.clear();
         comments.addAll(data);
         myAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Comment>> loader) {
+    public void onLoaderReset(Loader<List<SuperComment>> loader) {
 
     }
 

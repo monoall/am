@@ -5,10 +5,7 @@ import android.util.Log;
 import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.user.Authentication;
-import ua.org.javatraining.automessenger.app.vo.CommentGrades;
-import ua.org.javatraining.automessenger.app.vo.FullPost;
-import ua.org.javatraining.automessenger.app.vo.PostGrades;
-import ua.org.javatraining.automessenger.app.vo.ShortLocation;
+import ua.org.javatraining.automessenger.app.vo.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,14 +213,57 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public List<Comment> getComments(long postID) {
-        return commentService.getAllComments((int) postID);
+    public List<SuperComment> getComments(long postID) {
+        List<Comment> comments = commentService.getAllComments((int) postID);
+        ArrayList<SuperComment> superComments = new ArrayList<SuperComment>();
+
+        for (Comment c : comments) {
+            SuperComment sc = new SuperComment(c);
+            int grade = 0;
+            sc.setUserGrade(0);
+            String username = Authentication.getLastUser(context);
+            ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
+
+            for (GradeComment gc : cGrades) {
+                if(gc.getNameUser().equals(username)){
+                    sc.setUserGrade(gc.getGrade());
+                }else{
+                    grade += gc.getGrade();
+                }
+            }
+
+            sc.setGradeNumber(grade);
+            superComments.add(sc);
+        }
+
+        return superComments;
     }
 
     @Override
-    public List<Comment> getComments(long postID, long timestamp) {
-        return commentService.getAllCommentsNextPage((int) postID, timestamp);
-    }
+    public List<SuperComment> getComments(long postID, long timestamp) {
+        List<Comment> comments = commentService.getAllCommentsNextPage((int) postID, timestamp);
+        ArrayList<SuperComment> superComments = new ArrayList<SuperComment>();
+
+        for (Comment c : comments) {
+            SuperComment sc = new SuperComment(c);
+            int grade = 0;
+            sc.setUserGrade(0);
+            String username = Authentication.getLastUser(context);
+            ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
+
+            for (GradeComment gc : cGrades) {
+                if(gc.getNameUser().equals(username)){
+                    sc.setUserGrade(gc.getGrade());
+                }else{
+                    grade += gc.getGrade();
+                }
+            }
+
+            sc.setGradeNumber(grade);
+            superComments.add(sc);
+        }
+
+        return superComments;    }
 
     @Override
     public long addComment(Comment comment) {

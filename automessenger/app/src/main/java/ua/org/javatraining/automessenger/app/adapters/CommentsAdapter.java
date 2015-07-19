@@ -14,14 +14,16 @@ import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.PostDetails;
 import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
+import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
+import ua.org.javatraining.automessenger.app.vo.SuperComment;
 
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Comment> dataset;
+    private List<SuperComment> dataset;
     static View listItem;
     private Context context;
     private FullPost post;
@@ -33,7 +35,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    public CommentsAdapter(Context context, FullPost post, List<Comment> dataset, PostGrades grades, PostDetails outerActivity) {
+    public CommentsAdapter(Context context, FullPost post, List<SuperComment> dataset, PostGrades grades, PostDetails outerActivity) {
         this.dataset = dataset;
         this.post = post;
         this.context = context;
@@ -45,6 +47,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView descriptionField;
         public TextView dateField;
         public TextView ratingField;
+        public ImageButton thumbUp;
+        public ImageButton thumbDown;
         public View curView;
 
         public CommentHolder(View itemView) {
@@ -53,6 +57,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             descriptionField = (TextView) itemView.findViewById(R.id.description_field);
             dateField = (TextView) itemView.findViewById(R.id.date_field);
             ratingField = (TextView) itemView.findViewById(R.id.rating_field);
+            thumbDown = (ImageButton) itemView.findViewById(R.id.comment_thumb_down);
+            thumbUp = (ImageButton) itemView.findViewById(R.id.comment_thumb_up);
         }
 
         @Override
@@ -161,14 +167,60 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
 
-
             imageLoader.displayImage(post.getPhotos().get(0), hh.photo);
         } else if (viewHolder instanceof CommentHolder) {
-            CommentHolder cm = (CommentHolder) viewHolder;
+            final CommentHolder cm = (CommentHolder) viewHolder;
+            final SuperComment superComment = dataset.get(i - 1);
             cm.descriptionField.setText(dataset.get(i - 1).getCommentText());
             cm.dateField.setText(DateFormatUtil.toReadable(context, dataset.get(i - 1).getCommentDate()));
-            //todo разобратся с обработкой рейтинга комментария
             cm.curView.setOnClickListener(cm);
+            cm.ratingField.setText(String.valueOf(superComment.getGradeNumber() + superComment.getUserGrade()));
+
+            switch (superComment.getUserGrade()) {
+                case 1:
+                    cm.thumbUp.setImageResource(R.drawable.ic_thumb_up_black_18dp);
+                    break;
+                case -1:
+                    cm.thumbDown.setImageResource(R.drawable.ic_thumb_down_black_18dp);
+                    break;
+            }
+
+            cm.thumbUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (superComment.getUserGrade() == 1) {
+                        outerActivity.setCommentRate(superComment.getId(), 0);
+                        superComment.setUserGrade(outerActivity.getCommentGrades((int) superComment.getId()).getUserGrade());
+                        cm.thumbUp.setImageResource(R.drawable.ic_thumb_up_grey600_18dp);
+                        cm.ratingField.setText(String.valueOf(superComment.getGradeNumber() + superComment.getUserGrade()));
+                    } else {
+                        outerActivity.setCommentRate(superComment.getId(), 1);
+                        superComment.setUserGrade(outerActivity.getCommentGrades((int) superComment.getId()).getUserGrade());
+                        cm.thumbUp.setImageResource(R.drawable.ic_thumb_up_black_18dp);
+                        cm.thumbDown.setImageResource(R.drawable.ic_thumb_down_grey600_18dp);
+                        cm.ratingField.setText(String.valueOf(superComment.getGradeNumber() + superComment.getUserGrade()));
+                    }
+                }
+            });
+
+            cm.thumbDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (superComment.getUserGrade() == -1) {
+                        outerActivity.setCommentRate(superComment.getId(), 0);
+                        superComment.setUserGrade(outerActivity.getCommentGrades((int) superComment.getId()).getUserGrade());
+                        cm.thumbDown.setImageResource(R.drawable.ic_thumb_down_grey600_18dp);
+                        cm.ratingField.setText(String.valueOf(superComment.getGradeNumber() + superComment.getUserGrade()));
+                    } else {
+                        outerActivity.setCommentRate(superComment.getId(), -1);
+                        superComment.setUserGrade(outerActivity.getCommentGrades((int) superComment.getId()).getUserGrade());
+                        cm.thumbUp.setImageResource(R.drawable.ic_thumb_up_grey600_18dp);
+                        cm.thumbDown.setImageResource(R.drawable.ic_thumb_down_black_18dp);
+                        cm.ratingField.setText(String.valueOf(superComment.getGradeNumber() + superComment.getUserGrade()));
+                    }
+                }
+            });
+
         }
     }
 
