@@ -5,14 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class FeedPostLoaderObserver extends BroadcastReceiver {
+public class PostByTagLoaderObserver extends BroadcastReceiver {
 
-    public static final String POST_UPDATED_INTENT = "ua.org.javatraining.automessenger.app.loaders.POST_UPDATED";
+    public static final String POST_UPDATED_INTENT = "ua.org.javatraining.automessenger.app.loaders.POST_BY_TAG_UPDATED";
     public static final String LAST_POST_DATE = "ua.org.javatraining.automessenger.app.loaders.LAST_POST_DATE";
 
-    PostLoaderFeed loader;
+    PostLoaderByTag loader;
 
-    FeedPostLoaderObserver(PostLoaderFeed loader){
+    PostByTagLoaderObserver(PostLoaderByTag loader){
         this.loader = loader;
     }
 

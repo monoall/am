@@ -15,7 +15,6 @@ import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.loaders.PostLoaderByAuthor;
-import ua.org.javatraining.automessenger.app.loaders.PostLoaderFeed;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
@@ -28,10 +27,7 @@ public class NearbyFragment
     private static final int POST_LOADER_ID = 14;
     public static final int NEARBY_FRAGMENT = 3366;
 
-    private RecyclerView myRV;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLM;
-    private SwipeRefreshLayout refreshLayout;
     private List<FullPost> data = new ArrayList<FullPost>();
     private Loader<List<FullPost>> mLoader;
     private CallBacks activity;
@@ -79,7 +75,7 @@ public class NearbyFragment
         super.onViewCreated(view, savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.toolbar.setTitle(R.string.feed);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -115,8 +111,8 @@ public class NearbyFragment
     }
 
     private void initRecyclerView(View v) {
-        myRV = (RecyclerView) v.findViewById(R.id.posts_recyclerview);
-        myLM = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView myRV = (RecyclerView) v.findViewById(R.id.posts_recyclerview);
+        RecyclerView.LayoutManager myLM = new LinearLayoutManager(getActivity().getApplicationContext());
         myRV.setLayoutManager(myLM);
         myAdapter = new PostsAdapter(data, getActivity().getApplicationContext());
         myRV.setAdapter(myAdapter);

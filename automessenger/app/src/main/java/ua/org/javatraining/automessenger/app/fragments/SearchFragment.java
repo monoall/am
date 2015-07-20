@@ -12,10 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
-import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.adapters.TagAdapter;
 import ua.org.javatraining.automessenger.app.entities.Tag;
 import ua.org.javatraining.automessenger.app.services.DataSource;
@@ -29,11 +27,8 @@ public class SearchFragment extends Fragment {
     public static final int SEARCH_FRAGMENT = 4646468;
 
     private CallBacks activity;
-    private ImageButton searchButton;
     private EditText searchField;
-    private RecyclerView myRV;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLM;
     private DataSource source;
     private List<Tag> dataset;
     private SearchAsyncTask searchTask;
@@ -69,7 +64,7 @@ public class SearchFragment extends Fragment {
         initRecyclerView(view);
 
         searchField = (EditText) view.findViewById(R.id.search_field);
-        searchButton = (ImageButton) view.findViewById(R.id.go_search);
+        ImageButton searchButton = (ImageButton) view.findViewById(R.id.go_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,8 +118,8 @@ public class SearchFragment extends Fragment {
     }
 
     private void initRecyclerView(View v) {
-        myRV = (RecyclerView) v.findViewById(R.id.list);
-        myLM = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView myRV = (RecyclerView) v.findViewById(R.id.list);
+        RecyclerView.LayoutManager myLM = new LinearLayoutManager(getActivity().getApplicationContext());
         myRV.setLayoutManager(myLM);
         myAdapter = new TagAdapter(dataset, this);
         myRV.setAdapter(myAdapter);

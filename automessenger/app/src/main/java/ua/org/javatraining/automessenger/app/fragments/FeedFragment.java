@@ -1,21 +1,22 @@
 package ua.org.javatraining.automessenger.app.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.google.android.gms.cast.CastRemoteDisplayLocalService;
 import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.MainActivity;
+import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.loaders.PostLoaderFeed;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
@@ -31,13 +32,11 @@ public class FeedFragment
 
     private RecyclerView myRV;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLM;
-    private SwipeRefreshLayout refreshLayout;
     private List<FullPost> data = new ArrayList<FullPost>();
     private Loader<List<FullPost>> mLoader;
     private CallBacks activity;
 
-    public interface CallBacks{
+    public interface CallBacks {
         void setDrawerItemState(boolean isHighlighted, int title);
     }
 
@@ -54,13 +53,23 @@ public class FeedFragment
 
     @Override
     public Loader<List<FullPost>> onCreateLoader(int id, Bundle args) {
-        return new PostLoaderFeed(getActivity().getApplicationContext());
+        return new PostLoaderFeed(getActivity().getApplicationContext(), this);
+    }
+
+    //Spike
+    public void setData(List<FullPost> data){
+        this.data.clear();
+        this.data.addAll(data);
+        if (myAdapter != null) {
+            myAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<List<FullPost>> loader, List<FullPost> data) {
         this.data.clear();
         this.data.addAll(data);
+
         if (myAdapter != null) {
             myAdapter.notifyDataSetChanged();
         }
@@ -80,7 +89,7 @@ public class FeedFragment
         super.onViewCreated(view, savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.toolbar.setTitle(R.string.feed);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -117,10 +126,23 @@ public class FeedFragment
 
     private void initRecyclerView(View v) {
         myRV = (RecyclerView) v.findViewById(R.id.posts_recyclerview);
-        myLM = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView.LayoutManager myLM = new LinearLayoutManager(getActivity().getApplicationContext());
         myRV.setLayoutManager(myLM);
         myAdapter = new PostsAdapter(data, getActivity().getApplicationContext());
         myRV.setAdapter(myAdapter);
+
+        myRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (!myRV.canScrollVertically(1)) {
+                    Intent intent = new Intent(FeedPostLoaderObserver.POST_UPDATED_INTENT);
+                    intent.putExtra(FeedPostLoaderObserver.LAST_POST_DATE, data.get(data.size() - 1).getDate());
+                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                }
+            }
+        });
     }
 
 }

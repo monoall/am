@@ -31,7 +31,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private PostDetails outerActivity;
     private ImageLoader imageLoader = ImageLoader.getInstance();
 
-
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 

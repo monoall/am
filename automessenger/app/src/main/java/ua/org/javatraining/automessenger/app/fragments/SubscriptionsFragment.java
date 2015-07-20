@@ -28,10 +28,7 @@ public class SubscriptionsFragment
 
     private List<Subscription> data;
     private Loader mLoader;
-    private RecyclerView myRV;
     private RecyclerView.Adapter myAdapter;
-    private RecyclerView.LayoutManager myLM;
-    private SQLiteAdapter sqLiteAdapter;
     private SubscriptionService subscriptionService;
     private CallBacks activity;
 
@@ -61,7 +58,7 @@ public class SubscriptionsFragment
         super.onViewCreated(view, savedInstanceState);
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.toolbar.setTitle(R.string.subscriptions);
-        sqLiteAdapter = SQLiteAdapter.initInstance(getActivity());
+        SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(getActivity());
         subscriptionService = new SubscriptionService(sqLiteAdapter);
         data = new ArrayList<Subscription>();
         mLoader = getLoaderManager().initLoader(SUBSCRIPTION_LOADER_ID, null, this);
@@ -69,8 +66,8 @@ public class SubscriptionsFragment
     }
 
     private void initRV(View v) {
-        myRV = (RecyclerView) v.findViewById(R.id.subscription_recyclerview);
-        myLM = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView myRV = (RecyclerView) v.findViewById(R.id.subscription_recyclerview);
+        RecyclerView.LayoutManager myLM = new LinearLayoutManager(getActivity().getApplicationContext());
         myRV.setLayoutManager(myLM);
         myAdapter = new SubscriptionAdapter(this, data);
         myRV.setAdapter(myAdapter);

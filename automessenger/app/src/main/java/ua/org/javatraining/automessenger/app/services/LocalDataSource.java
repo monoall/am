@@ -112,11 +112,9 @@ public class LocalDataSource implements DataSource {
     @Override
     public List<FullPost> getPostsFromSubscriptions(long timestamp) {
         List<Post> posts = postService.getPostsFromSubscribesNextPage(Authentication.getLastUser(context), timestamp);
-        List<FullPost> fPosts = null;
+        List<FullPost> fPosts = new ArrayList<FullPost>();
 
         if (posts != null) {
-            fPosts = new ArrayList<FullPost>();
-
             for (Post p : posts) {
                 FullPost fPost = new FullPost(p);
                 Photo photo = photoService.getPhoto((int) p.getId());
@@ -171,10 +169,9 @@ public class LocalDataSource implements DataSource {
     @Override
     public List<FullPost> getPostsByTagName(String tagName, long timestamp) {
         List<Post> posts = postService.getPostsByTagNextPage(tagName, timestamp);
-        List<FullPost> fPosts = null;
+        List<FullPost> fPosts = new ArrayList<FullPost>();
 
         if (posts != null) {
-            fPosts = new ArrayList<FullPost>();
 
             for (Post p : posts) {
                 FullPost fPost = new FullPost(p);
@@ -263,7 +260,8 @@ public class LocalDataSource implements DataSource {
             superComments.add(sc);
         }
 
-        return superComments;    }
+        return superComments;
+    }
 
     @Override
     public long addComment(Comment comment) {
