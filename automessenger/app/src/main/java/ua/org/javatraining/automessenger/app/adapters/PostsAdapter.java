@@ -94,7 +94,9 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemHolder.date.setText(DateFormatUtil.toReadable(context, fullPost.getDate()));
             itemHolder.tag.setText(fullPost.getTag());
             itemHolder.commentNumber.setText(Integer.toString(fullPost.getCommentCount()));
-            Log.i("mytag", "onBindViewHolder " + fullPost.getPhotos().get(0));
+            Log.i("mytag", "onBindViewHolder, loc1 = " + fullPost.getLocCountry());
+            Log.i("mytag", "onBindViewHolder, loc2 = " + fullPost.getLocAdminArea());
+            Log.i("mytag", "onBindViewHolder, loc3 = " + fullPost.getLocRegion());
             imageLoader.displayImage(fullPost.getPhotos().get(0), itemHolder.photo);
 
             itemHolder.frame.setOnClickListener(new View.OnClickListener() {

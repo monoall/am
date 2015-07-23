@@ -10,6 +10,33 @@ public class Post {
     private String postLocation;
     private String nameUser;
     private String nameTag;
+    private String locCountry;
+    private String locAdminArea;
+    private String locRegion;
+
+    public String getLocCountry() {
+        return locCountry;
+    }
+
+    public void setLocCountry(String locCountry) {
+        this.locCountry = locCountry;
+    }
+
+    public String getLocAdminArea() {
+        return locAdminArea;
+    }
+
+    public void setLocAdminArea(String locAdminArea) {
+        this.locAdminArea = locAdminArea;
+    }
+
+    public String getLocRegion() {
+        return locRegion;
+    }
+
+    public void setLocRegion(String locRegion) {
+        this.locRegion = locRegion;
+    }
 
     public long getId() {
         return id;

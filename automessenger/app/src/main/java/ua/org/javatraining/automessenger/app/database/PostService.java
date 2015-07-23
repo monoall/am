@@ -32,6 +32,9 @@ public class PostService implements DbConstants {
             cv.put(POST_LOCATION, post.getPostLocation());
             cv.put(USER_NAME, post.getNameUser());
             cv.put(TAG_NAME, post.getNameTag());
+            cv.put(LOC_COUNTRY, post.getLocCountry());
+            cv.put(LOC_ADMIN_AREA, post.getLocAdminArea());
+            cv.put(LOC_REGION, post.getLocRegion());
             id = sqLiteDatabase.insert(POST_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         } finally {
@@ -73,7 +76,7 @@ public class PostService implements DbConstants {
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if (count < 10) {
+            if (count < 4 ) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
@@ -91,7 +94,7 @@ public class PostService implements DbConstants {
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if (count < 10) {
+            if (count < 4) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
@@ -109,7 +112,7 @@ public class PostService implements DbConstants {
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if (count < 10) {
+            if (count < 4) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
@@ -142,7 +145,7 @@ public class PostService implements DbConstants {
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if (count < 10) {
+            if (count < 4) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
@@ -167,7 +170,7 @@ public class PostService implements DbConstants {
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if (count < 10) {
+            if (count < 4) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
@@ -185,7 +188,7 @@ public class PostService implements DbConstants {
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
-            if (count < 10) {
+            if (count < 4) {
                 Post post = buildPost(cursor);
                 al.add(post);
                 count++;
@@ -220,6 +223,9 @@ public class PostService implements DbConstants {
         p.setPostLocation(c.getString(c.getColumnIndex(POST_LOCATION)));
         p.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
         p.setNameTag(c.getString(c.getColumnIndex(TAG_NAME)));
+        p.setLocAdminArea(c.getString(c.getColumnIndex(LOC_ADMIN_AREA)));
+        p.setLocCountry(c.getString(c.getColumnIndex(LOC_COUNTRY)));
+        p.setLocRegion(c.getString(c.getColumnIndex(LOC_REGION)));
         return p;
     }
 

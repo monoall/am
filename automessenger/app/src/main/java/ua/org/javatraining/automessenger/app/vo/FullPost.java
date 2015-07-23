@@ -15,6 +15,9 @@ public class FullPost {
     private String postLocation;
     private String author;
     private String tag;
+    private String locCountry;
+    private String locAdminArea;
+    private String locRegion;
     private List<String> photos;
     private int commentCount;
 
@@ -26,8 +29,35 @@ public class FullPost {
             this.postLocation = post.getPostLocation();
             this.tag = post.getNameTag();
             this.text = post.getPostText();
+            this.locCountry = post.getLocCountry();
+            this.locAdminArea = post.getLocAdminArea();
+            this.locRegion = post.getLocRegion();
             photos = new ArrayList<String>();
         }
+    }
+
+    public String getLocCountry() {
+        return locCountry;
+    }
+
+    public void setLocCountry(String locCountry) {
+        this.locCountry = locCountry;
+    }
+
+    public String getLocAdminArea() {
+        return locAdminArea;
+    }
+
+    public void setLocAdminArea(String locAdminArea) {
+        this.locAdminArea = locAdminArea;
+    }
+
+    public String getLocRegion() {
+        return locRegion;
+    }
+
+    public void setLocRegion(String locRegion) {
+        this.locRegion = locRegion;
     }
 
     public void separate(Post post, Photo photo) {
@@ -38,6 +68,9 @@ public class FullPost {
             post.setPostLocation(this.postLocation);
             post.setNameUser(this.author);
             post.setNameTag(this.tag);
+            post.setLocCountry(this.locCountry);
+            post.setLocAdminArea(this.locAdminArea);
+            post.setLocRegion(this.locRegion);
         }
 
         if (photo != null) {

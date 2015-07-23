@@ -139,6 +139,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public List<FullPost> getPostsByLocation(ShortLocation shortLocation, long timestamp) {
+
         return null;
     }
 

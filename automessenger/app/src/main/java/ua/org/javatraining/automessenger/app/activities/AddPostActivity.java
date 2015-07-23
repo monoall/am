@@ -3,10 +3,13 @@ package ua.org.javatraining.automessenger.app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -16,35 +19,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.database.PhotoService;
-import ua.org.javatraining.automessenger.app.database.PostService;
-import ua.org.javatraining.automessenger.app.database.SQLiteAdapter;
-import ua.org.javatraining.automessenger.app.database.TagService;
-import ua.org.javatraining.automessenger.app.entities.Photo;
-import ua.org.javatraining.automessenger.app.entities.Post;
-import ua.org.javatraining.automessenger.app.entities.Tag;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
+import ua.org.javatraining.automessenger.app.vo.ShortLocation;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class AddPostActivity extends AppCompatActivity {
 
     private static final int SELECT_PHOTO = 100;
 
-    private String username;
-    private Toolbar toolbar;
     private ImageView imageView;
     private String photoURI;
     private EditText tagText;
     private EditText postText;
     private ImageLoader imageLoader = ImageLoader.getInstance();
     private DataSource source;
+    private Geocoder geocoder;
+    private ShortLocation sl = null;
+    private AddressLoader addressLoader;
+    private float[] loc;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -60,7 +59,7 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
         photoURI = getIntent().getStringExtra("photoPath");
-        username = getIntent().getStringExtra("username");
+        String username = getIntent().getStringExtra("username");
 
         imageView = (ImageView) findViewById(R.id.photo);
         tagText = (EditText) findViewById(R.id.car_number);
@@ -68,7 +67,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         source = DataSourceManager.getSource(this);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_add_post);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -78,7 +77,17 @@ public class AddPostActivity extends AppCompatActivity {
             }
         });
 
-        float testLoc[] = getLocation(null);
+        geocoder = new Geocoder(this, Locale.ENGLISH);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (addressLoader != null && !addressLoader.isCancelled()) {
+            addressLoader.cancel(true);
+        }
     }
 
     @Override
@@ -90,6 +99,14 @@ public class AddPostActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     photoURI = imageReturnedIntent.getData().toString();
                     Log.i("", photoURI);
+                    loc = getLocation(Uri.parse(photoURI));
+
+                    if (loc != null) {
+                        Log.i("mytag", "task executed");
+                        addressLoader = new AddressLoader();
+                        addressLoader.execute(loc);
+                    }
+
                     imageLoader.displayImage(photoURI, imageView);
                 }
         }
@@ -103,21 +120,26 @@ public class AddPostActivity extends AppCompatActivity {
 
 
     public void donePressed(MenuItem item) {
-        String tag = tagText.getText().toString().replaceAll(" ","").toUpperCase();
+        String tag = tagText.getText().toString().replaceAll(" ", "").toUpperCase();
         String text = postText.getText().toString();
 
         if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) {
             FullPost fPost = new FullPost();
 
-            float[] loc = getLocation(Uri.parse(photoURI));
             boolean statusGEO = loc != null;
 
             fPost.setText(text);
             fPost.setTag(tag);
             fPost.setDate(System.currentTimeMillis());
             fPost.getPhotos().add(photoURI);
-            if (statusGEO) fPost.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
-
+            if (statusGEO) {
+                fPost.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
+                if (sl != null) {
+                    fPost.setLocCountry(sl.getCountry());
+                    fPost.setLocAdminArea(sl.getAdminArea());
+                    fPost.setLocRegion(sl.getSubAdminArea());
+                }
+            }
             source.addPost(fPost);
 
             onBackPressed();
@@ -156,6 +178,40 @@ public class AddPostActivity extends AppCompatActivity {
         }
 
         return result;
+    }
+
+    private class AddressLoader extends AsyncTask<float[], Void, ShortLocation> {
+        @Override
+        protected ShortLocation doInBackground(float[]... params) {
+            ShortLocation loc = null;
+            try {
+                loc = new ShortLocation();
+                Address address = geocoder.getFromLocation(params[0][0], params[0][1], 1).get(0);
+                loc.setCountry(address.getCountryName());
+                Log.i("mytag", "AddPostActivity, donePressed, LocCountry = " + loc.getCountry());
+                loc.setAdminArea(address.getAdminArea());
+                Log.i("mytag", "AddPostActivity, donePressed, LocAdminArea = " + loc.getAdminArea());
+                if (address.getSubLocality() != null) {
+                    loc.setSubAdminArea(address.getSubAdminArea());
+                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getSubAdminArea());
+                } else {
+                    loc.setSubAdminArea(address.getLocality());
+                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getSubAdminArea());
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return loc;
+        }
+
+        @Override
+        protected void onPostExecute(ShortLocation shortLocation) {
+            super.onPostExecute(shortLocation);
+            sl = shortLocation;
+        }
     }
 
 }

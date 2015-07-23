@@ -7,7 +7,7 @@ public interface DbConstants {
     String USER_CREATE = "create table IF NOT EXISTS USER (USER_NAME text primary key not null unique);";
     String TAG_CREATE = "create table IF NOT EXISTS TAG (TAG_NAME text primary key);";
     String SUBSCRIPTION_CREATE = "create table IF NOT EXISTS SUBSCRIPTION (ID integer primary key not null unique, USER_NAME text, TAG_NAME text, CONSTRAINT fk_subscription_user_parent FOREIGN KEY (USER_NAME) REFERENCES user (USER_NAME) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT fk_subscription_tag_parent FOREIGN KEY (TAG_NAME) REFERENCES tag (TAG_NAME) ON DELETE CASCADE ON UPDATE CASCADE);";
-    String POST_CREATE = "create table IF NOT EXISTS POST (ID integer primary key autoincrement not null unique, POST_TEXT text, POST_DATE integer, POST_LOCATION text, USER_NAME text, TAG_NAME text, CONSTRAINT fk_post_user_parent\n" +
+    String POST_CREATE = "create table IF NOT EXISTS POST (ID integer primary key autoincrement not null unique, POST_TEXT text, POST_DATE integer, POST_LOCATION text, USER_NAME text, TAG_NAME text, LOC_COUNTRY text, LOC_ADMIN_AREA text, LOC_REGION text, CONSTRAINT fk_post_user_parent\n" +
             "\tFOREIGN KEY (USER_NAME)\n" +
             "\tREFERENCES USER (USER_NAME)\n" +
             "\t\t ON DELETE CASCADE\n" +
@@ -68,6 +68,9 @@ public interface DbConstants {
     String POST_TEXT = "POST_TEXT";
     String POST_DATE = "POST_DATE";
     String POST_LOCATION = "POST_LOCATION";
+    String LOC_COUNTRY = "LOC_COUNTRY";
+    String LOC_ADMIN_AREA = "LOC_ADMIN_AREA";
+    String LOC_REGION = "LOC_REGION";
 
     String COMMENT_TABLE = "COMMENT";
     String COMMENT_DATE = "COMMENT_DATE";
