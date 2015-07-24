@@ -128,8 +128,7 @@ public class PostService implements DbConstants {
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_POST_BY_ID, new String[]{Long.toString(postID)});
         cursor.moveToFirst();
-        Post post = buildPost(cursor);
-        return post;
+        return buildPost(cursor);
     }
 
     /**
@@ -185,6 +184,114 @@ public class PostService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_ALL_POST_BY_TAG_NAME_NEXT_PAGE, new String[]{tagName, Long.toString(timestamp)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 4) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public ArrayList<Post> getPostsByLocationWithOneWord(String country) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POSTS_BY_LOCATION_ONE_WORD, new String[]{country});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 4) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public ArrayList<Post> getPostsByLocationWithTwoWords(String country, String adminArea) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POSTS_BY_LOCATION_TWO_WORDS, new String[]{country, adminArea});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 4) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public ArrayList<Post> getPostsByLocationWithThreeWords(String country, String adminArea, String  region) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POSTS_BY_LOCATION_THREE_WORDS, new String[]{country, adminArea, region});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 4) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public ArrayList<Post> getPostsByLocationWithOneWordNextPage(String country, long timestamp) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POSTS_BY_LOCATION_ONE_WORD_NEXT_PAGE, new String[]{country, String.valueOf(timestamp)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 4) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public ArrayList<Post> getPostsByLocationWithTwoWordsNextPage(String country, String adminArea, long timestamp) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POSTS_BY_LOCATION_TWO_WORDS_NEXT_PAGE, new String[]{country, adminArea, String.valueOf(timestamp)});
+        ArrayList<Post> al = new ArrayList<Post>();
+        int count = 0;
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            if (count < 4) {
+                Post post = buildPost(cursor);
+                al.add(post);
+                count++;
+            } else {
+                break;
+            }
+        }
+        return al;
+    }
+
+    public ArrayList<Post> getPostsByLocationWithThreeWordsNextPage(String country, String adminArea, String  region, long timestamp) {
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_POSTS_BY_LOCATION_THREE_WORDS_NEXT_PAGE, new String[]{country, adminArea, region, String.valueOf(timestamp)});
         ArrayList<Post> al = new ArrayList<Post>();
         int count = 0;
         for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {

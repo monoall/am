@@ -95,6 +95,12 @@ public interface DbConstants {
             " SELECT " + TAG_NAME + " FROM " + SUBSCRIPTION_TABLE + " WHERE " + USER_NAME + " = ? )";
     String QUERY_POST_BY_SUBSCRIPTIONS_NEXT_PAGE = "SELECT * FROM " + POST_TABLE + " WHERE " + USER_NAME + " = ? AND " + TAG_NAME + " IN (" +
             " SELECT " + TAG_NAME + " FROM " + SUBSCRIPTION_TABLE + " WHERE " + USER_NAME + " = ? ) AND " + POST_DATE + " < ?";
+    String QUERY_POSTS_BY_LOCATION_ONE_WORD = "SELECT * FROM " + POST_TABLE + " WHERE " + LOC_COUNTRY + " = ?";
+    String QUERY_POSTS_BY_LOCATION_TWO_WORDS = "SELECT * FROM " + POST_TABLE + " WHERE " + LOC_COUNTRY + " = ? AND " + LOC_ADMIN_AREA + " = ?";
+    String QUERY_POSTS_BY_LOCATION_THREE_WORDS = "SELECT * FROM " + POST_TABLE + " WHERE " + LOC_COUNTRY + " = ? AND " + LOC_ADMIN_AREA + " = ? AND " + LOC_REGION + " = ?";
+    String QUERY_POSTS_BY_LOCATION_ONE_WORD_NEXT_PAGE = "SELECT * FROM " + POST_TABLE + " WHERE " + LOC_COUNTRY + " = ? AND " + POST_DATE + " < ?";
+    String QUERY_POSTS_BY_LOCATION_TWO_WORDS_NEXT_PAGE = "SELECT * FROM " + POST_TABLE + " WHERE " + LOC_COUNTRY + " = ? AND " + LOC_ADMIN_AREA + " = ? AND " + POST_DATE + " < ?";
+    String QUERY_POSTS_BY_LOCATION_THREE_WORDS_NEXT_PAGE = "SELECT * FROM " + POST_TABLE + " WHERE " + LOC_COUNTRY + " = ? AND " + LOC_ADMIN_AREA + " = ? AND " + LOC_REGION + " = ? AND " + POST_DATE + " < ?";
     String QUERY_ALL_TAG_ID_BY_USER_NAME = "SELECT " + "*" + " from " + SUBSCRIPTION_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_ALL_POST_BY_USER_NAME_AND_TAG_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + USER_NAME + " = ?" + " and " + TAG_NAME + " = ?";
     String QUERY_ALL_POST_BY_TAG_NAME = "SELECT " + "*" + " from " + POST_TABLE + " where " + TAG_NAME + " = ?";

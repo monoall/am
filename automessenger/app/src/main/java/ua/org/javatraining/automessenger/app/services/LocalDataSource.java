@@ -133,14 +133,76 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public List<FullPost> getPostsByLocation(ShortLocation shortLocation) {
+        List<FullPost> fPosts = new ArrayList<FullPost>();
 
-        return null;
+        if (shortLocation != null) {
+            List<Post> posts;
+
+            if (shortLocation.getCountry().equals("")) {   //if ShortLocation class don't have even country return empty List
+                return fPosts;
+            } else if (shortLocation.getAdminArea().equals("")) { //if ShortLocation contain country but don't contain AdminArea we search only by country
+                posts = postService.getPostsByLocationWithOneWord(shortLocation.getCountry());
+            } else if (shortLocation.getRegion().equals("")) { //if ShortLocation contain country and AdminArea but don't contain Region we search only by country and AdminArea
+                posts = postService.getPostsByLocationWithTwoWords(shortLocation.getCountry(), shortLocation.getAdminArea());
+            } else { //ShortLocation have all fields, make full search
+                posts = postService.getPostsByLocationWithThreeWords(shortLocation.getCountry(), shortLocation.getAdminArea(), shortLocation.getRegion());
+            }
+
+            if (posts != null) {
+                for (Post p : posts) {
+                    FullPost fPost = new FullPost(p);
+                    Photo photo = photoService.getPhoto((int) p.getId());
+                    fPost.setCommentCount(commentService.getCommentCountByPostID((int) p.getId()));
+
+                    if (photo != null) {
+                        fPost.getPhotos().add(photo.getPhotoLink());
+                    }
+
+                    fPosts.add(fPost);
+                }
+            }
+
+            return fPosts;
+        }
+
+        return fPosts;
     }
 
     @Override
     public List<FullPost> getPostsByLocation(ShortLocation shortLocation, long timestamp) {
+        List<FullPost> fPosts = new ArrayList<FullPost>();
 
-        return null;
+        if (shortLocation != null) {
+            List<Post> posts;
+
+            if (shortLocation.getCountry().equals("")) {   //if ShortLocation class don't have even country return empty List
+                return fPosts;
+            } else if (shortLocation.getAdminArea().equals("")) { //if ShortLocation contain country but don't contain AdminArea we search only by country
+                posts = postService.getPostsByLocationWithOneWordNextPage(shortLocation.getCountry(), timestamp);
+            } else if (shortLocation.getRegion().equals("")) { //if ShortLocation contain country and AdminArea but don't contain Region we search only by country and AdminArea
+                posts = postService.getPostsByLocationWithTwoWordsNextPage(shortLocation.getCountry(), shortLocation.getAdminArea(), timestamp);
+            } else { //ShortLocation have all fields, make full search
+                posts = postService.getPostsByLocationWithThreeWordsNextPage(shortLocation.getCountry(), shortLocation.getAdminArea(), shortLocation.getRegion(), timestamp);
+            }
+
+            if (posts != null) {
+                for (Post p : posts) {
+                    FullPost fPost = new FullPost(p);
+                    Photo photo = photoService.getPhoto((int) p.getId());
+                    fPost.setCommentCount(commentService.getCommentCountByPostID((int) p.getId()));
+
+                    if (photo != null) {
+                        fPost.getPhotos().add(photo.getPhotoLink());
+                    }
+
+                    fPosts.add(fPost);
+                }
+            }
+
+            return fPosts;
+        }
+
+        return fPosts;
     }
 
     @Override
@@ -223,9 +285,9 @@ public class LocalDataSource implements DataSource {
             ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
 
             for (GradeComment gc : cGrades) {
-                if(gc.getNameUser().equals(username)){
+                if (gc.getNameUser().equals(username)) {
                     sc.setUserGrade(gc.getGrade());
-                }else{
+                } else {
                     grade += gc.getGrade();
                 }
             }
@@ -250,9 +312,9 @@ public class LocalDataSource implements DataSource {
             ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
 
             for (GradeComment gc : cGrades) {
-                if(gc.getNameUser().equals(username)){
+                if (gc.getNameUser().equals(username)) {
                     sc.setUserGrade(gc.getGrade());
-                }else{
+                } else {
                     grade += gc.getGrade();
                 }
             }

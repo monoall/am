@@ -1,16 +1,16 @@
 package ua.org.javatraining.automessenger.app.vo;
 
 public class ShortLocation {
-    private String country;
-    private String adminArea;
-    private String subAdminArea;
+    private String country = "";
+    private String adminArea = "";
+    private String region = "";
 
-    public String getSubAdminArea() {
-        return subAdminArea;
+    public String getRegion() {
+        return region;
     }
 
-    public void setSubAdminArea(String subAdminArea) {
-        this.subAdminArea = subAdminArea;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public String getAdminArea() {

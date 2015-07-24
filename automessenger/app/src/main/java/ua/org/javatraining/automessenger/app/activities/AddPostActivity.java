@@ -137,7 +137,7 @@ public class AddPostActivity extends AppCompatActivity {
                 if (sl != null) {
                     fPost.setLocCountry(sl.getCountry());
                     fPost.setLocAdminArea(sl.getAdminArea());
-                    fPost.setLocRegion(sl.getSubAdminArea());
+                    fPost.setLocRegion(sl.getRegion());
                 }
             }
             source.addPost(fPost);
@@ -192,11 +192,11 @@ public class AddPostActivity extends AppCompatActivity {
                 loc.setAdminArea(address.getAdminArea());
                 Log.i("mytag", "AddPostActivity, donePressed, LocAdminArea = " + loc.getAdminArea());
                 if (address.getSubLocality() != null) {
-                    loc.setSubAdminArea(address.getSubAdminArea());
-                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getSubAdminArea());
+                    loc.setRegion(address.getSubAdminArea());
+                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getRegion());
                 } else {
-                    loc.setSubAdminArea(address.getLocality());
-                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getSubAdminArea());
+                    loc.setRegion(address.getLocality());
+                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getRegion());
                 }
 
             } catch (IOException e) {
