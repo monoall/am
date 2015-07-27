@@ -34,6 +34,7 @@ import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.services.GoogleDriveAuth;
+import ua.org.javatraining.automessenger.app.services.InsertTask;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity
         extends
@@ -265,7 +267,8 @@ public class MainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
-            uploadPhotoToDrive(photoUri);
+            String photoUrl = uploadPhotoToDrive(photoUri);
+            Log.i("mt tag", "photoUrl " + photoUrl);
             Intent intent = new Intent(this, AddPostActivity.class);
             intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
@@ -342,7 +345,17 @@ public class MainActivity
     private String uploadPhotoToDrive(Uri uri){
         GoogleDriveAuth gauth = new GoogleDriveAuth();
         Drive drive = gauth.init(this);
-        return gauth.insertPhoto(uri, drive);
+        InsertTask it = new InsertTask(drive, uri);
+        it.execute();
+        String photoUrl = "url";
+        try {
+            photoUrl = it.get();
+        } catch (InterruptedException e) {
+            System.out.println("Error " + e);
+        } catch (ExecutionException e) {
+            System.out.println("Error " + e);
+        }
+        return photoUrl;
     }
 
 }

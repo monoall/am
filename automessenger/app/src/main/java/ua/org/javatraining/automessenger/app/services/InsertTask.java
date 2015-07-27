@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.Permission;
 
 import java.io.IOException;
 
@@ -52,7 +51,7 @@ public class InsertTask extends AsyncTask<Void, Void, String> {
         } catch (NullPointerException e) {
         }
 
-        Permission newPermission = new Permission();
+        /*Permission newPermission = new Permission();
         newPermission.setValue("domain");
         newPermission.setType("group");
         newPermission.setRole("reader");
@@ -61,7 +60,7 @@ public class InsertTask extends AsyncTask<Void, Void, String> {
             System.out.println("Done Shared successfully!!!!!!");
         } catch (IOException e) {
             System.out.println("An error occurred: " + e);
-        }
+        }*/
 
         return file.getDownloadUrl();
     }
