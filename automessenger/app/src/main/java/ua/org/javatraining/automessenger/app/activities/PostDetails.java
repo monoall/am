@@ -16,10 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
-import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.entities.*;
+import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
+import ua.org.javatraining.automessenger.app.entities.Comment;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
@@ -147,7 +150,7 @@ public class PostDetails
         });
     }
 
-    public void setPostRate(int rate){
+    public void setPostRate(int rate) {
         source.setCurrentUserPostGrade(postId, rate);
     }
 
@@ -156,11 +159,11 @@ public class PostDetails
         source.setCurrentUserCommentGrade(commentID, grade);
     }
 
-    public CommentGrades getCommentGrades(int id){
+    public CommentGrades getCommentGrades(int id) {
         return source.getCommentGrades(id);
     }
 
-    public PostGrades getPostGrades(){
+    public PostGrades getPostGrades() {
         return source.getPostGrades(postId);
     }
 
@@ -169,7 +172,7 @@ public class PostDetails
             subscription = source.addSubscription(fullPost.getTag());
             if (!(subscription.getId() >= 1)) {
                 subscription = null;
-            }else{
+            } else {
                 item.setIcon(R.drawable.ic_star_rate_white_24dp);
             }
 

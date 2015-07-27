@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.api.services.drive.Drive;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -32,7 +33,7 @@ import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
-import ua.org.javatraining.automessenger.app.services.SendToDriveService;
+import ua.org.javatraining.automessenger.app.services.GoogleDriveAuth;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -65,6 +66,7 @@ public class MainActivity
     private DataSource source;
     private LocalBroadcastManager localBroadcastManager;
     private String tag;
+    private Uri photoUri;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -239,8 +241,9 @@ public class MainActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            photoUri = Uri.fromFile(photoFile);
             if (photoFile != null) {
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(cameraIntent, TAKE_PHOTO_REQUEST);
             }
         }
@@ -262,15 +265,12 @@ public class MainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
-            Intent serviceIntent = new Intent(this, SendToDriveService.class);
-            Log.i("log", "onActivityResult photopath " + photoPath);
-            serviceIntent.putExtra(SendToDriveService.PHOTOPATH, photoPath);
-            startService(serviceIntent);
-
+            uploadPhotoToDrive(photoUri);
             Intent intent = new Intent(this, AddPostActivity.class);
             intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
             startActivity(intent);
+
         }
         if (requestCode == Authentication.ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
@@ -333,5 +333,16 @@ public class MainActivity
             }
         }
     }
-   
+
+    /**
+     * Upload photo to google Drive
+     * @param uri uri of the photo to upload
+     * @return global uri of the uploaded photo
+     */
+    private String uploadPhotoToDrive(Uri uri){
+        GoogleDriveAuth gauth = new GoogleDriveAuth();
+        Drive drive = gauth.init(this);
+        return gauth.insertPhoto(uri, drive);
+    }
+
 }
