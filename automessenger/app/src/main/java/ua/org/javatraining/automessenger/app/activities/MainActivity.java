@@ -273,7 +273,6 @@ public class MainActivity
             intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
             startActivity(intent);
-
         }
         if (requestCode == Authentication.ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);

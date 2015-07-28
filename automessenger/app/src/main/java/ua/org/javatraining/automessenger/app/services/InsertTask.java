@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.Permission;
 
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ public class InsertTask extends AsyncTask<Void, Void, String> {
     public String insertPhoto(Uri filePath, Drive mService){
         com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
         body.setTitle("Title");
-        body.setDescription("Phhoto");
+        body.setDescription("Photo");
 
         Log.i("log", "realPath " + filePath.getPath());
         java.io.File fileContent = new java.io.File(filePath.getPath());
@@ -47,25 +48,21 @@ public class InsertTask extends AsyncTask<Void, Void, String> {
             System.out.println("Error " + e);
         }
         try {
-            System.out.println("downloadURL " + file.getDownloadUrl());
+            System.out.println("downloadURL " + file.getWebContentLink());
         } catch (NullPointerException e) {
         }
 
-        /*Permission newPermission = new Permission();
-        newPermission.setValue("domain");
-        newPermission.setType("group");
+        Permission newPermission = new Permission();
+        newPermission.setType("anyone");
         newPermission.setRole("reader");
         try {
             mService.permissions().insert(file.getId(), newPermission).execute();
             System.out.println("Done Shared successfully!!!!!!");
         } catch (IOException e) {
             System.out.println("An error occurred: " + e);
-        }*/
-
-        return file.getDownloadUrl();
+        }
+        String[] res = file.getWebContentLink().split("&");
+        return res[0];
     }
-
-
-
 
 }
