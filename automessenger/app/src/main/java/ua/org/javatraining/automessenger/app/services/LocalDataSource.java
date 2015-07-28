@@ -12,6 +12,7 @@ import java.util.List;
 
 public class LocalDataSource implements DataSource {
 
+    private UploadQueueService queueService;
     private CommentService commentService;
     private PostService postService;
     private PhotoService photoService;
@@ -24,6 +25,7 @@ public class LocalDataSource implements DataSource {
 
     public LocalDataSource(Context context) {
         SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(context);
+        queueService = new UploadQueueService(sqLiteAdapter);
         commentService = new CommentService(sqLiteAdapter);
         postService = new PostService(sqLiteAdapter);
         photoService = new PhotoService(sqLiteAdapter);
@@ -37,10 +39,11 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public void setUser(String username) {
-        if (userService.getUser(username) == null) {
+        if (!username.equals("") && userService.getUser(username) == null) {
             User user = new User();
             user.setName(username);
             userService.insertUser(user);
+            queueService.insertInQueue(user);
         }
     }
 
@@ -269,7 +272,11 @@ public class LocalDataSource implements DataSource {
         photo.setIdPost((int) postID);
         photoService.insertPhoto(photo);
 
-        return postID;
+        if (postID != 0){
+            queueService.insertInQueue(post);
+        }
+
+            return postID;
     }
 
     @Override
@@ -330,6 +337,7 @@ public class LocalDataSource implements DataSource {
     public long addComment(Comment comment) {
         if (comment != null) {
             comment.setNameUser(Authentication.getLastUser(context));
+            queueService.insertInQueue(comment);
             return commentService.insertComment(comment).getId();
         }
         return 0;
@@ -348,15 +356,16 @@ public class LocalDataSource implements DataSource {
         Subscription subscription = new Subscription();
         subscription.setNameUser(Authentication.getLastUser(context));
         subscription.setNameTag(tag);
-
+        queueService.insertInQueue(subscription);
         return subscriptionService.insertSubscription(subscription);
     }
 
     @Override
     public void removeSubscription(Subscription subscription) {
-        if (subscription != null)
+        if (subscription != null) {
             subscriptionService.deleteSubscription(subscription);
-
+            queueService.insertInQueueForDelete(subscription);
+        }
     }
 
     @Override
@@ -409,6 +418,8 @@ public class LocalDataSource implements DataSource {
         } else {
             gradePostService.updateGradePost(newGradePost);
         }
+
+        queueService.insertInQueue(newGradePost);
     }
 
     @Override
@@ -457,6 +468,8 @@ public class LocalDataSource implements DataSource {
         } else {
             gradeCommentService.updateGradeComment(newGradeComment);
         }
+
+        queueService.insertInQueue(newGradeComment);
     }
 
     @Override

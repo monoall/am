@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.entities;
 
-public class Post {
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+
+public class Post implements UploadQueueItemInterface{
 
     public static final String POST_ID = "ua.org.javatraining.automessenger.app.entityes.POST_ID";
 
@@ -86,4 +88,13 @@ public class Post {
         this.postText = postText;
     }
 
+    @Override
+    public String getIdentifier() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public int getDataTpe() {
+        return UploadQueueService.POST;
+    }
 }

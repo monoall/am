@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.entities;
 
-public class GradePost {
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+
+public class GradePost implements UploadQueueItemInterface {
 
     private long id;
     private String nameUser;
@@ -45,5 +47,15 @@ public class GradePost {
 
     public void decreaseGrade(){
         grade--;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public int getDataTpe() {
+        return UploadQueueService.POST_GRADE;
     }
 }

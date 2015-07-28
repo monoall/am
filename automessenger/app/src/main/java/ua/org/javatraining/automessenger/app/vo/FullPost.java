@@ -1,13 +1,14 @@
 package ua.org.javatraining.automessenger.app.vo;
 
-import android.util.Log;
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+import ua.org.javatraining.automessenger.app.entities.UploadQueueItemInterface;
 import ua.org.javatraining.automessenger.app.entities.Photo;
 import ua.org.javatraining.automessenger.app.entities.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FullPost {
+public class FullPost{
 
     private long postID;
     private String text;
@@ -145,4 +146,5 @@ public class FullPost {
     public void setCommentCount(int commentCount) {
         this.commentCount = commentCount;
     }
+
 }

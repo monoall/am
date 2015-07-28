@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.entities;
 
-public class Subscription {
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+
+public class Subscription implements UploadQueueItemInterface {
 
     private long id;
     private String nameUser;
@@ -33,5 +35,15 @@ public class Subscription {
     @Override
     public String toString() {
         return nameTag;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public int getDataTpe() {
+        return UploadQueueService.SUBSCRIPTION;
     }
 }

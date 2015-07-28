@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.entities;
 
-public class Comment {
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+
+public class Comment implements UploadQueueItemInterface {
 
     private long id;
     private long commentDate;
@@ -46,5 +48,15 @@ public class Comment {
 
     public void setIdPost(long idPost) {
         this.idPost = idPost;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public int getDataTpe() {
+        return UploadQueueService.COMMENT;
     }
 }

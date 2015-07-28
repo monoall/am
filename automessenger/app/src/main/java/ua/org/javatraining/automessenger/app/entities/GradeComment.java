@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.entities;
 
-public class GradeComment {
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+
+public class GradeComment implements UploadQueueItemInterface {
 
     private long id;
     private String nameUser;
@@ -38,6 +40,7 @@ public class GradeComment {
     public void setGrade(int grade){
         this.grade = grade;
     }
+
     public void increaseGrade(){
         grade++;
     }
@@ -46,4 +49,13 @@ public class GradeComment {
         grade--;
     }
 
+    @Override
+    public String getIdentifier() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public int getDataTpe() {
+        return UploadQueueService.COMMENT_GRADE;
+    }
 }

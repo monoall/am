@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.entities;
 
-public class User  {
+import ua.org.javatraining.automessenger.app.database.UploadQueueService;
+
+public class User implements UploadQueueItemInterface {
 
     private String name;
 
@@ -12,4 +14,13 @@ public class User  {
         this.name = name;
     }
 
+    @Override
+    public String getIdentifier() {
+        return name;
+    }
+
+    @Override
+    public int getDataTpe() {
+        return UploadQueueService.USER;
+    }
 }
