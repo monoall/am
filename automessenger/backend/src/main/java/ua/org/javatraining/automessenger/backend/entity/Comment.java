@@ -21,12 +21,12 @@ public class Comment {
     @Column(name = "comment_text")
     private String commentText;
 
-    @Column(name = "username_user")
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User userId;
 
 
-    @Column(name = "id_post")
+    @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Post postId;
 

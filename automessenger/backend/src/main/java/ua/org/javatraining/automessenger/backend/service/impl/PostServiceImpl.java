@@ -1,10 +1,10 @@
-package ua.org.javatraining.automessenger.backend.test.service.impl;
+package ua.org.javatraining.automessenger.backend.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.org.javatraining.automessenger.backend.entity.Post;
 import ua.org.javatraining.automessenger.backend.repository.PostRepository;
-import ua.org.javatraining.automessenger.backend.test.service.PostService;
+import ua.org.javatraining.automessenger.backend.service.PostService;
 
 import java.util.List;
 

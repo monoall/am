@@ -13,11 +13,11 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "username_user")
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User userId;
 
-    @Column(name = "tag_name_tag")
+    @JoinColumn(name = "tag_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Tag tagId;
 

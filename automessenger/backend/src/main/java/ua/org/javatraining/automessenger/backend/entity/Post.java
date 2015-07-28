@@ -23,7 +23,7 @@ public class Post {
     @Column(name = "post_location")
     private String postLocation;
 
-    @Column(name = "username_user")
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User userId;
 

@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.backend.test.config;
+package ua.org.javatraining.automessenger.backend.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
