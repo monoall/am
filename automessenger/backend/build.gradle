@@ -1,5 +1,17 @@
-apply plugin: 'java'
+apply plugin: 'war'
 
 repositories {
     mavenCentral()
+}
+
+dependencies{
+    compile 'org.springframework:spring-webmvc:4.1.7.RELEASE'
+    compile 'org.hibernate:hibernate-entitymanager:5.0.0.CR1'
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'org.springframework.data:spring-data-jpa:1.8.1.RELEASE'
+    compile 'postgresql:postgresql:9.1-901-1.jdbc4'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.springframework:spring-test:4.1.7.RELEASE'
+
 }
