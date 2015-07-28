@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.backend.test.config;
+package ua.org.javatraining.automessenger.backend.config;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.context.annotation.Bean;

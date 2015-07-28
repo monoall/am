@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.backend.test.service;
+package ua.org.javatraining.automessenger.backend.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -6,7 +6,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import ua.org.javatraining.automessenger.backend.test.config.TestDataBaseConfig;
+import ua.org.javatraining.automessenger.backend.config.TestDataBaseConfig;
 import ua.org.javatraining.automessenger.backend.test.util.UserUtil;
 
 import javax.annotation.Resource;

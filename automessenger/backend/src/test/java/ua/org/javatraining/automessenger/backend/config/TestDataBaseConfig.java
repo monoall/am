@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.backend.test.config;
+package ua.org.javatraining.automessenger.backend.config;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,7 @@ public class TestDataBaseConfig {
     private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.PostgreSQL9Dialect";
     private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
     private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ua.org.javatraining.automessenger.backend.entity";
-    private static final String PROPERTY_NAME_HIBERNATE_HBM2DDL_AUTO = "create-drop";
+    private static final String PROPERTY_NAME_HIBERNATE_HBM2DDL_AUTO = "create";
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {

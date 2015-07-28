@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.backend.test.service;
+package ua.org.javatraining.automessenger.backend.service;
 
 import ua.org.javatraining.automessenger.backend.entity.Subscription;
 

@@ -13,11 +13,11 @@ public class GradePost {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "id_comment")
+    @JoinColumn(name = "comment_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment commentId;
 
-    @Column(name = "username_user")
+    @JoinColumn(name = "username_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User userId;
 
