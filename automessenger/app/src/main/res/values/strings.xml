@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">automessenger</string>
+    <string name="app_name">Automessenger</string>
 
     <string name="feed">Feed</string>
     <string name="nearby">Nearby</string>

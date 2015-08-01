@@ -23,6 +23,7 @@ public class SQLiteAdapter extends SQLiteOpenHelper implements DbConstants {
         db.execSQL(GRADE_POST_CREATE);
         db.execSQL(GRADE_COMMENT_CREATE);
         db.execSQL(PHOTO_CREATE);
+        db.execSQL(UPLOAD_QUEUE_CREATE);
     }
 
     @Override

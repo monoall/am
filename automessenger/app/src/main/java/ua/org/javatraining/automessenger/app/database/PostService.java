@@ -30,11 +30,11 @@ public class PostService implements DbConstants {
             cv.put(POST_TEXT, post.getPostText());
             cv.put(POST_DATE, post.getPostDate());
             cv.put(POST_LOCATION, post.getPostLocation());
-            cv.put(USER_NAME, post.getNameUser());
-            cv.put(TAG_NAME, post.getNameTag());
-            cv.put(LOC_COUNTRY, post.getLocCountry());
-            cv.put(LOC_ADMIN_AREA, post.getLocAdminArea());
-            cv.put(LOC_REGION, post.getLocRegion());
+            cv.put(USER_NAME, post.getUserId());
+            cv.put(TAG_NAME, post.getTagName());
+            cv.put(LOC_COUNTRY, post.getLocationCountry());
+            cv.put(LOC_ADMIN_AREA, post.getLocationAdminArea());
+            cv.put(LOC_REGION, post.getLocationRegion());
             id = sqLiteDatabase.insert(POST_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         } finally {
@@ -315,7 +315,7 @@ public class PostService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         sqLiteDatabase.beginTransaction();
         try {
-            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?" + " and " + USER_NAME + " = ?", new String[]{post.getPostText(), post.getNameUser()});
+            sqLiteDatabase.delete(POST_TABLE, POST_TEXT + " = ?" + " and " + USER_NAME + " = ?", new String[]{post.getPostText(), post.getUserId()});
             sqLiteDatabase.setTransactionSuccessful();
         } finally {
             sqLiteDatabase.endTransaction();
@@ -328,11 +328,11 @@ public class PostService implements DbConstants {
         p.setPostText(c.getString(c.getColumnIndex(POST_TEXT)));
         p.setPostDate(c.getLong(c.getColumnIndex(POST_DATE)));
         p.setPostLocation(c.getString(c.getColumnIndex(POST_LOCATION)));
-        p.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
-        p.setNameTag(c.getString(c.getColumnIndex(TAG_NAME)));
-        p.setLocAdminArea(c.getString(c.getColumnIndex(LOC_ADMIN_AREA)));
-        p.setLocCountry(c.getString(c.getColumnIndex(LOC_COUNTRY)));
-        p.setLocRegion(c.getString(c.getColumnIndex(LOC_REGION)));
+        p.setUserId(c.getString(c.getColumnIndex(USER_NAME)));
+        p.setTagName(c.getString(c.getColumnIndex(TAG_NAME)));
+        p.setLocationAdminArea(c.getString(c.getColumnIndex(LOC_ADMIN_AREA)));
+        p.setLocationCountry(c.getString(c.getColumnIndex(LOC_COUNTRY)));
+        p.setLocationRegion(c.getString(c.getColumnIndex(LOC_REGION)));
         return p;
     }
 

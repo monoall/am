@@ -87,7 +87,7 @@ public class PostDetails
         List<Subscription> subs = source.getSubscriptions();
 
         for (Subscription s : subs) {
-            if (s.getNameTag().equals(fullPost.getTag())) {
+            if (s.getTagId().equals(fullPost.getTag())) {
                 subscription = s;
                 status = true;
                 break;
@@ -190,7 +190,7 @@ public class PostDetails
             Comment commentObj = new Comment();
             commentObj.setCommentDate(System.currentTimeMillis());
             commentObj.setCommentText(comment);
-            commentObj.setIdPost(postId);
+            commentObj.setPostId(postId);
             long id = source.addComment(commentObj);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(addCommentField.getWindowToken(), 0);

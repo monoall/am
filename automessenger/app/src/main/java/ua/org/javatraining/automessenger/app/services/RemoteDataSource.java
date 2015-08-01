@@ -1,11 +1,15 @@
 package ua.org.javatraining.automessenger.app.services;
 
+import android.content.Context;
 import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.vo.*;
 
 import java.util.List;
 
 public class RemoteDataSource implements DataSource {
+
+    public RemoteDataSource(Context context) {
+    }
 
     @Override
     public void setUser(String username) {

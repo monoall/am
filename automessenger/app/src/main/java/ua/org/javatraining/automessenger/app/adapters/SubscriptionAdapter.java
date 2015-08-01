@@ -46,7 +46,7 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
     public void onBindViewHolder(SubscriptionAdapter.ViewHolder holder, int position) {
         final int pos = position;
 
-        holder.text.setText(dataset.get(position).getNameTag());
+        holder.text.setText(dataset.get(position).getTagId());
 
         //Define action for delete button
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +60,7 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                parent.showPosts(dataset.get(pos).getNameTag());
+                parent.showPosts(dataset.get(pos).getTagId());
             }
         });
     }

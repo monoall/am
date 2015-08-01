@@ -1,13 +1,12 @@
 package ua.org.javatraining.automessenger.app.vo;
 
-import android.util.Log;
 import ua.org.javatraining.automessenger.app.entities.Photo;
 import ua.org.javatraining.automessenger.app.entities.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FullPost {
+public class FullPost{
 
     private long postID;
     private String text;
@@ -24,14 +23,14 @@ public class FullPost {
     public FullPost(Post post) {
         if (post != null) {
             this.postID = post.getId();
-            this.author = post.getNameUser();
+            this.author = post.getUserId();
             this.date = post.getPostDate();
             this.postLocation = post.getPostLocation();
-            this.tag = post.getNameTag();
+            this.tag = post.getTagName();
             this.text = post.getPostText();
-            this.locCountry = post.getLocCountry();
-            this.locAdminArea = post.getLocAdminArea();
-            this.locRegion = post.getLocRegion();
+            this.locCountry = post.getLocationCountry();
+            this.locAdminArea = post.getLocationAdminArea();
+            this.locRegion = post.getLocationRegion();
             photos = new ArrayList<String>();
         }
     }
@@ -66,11 +65,11 @@ public class FullPost {
             post.setPostText(this.text);
             post.setPostDate(this.date);
             post.setPostLocation(this.postLocation);
-            post.setNameUser(this.author);
-            post.setNameTag(this.tag);
-            post.setLocCountry(this.locCountry);
-            post.setLocAdminArea(this.locAdminArea);
-            post.setLocRegion(this.locRegion);
+            post.setUserId(this.author);
+            post.setTagName(this.tag);
+            post.setLocationCountry(this.locCountry);
+            post.setLocationAdminArea(this.locAdminArea);
+            post.setLocationRegion(this.locRegion);
         }
 
         if (photo != null) {
@@ -145,4 +144,5 @@ public class FullPost {
     public void setCommentCount(int commentCount) {
         this.commentCount = commentCount;
     }
+
 }

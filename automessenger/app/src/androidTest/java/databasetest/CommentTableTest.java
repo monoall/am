@@ -41,8 +41,8 @@ public class CommentTableTest extends DBITest implements DbConstants {
         Comment comment = new Comment();
         comment.setCommentDate(120315);
         comment.setCommentText("Comment Text");
-        comment.setNameUser("User");
-        comment.setIdPost(1);
+        comment.setUserId("User");
+        comment.setPostId(1);
         commentService.insertComment(comment);
         Cursor c = db.query(COMMENT_TABLE, null,
                 COMMENT_TEXT + " = ?", new String[]{"Comment Text"}, null, null, null);
@@ -62,8 +62,8 @@ public class CommentTableTest extends DBITest implements DbConstants {
         Comment comment = new Comment();
         comment.setCommentDate(130817);
         comment.setCommentText("text3");
-        comment.setNameUser("User");
-        comment.setIdPost(2);
+        comment.setUserId("User");
+        comment.setPostId(2);
     }
 
 

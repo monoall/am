@@ -19,16 +19,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import com.google.api.services.drive.Drive;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.services.GoogleDriveAuth;
+import ua.org.javatraining.automessenger.app.services.InsertTask;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.ShortLocation;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -128,6 +133,9 @@ public class AddPostActivity extends AppCompatActivity {
 
             boolean statusGEO = loc != null;
 
+            //todo problem here
+            uploadPhotoToDrive(Uri.parse(photoURI));
+
             fPost.setText(text);
             fPost.setTag(tag);
             fPost.setDate(System.currentTimeMillis());
@@ -191,7 +199,7 @@ public class AddPostActivity extends AppCompatActivity {
                 Log.i("mytag", "AddPostActivity, donePressed, LocCountry = " + loc.getCountry());
                 loc.setAdminArea(address.getAdminArea());
                 Log.i("mytag", "AddPostActivity, donePressed, LocAdminArea = " + loc.getAdminArea());
-                if (address.getSubLocality() != null) {
+                if (address.getSubAdminArea() != null) {
                     loc.setRegion(address.getSubAdminArea());
                     Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getRegion());
                 } else {
@@ -212,6 +220,30 @@ public class AddPostActivity extends AppCompatActivity {
             super.onPostExecute(shortLocation);
             sl = shortLocation;
         }
+    }
+
+    /**
+     * Upload photo to google Drive
+     * @param uri uri of the photo to upload
+     * @return global uri of the uploaded photo
+     */
+    private String uploadPhotoToDrive(Uri uri){
+        GoogleDriveAuth gauth = new GoogleDriveAuth();
+        Drive drive = gauth.init(this);
+        InsertTask it = new InsertTask(drive, uri);
+        it.execute();
+
+        String photoUrl = "url";
+        try {
+            photoUrl = it.get();
+        } catch (InterruptedException e) {
+            System.out.println("Error " + e);
+        } catch (ExecutionException e) {
+            System.out.println("Error " + e);
+        }
+        Log.i("mytag", "photoUrl " + photoUrl);
+
+        return photoUrl;
     }
 
 }

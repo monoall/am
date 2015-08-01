@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ua.org.javatraining.automessenger.app.entities.GradeComment;
-import ua.org.javatraining.automessenger.app.entities.GradePost;
 
 import java.util.ArrayList;
 
@@ -52,8 +51,8 @@ public class GradeCommentService implements DbConstants {
         sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
-            cv.put(USER_NAME, gradeComment.getNameUser());
-            cv.put(ID_COMMENT, gradeComment.getIdComment());
+            cv.put(USER_NAME, gradeComment.getUserId());
+            cv.put(ID_COMMENT, gradeComment.getCommentId());
             cv.put(GRADE, gradeComment.getGrade());
             id = sqLiteDatabase.insert(GRADE_COMMENT_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
@@ -76,7 +75,7 @@ public class GradeCommentService implements DbConstants {
         try{
             ContentValues cv = new ContentValues();
             cv.put(GRADE, gradeComment.getGrade());
-            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, USER_NAME + " = ?" + " and " + ID_COMMENT  + " = ?", new String[] { gradeComment.getNameUser(), String.valueOf(gradeComment.getIdComment())});
+            id = sqLiteDatabase.update(GRADE_COMMENT_TABLE, cv, USER_NAME + " = ?" + " and " + ID_COMMENT  + " = ?", new String[] { gradeComment.getUserId(), String.valueOf(gradeComment.getCommentId())});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
@@ -104,8 +103,8 @@ public class GradeCommentService implements DbConstants {
     private GradeComment buildGradeComment(Cursor c){
         GradeComment gradeComment = new GradeComment();
         gradeComment.setId(c.getInt(c.getColumnIndex(ID)));
-        gradeComment.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
-        gradeComment.setIdComment(c.getInt(c.getColumnIndex(ID_COMMENT)));
+        gradeComment.setUserId(c.getString(c.getColumnIndex(USER_NAME)));
+        gradeComment.setCommentId(c.getInt(c.getColumnIndex(ID_COMMENT)));
         gradeComment.setGrade(c.getInt(c.getColumnIndex(GRADE)));
         return gradeComment;
     }

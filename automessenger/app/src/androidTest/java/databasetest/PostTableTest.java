@@ -42,8 +42,8 @@ public class PostTableTest extends DBITest implements DbConstants {
         post.setPostText("Post text1");
         post.setPostDate(120215);
         post.setPostLocation("ShortLocation");
-        post.setNameUser("Yum");
-        post.setNameTag("BE 120515");
+        post.setUserId("Yum");
+        post.setTagName("BE 120515");
         postService.insertPost(post);
         Cursor c = db.query(POST_TABLE, null,
                 USER_NAME + " = ?", new String[]{"Yum"}, null, null, null);
@@ -85,8 +85,8 @@ public class PostTableTest extends DBITest implements DbConstants {
         post.setPostText("Post text4");
         post.setPostDate(120817);
         post.setPostLocation("location");
-        post.setNameUser("John");
-        post.setNameTag("BE 0102");
+        post.setUserId("John");
+        post.setTagName("BE 0102");
         postService.deletePost(post);
         Cursor c = db.query(POST_TABLE, null,
                 POST_TEXT + " = ?", new String[]{"Post text4"}, null, null, null);

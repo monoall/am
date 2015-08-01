@@ -31,7 +31,7 @@ public interface DataSource {
 
 
     /**
-     * Get last 10 posts from user subscribes with user own posts
+     * Get last 5 posts from user subscribes with user own posts
      *
      * @return List with Post objects
      */
@@ -39,7 +39,7 @@ public interface DataSource {
 
     /**
      * Method required for pagination.
-     * Get 10 posts from user subscribes with user own posts older than specified date(represented as Timestamp)
+     * Get 5 posts from user subscribes with user own posts older than specified date(represented as Timestamp)
      *
      * @param timestamp timestamp from last post we have for that moment
      * @return List with Post objects
@@ -47,7 +47,7 @@ public interface DataSource {
     List<FullPost> getPostsFromSubscriptions(long timestamp);
 
     /**
-     * Get 10 posts from specified area
+     * Get 5 posts from specified area
      *
      * @param shortLocation Representation location in three fields
      * @return List with Post objects
@@ -56,7 +56,7 @@ public interface DataSource {
 
     /**
      * Method required for pagination.
-     * Get 10 posts from specified area older than specified date(represented as Timestamp)
+     * Get 5 posts from specified area older than specified date(represented as Timestamp)
      *
      * @param shortLocation Representation location in three fields
      * @param timestamp     timestamp from last post we have for that moment
@@ -65,7 +65,7 @@ public interface DataSource {
     List<FullPost> getPostsByLocation(ShortLocation shortLocation, long timestamp);
 
     /**
-     * Get 10 posts by tag name
+     * Get 5 posts by tag name
      *
      * @param tagName specified tag
      * @return List with Post objects
@@ -74,7 +74,7 @@ public interface DataSource {
 
     /**
      * Method required for pagination.
-     * Get 10 posts by tag name older than specified date(represented as Timestamp)
+     * Get 5 posts by tag name older than specified date(represented as Timestamp)
      *
      * @param tagName   specified tag
      * @param timestamp timestamp from last post we have for that moment
