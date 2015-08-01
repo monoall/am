@@ -267,8 +267,6 @@ public class MainActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
-            String photoUrl = uploadPhotoToDrive(photoUri);
-            Log.i("mt tag", "photoUrl " + photoUrl);
             Intent intent = new Intent(this, AddPostActivity.class);
             intent.putExtra("photoPath", "file:/" + photoPath);
             intent.putExtra("username", username);
@@ -334,27 +332,6 @@ public class MainActivity
                 iv.clearColorFilter();
             }
         }
-    }
-
-    /**
-     * Upload photo to google Drive
-     * @param uri uri of the photo to upload
-     * @return global uri of the uploaded photo
-     */
-    private String uploadPhotoToDrive(Uri uri){
-        GoogleDriveAuth gauth = new GoogleDriveAuth();
-        Drive drive = gauth.init(this);
-        InsertTask it = new InsertTask(drive, uri);
-        it.execute();
-        String photoUrl = "url";
-        try {
-            photoUrl = it.get();
-        } catch (InterruptedException e) {
-            System.out.println("Error " + e);
-        } catch (ExecutionException e) {
-            System.out.println("Error " + e);
-        }
-        return photoUrl;
     }
 
 }

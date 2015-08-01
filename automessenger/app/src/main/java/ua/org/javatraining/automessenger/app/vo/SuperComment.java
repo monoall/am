@@ -16,8 +16,8 @@ public class SuperComment {
         this.id = c.getId();
         this.commentDate = c.getCommentDate();
         this.commentText = c.getCommentText();
-        this.author = c.getNameUser();
-        this.postID = c.getIdPost();
+        this.author = c.getUserId();
+        this.postID = c.getPostId();
     }
 
     public SuperComment() {

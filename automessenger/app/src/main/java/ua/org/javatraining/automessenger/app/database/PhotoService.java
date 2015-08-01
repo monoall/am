@@ -27,7 +27,7 @@ public class PhotoService implements DbConstants {
        try{
            ContentValues cv = new ContentValues();
            cv.put(LINK, photo.getPhotoLink());
-           cv.put(ID_POST, photo.getIdPost());
+           cv.put(ID_POST, photo.getPostId());
            id = sqLiteDatabase.insert(PHOTO_TABLE, null, cv);
            sqLiteDatabase.setTransactionSuccessful();
        }finally {
@@ -59,7 +59,7 @@ public class PhotoService implements DbConstants {
        Photo p = new Photo();
        p.setId(c.getInt(c.getColumnIndex(ID)));
        p.setPhotoLink(c.getString(c.getColumnIndex(LINK)));
-       p.setIdPost(c.getInt(c.getColumnIndex(ID_POST)));
+       p.setPostId(c.getInt(c.getColumnIndex(ID_POST)));
        return p;
      }
 }

@@ -4,7 +4,7 @@ public class Photo {
 
     private long id;
     private String photoLink;
-    private int idPost;
+    private int postId;
 
     public long getId() {
         return id;
@@ -22,11 +22,11 @@ public class Photo {
         this.photoLink = photoLink;
     }
 
-    public int getIdPost() {
-        return idPost;
+    public int getPostId() {
+        return postId;
     }
 
-    public void setIdPost(int idPost) {
-        this.idPost = idPost;
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 }

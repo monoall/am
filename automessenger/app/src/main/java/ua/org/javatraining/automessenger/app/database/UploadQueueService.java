@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import ua.org.javatraining.automessenger.app.entities.*;
-import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.UploadQueueItem;
 
 public class UploadQueueService implements DbConstants {
@@ -49,8 +48,8 @@ public class UploadQueueService implements DbConstants {
             ContentValues cv = new ContentValues();
             cv.put(CONTENT_TYPE, DELETE_SUBSCRIPTION);
             cv.put(CONTENT_IDENTIFIER, subscription.getId());
-            cv.put(EXTRA_TEXT_1, subscription.getNameTag());
-            cv.put(EXTRA_TEXT_2, subscription.getNameUser());
+            cv.put(EXTRA_TEXT_1, subscription.getTagId());
+            cv.put(EXTRA_TEXT_2, subscription.getUserId());
             id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
             Log.i("mytag", "UploadQueueService, insertInQueueForDelete(), insert OK, id =  " + id);

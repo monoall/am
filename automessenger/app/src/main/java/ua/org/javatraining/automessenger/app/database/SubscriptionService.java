@@ -27,8 +27,8 @@ public class SubscriptionService implements DbConstants {
         sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
-            cv.put(USER_NAME, subscription.getNameUser());
-            cv.put(TAG_NAME, subscription.getNameTag());
+            cv.put(USER_NAME, subscription.getUserId());
+            cv.put(TAG_NAME, subscription.getTagId());
             id = sqLiteDatabase.insert(SUBSCRIPTION_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
@@ -52,8 +52,8 @@ public class SubscriptionService implements DbConstants {
         ArrayList<Subscription> al = new ArrayList<Subscription>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             Subscription subscription = new Subscription();
-            subscription.setNameUser(cursor.getString(indexUser));
-            subscription.setNameTag(cursor.getString(indexTag));
+            subscription.setUserId(cursor.getString(indexUser));
+            subscription.setTagId(cursor.getString(indexTag));
             al.add(subscription);
         }
         return al;
@@ -68,7 +68,7 @@ public class SubscriptionService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{subscription.getNameUser(), subscription.getNameTag()});
+            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{subscription.getUserId(), subscription.getTagId()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();

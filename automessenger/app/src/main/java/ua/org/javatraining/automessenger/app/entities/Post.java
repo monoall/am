@@ -10,34 +10,34 @@ public class Post implements UploadQueueItemInterface{
     private String postText;
     private long postDate;
     private String postLocation;
-    private String nameUser;
-    private String nameTag;
-    private String locCountry;
-    private String locAdminArea;
-    private String locRegion;
+    private String userId;
+    private String tagName;
+    private String locationCountry;
+    private String locationAdminArea;
+    private String locationRegion;
 
-    public String getLocCountry() {
-        return locCountry;
+    public String getLocationCountry() {
+        return locationCountry;
     }
 
-    public void setLocCountry(String locCountry) {
-        this.locCountry = locCountry;
+    public void setLocationCountry(String locationCountry) {
+        this.locationCountry = locationCountry;
     }
 
-    public String getLocAdminArea() {
-        return locAdminArea;
+    public String getLocationAdminArea() {
+        return locationAdminArea;
     }
 
-    public void setLocAdminArea(String locAdminArea) {
-        this.locAdminArea = locAdminArea;
+    public void setLocationAdminArea(String locationAdminArea) {
+        this.locationAdminArea = locationAdminArea;
     }
 
-    public String getLocRegion() {
-        return locRegion;
+    public String getLocationRegion() {
+        return locationRegion;
     }
 
-    public void setLocRegion(String locRegion) {
-        this.locRegion = locRegion;
+    public void setLocationRegion(String locationRegion) {
+        this.locationRegion = locationRegion;
     }
 
     public long getId() {
@@ -48,20 +48,20 @@ public class Post implements UploadQueueItemInterface{
         this.id = id;
     }
 
-    public String getNameUser() {
-        return nameUser;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setNameUser(String nameUser) {
-        this.nameUser = nameUser;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getNameTag() {
-        return nameTag;
+    public String getTagName() {
+        return tagName;
     }
 
-    public void setNameTag(String nameTag) {
-        this.nameTag = nameTag;
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
     public String getPostLocation() {

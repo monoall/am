@@ -7,8 +7,8 @@ public class Comment implements UploadQueueItemInterface {
     private long id;
     private long commentDate;
     private String commentText;
-    private String nameUser;
-    private long idPost;
+    private String userId;
+    private long postId;
 
     public long getId() {
         return id;
@@ -34,20 +34,20 @@ public class Comment implements UploadQueueItemInterface {
         this.commentText = commentText;
     }
 
-    public String getNameUser() {
-        return nameUser;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setNameUser(String nameUser) {
-        this.nameUser = nameUser;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public long getIdPost() {
-        return idPost;
+    public long getPostId() {
+        return postId;
     }
 
-    public void setIdPost(long idPost) {
-        this.idPost = idPost;
+    public void setPostId(long postId) {
+        this.postId = postId;
     }
 
     @Override

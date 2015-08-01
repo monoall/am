@@ -5,8 +5,8 @@ import ua.org.javatraining.automessenger.app.database.UploadQueueService;
 public class GradeComment implements UploadQueueItemInterface {
 
     private long id;
-    private String nameUser;
-    private int idComment;
+    private String userId;
+    private int commentId;
     private int grade = 0;
 
     public long getId() {
@@ -17,20 +17,20 @@ public class GradeComment implements UploadQueueItemInterface {
         this.id = id;
     }
 
-    public String getNameUser() {
-        return nameUser;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setNameUser(String nameUser) {
-        this.nameUser = nameUser;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getIdComment() {
-        return idComment;
+    public int getCommentId() {
+        return commentId;
     }
 
-    public void setIdComment(int idComment) {
-        this.idComment = idComment;
+    public void setCommentId(int commentId) {
+        this.commentId = commentId;
     }
 
     public int getGrade() {

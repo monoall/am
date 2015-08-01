@@ -262,14 +262,14 @@ public class LocalDataSource implements DataSource {
         fullPost.setAuthor(Authentication.getLastUser(context));
 
         fullPost.separate(post, photo);
-        if (tagService.getTag(post.getNameTag()) == null) {
+        if (tagService.getTag(post.getTagName()) == null) {
             Tag tag = new Tag();
-            tag.setTagName(post.getNameTag());
+            tag.setTagName(post.getTagName());
             tagService.insertTag(tag);
         }
 
         long postID = postService.insertPost(post).getId();
-        photo.setIdPost((int) postID);
+        photo.setPostId((int) postID);
         photoService.insertPhoto(photo);
 
         if (postID != 0){
@@ -292,7 +292,7 @@ public class LocalDataSource implements DataSource {
             ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
 
             for (GradeComment gc : cGrades) {
-                if (gc.getNameUser().equals(username)) {
+                if (gc.getUserId().equals(username)) {
                     sc.setUserGrade(gc.getGrade());
                 } else {
                     grade += gc.getGrade();
@@ -319,7 +319,7 @@ public class LocalDataSource implements DataSource {
             ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
 
             for (GradeComment gc : cGrades) {
-                if (gc.getNameUser().equals(username)) {
+                if (gc.getUserId().equals(username)) {
                     sc.setUserGrade(gc.getGrade());
                 } else {
                     grade += gc.getGrade();
@@ -336,7 +336,7 @@ public class LocalDataSource implements DataSource {
     @Override
     public long addComment(Comment comment) {
         if (comment != null) {
-            comment.setNameUser(Authentication.getLastUser(context));
+            comment.setUserId(Authentication.getLastUser(context));
             queueService.insertInQueue(comment);
             return commentService.insertComment(comment).getId();
         }
@@ -354,8 +354,8 @@ public class LocalDataSource implements DataSource {
     @Override
     public Subscription addSubscription(String tag) {
         Subscription subscription = new Subscription();
-        subscription.setNameUser(Authentication.getLastUser(context));
-        subscription.setNameTag(tag);
+        subscription.setUserId(Authentication.getLastUser(context));
+        subscription.setTagId(tag);
         queueService.insertInQueue(subscription);
         return subscriptionService.insertSubscription(subscription);
     }
@@ -381,7 +381,7 @@ public class LocalDataSource implements DataSource {
 
         if (gPosts != null) {
             for (GradePost gp : gPosts) {
-                if (gp.getNameUser().equals(userName)) {
+                if (gp.getUserId().equals(userName)) {
                     grades.setUserGrade(gp.getGrade());
                 } else {
                     grade += gp.getGrade();
@@ -409,7 +409,7 @@ public class LocalDataSource implements DataSource {
             grade = 1;
 
         GradePost newGradePost = new GradePost();
-        newGradePost.setNameUser(Authentication.getLastUser(context));
+        newGradePost.setUserId(Authentication.getLastUser(context));
         newGradePost.setGrade(grade);
         newGradePost.setIdPost((int) postID);
 
@@ -432,7 +432,7 @@ public class LocalDataSource implements DataSource {
         int grade = 0;
 
         for (GradeComment gc : gCoomments) {
-            if (gc.getNameUser().equals(userName)) {
+            if (gc.getUserId().equals(userName)) {
                 grades.setUserGrade(gc.getGrade());
             } else {
                 grade += gc.getGrade();
@@ -459,9 +459,9 @@ public class LocalDataSource implements DataSource {
             grade = 1;
 
         GradeComment newGradeComment = new GradeComment();
-        newGradeComment.setNameUser(Authentication.getLastUser(context));
+        newGradeComment.setUserId(Authentication.getLastUser(context));
         newGradeComment.setGrade(grade);
-        newGradeComment.setIdComment((int) commentID);
+        newGradeComment.setCommentId((int) commentID);
 
         if (oldGradeComment == null) {
             gradeCommentService.insertGradeComment(newGradeComment);
