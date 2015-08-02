@@ -19,14 +19,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
-import com.google.gson.Gson;
+import com.google.api.services.drive.model.Permission;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.services.GoogleDriveAuth;
-import ua.org.javatraining.automessenger.app.services.InsertTask;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.ShortLocation;
@@ -38,7 +40,9 @@ import java.util.concurrent.ExecutionException;
 public class AddPostActivity extends AppCompatActivity {
 
     private static final int SELECT_PHOTO = 100;
+    private static final java.lang.String PHOTO_URI_VALUE = "photoURI";
 
+    private ProgressBar pBar;
     private ImageView imageView;
     private String photoURI;
     private EditText tagText;
@@ -49,6 +53,17 @@ public class AddPostActivity extends AppCompatActivity {
     private ShortLocation sl = null;
     private AddressLoader addressLoader;
     private float[] loc;
+    private String tag;
+    private String text;
+    private String photoURL;
+    private TextView makePostButton;
+    private View addPhotoButton;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(PHOTO_URI_VALUE, photoURI);
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -63,12 +78,19 @@ public class AddPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
-        photoURI = getIntent().getStringExtra("photoPath");
-        String username = getIntent().getStringExtra("username");
 
         imageView = (ImageView) findViewById(R.id.photo);
         tagText = (EditText) findViewById(R.id.car_number);
         postText = (EditText) findViewById(R.id.post_description);
+        pBar = (ProgressBar) findViewById(R.id.marker_progress);
+        makePostButton = (TextView) findViewById(R.id.postButton);
+        addPhotoButton = findViewById(R.id.add_photo_button);
+
+        if(savedInstanceState == null) {
+            photoURI = getIntent().getStringExtra("photoPath");
+        }else{
+            photoURI = savedInstanceState.getString(PHOTO_URI_VALUE);
+        }
 
         source = DataSourceManager.getSource(this);
 
@@ -104,75 +126,98 @@ public class AddPostActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     photoURI = imageReturnedIntent.getData().toString();
                     Log.i("", photoURI);
-                    loc = getLocation(Uri.parse(photoURI));
-
-                    if (loc != null) {
-                        Log.i("mytag", "task executed");
-                        addressLoader = new AddressLoader();
-                        addressLoader.execute(loc);
-                    }
-
                     imageLoader.displayImage(photoURI, imageView);
                 }
         }
     }
 
+    /**
+     * Called when "add photo" button pressed.
+     * Send implicit intent to pick photo from gallery or similar app.
+     */
     public void addPhotoPressed(View view) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
     }
 
+    /**
+     * Add post to DB. Called when "Done" button pressed.
+     */
+    public void prepare(MenuItem item) {
 
-    public void donePressed(MenuItem item) {
-        String tag = tagText.getText().toString().replaceAll(" ", "").toUpperCase();
-        String text = postText.getText().toString();
+        tag = tagText.getText().toString().replaceAll(" ", "").toUpperCase();
+        text = postText.getText().toString();
 
         if (ValidationUtils.checkTag(tag) && !text.equals("") && photoURI != null) {
-            FullPost fPost = new FullPost();
 
-            boolean statusGEO = loc != null;
+            item.setEnabled(false);
 
-            //todo problem here
-            uploadPhotoToDrive(Uri.parse(photoURI));
+            //Get altitude and longitude
+            loc = getLocation(Uri.parse(photoURI));
+            Log.i("mytag", "AddPostActivity, prepare, loc = " + loc[0] + " " + loc[1]);
 
-            fPost.setText(text);
-            fPost.setTag(tag);
-            fPost.setDate(System.currentTimeMillis());
-            fPost.getPhotos().add(photoURI);
-            if (statusGEO) {
-                fPost.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
-                if (sl != null) {
-                    fPost.setLocCountry(sl.getCountry());
-                    fPost.setLocAdminArea(sl.getAdminArea());
-                    fPost.setLocRegion(sl.getRegion());
+            //Get actual address from altitude and longitude
+            if (loc != null) {
+                addressLoader = new AddressLoader();
+                addressLoader.execute(loc);
+                try {
+                    sl = addressLoader.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                if (!addressLoader.isCancelled()) {
+                    addressLoader.cancel(true);
                 }
             }
-            source.addPost(fPost);
 
-            onBackPressed();
+            //Upload photo to Google Drive
+            uploadPhotoToDrive(getFilePathFromUri(Uri.parse(photoURI)));
+            Log.i("mytag", "AddPostActivity, prepare, photoURI = " + photoURI);
         }
     }
 
-    //getting GPS coordinates from photo
+    public void makePost(View view) {
+        FullPost fPost = new FullPost();
+
+        boolean statusGEO = loc != null;
+
+        fPost.setText(text);
+        fPost.setTag(tag);
+        fPost.setDate(System.currentTimeMillis());
+        fPost.getPhotos().add(photoURL);
+        if (statusGEO) {
+            fPost.setPostLocation(Float.toString(loc[0]) + " " + Float.toString(loc[1]));
+            if (sl != null) {
+                fPost.setLocCountry(sl.getCountry());
+                fPost.setLocAdminArea(sl.getAdminArea());
+                fPost.setLocRegion(sl.getRegion());
+            }
+        }
+        source.addPost(fPost);
+
+        onBackPressed();
+    }
+
+    /**
+     * Getting coordinates for post.
+     * First checks exif data in photo, if its empty takes coordinates from LocationManager.
+     *
+     * @param uri photo
+     * @return array with altitude and longitude
+     */
     private float[] getLocation(Uri uri) {
         float[] result = new float[2];
-        String filename = null;
+        String filename;
         if (uri != null) {
             try {
-                if (uri.getScheme().equals("file")) {
-                    filename = uri.getHost() + uri.getPath();
-                } else {
-                    String[] proj = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
-                    if (cursor.moveToFirst()) {
-                        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                        filename = cursor.getString(column_index);
-                    }
-                    cursor.close();
-                }
+                filename = getFilePathFromUri(uri);
+                Log.i("mytag", "AddPostActivity, getLocation, filename = " + filename);
                 ExifInterface exif = new ExifInterface(filename);
-                boolean check = exif.getLatLong(result);
+                exif.getLatLong(result);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -188,6 +233,9 @@ public class AddPostActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * Takes altitude and longitude and return VO with key locations(Country, Region and subRegion)
+     */
     private class AddressLoader extends AsyncTask<float[], Void, ShortLocation> {
         @Override
         protected ShortLocation doInBackground(float[]... params) {
@@ -196,15 +244,15 @@ public class AddPostActivity extends AppCompatActivity {
                 loc = new ShortLocation();
                 Address address = geocoder.getFromLocation(params[0][0], params[0][1], 1).get(0);
                 loc.setCountry(address.getCountryName());
-                Log.i("mytag", "AddPostActivity, donePressed, LocCountry = " + loc.getCountry());
+                Log.i("mytag", "AddPostActivity, prepare, LocCountry = " + loc.getCountry());
                 loc.setAdminArea(address.getAdminArea());
-                Log.i("mytag", "AddPostActivity, donePressed, LocAdminArea = " + loc.getAdminArea());
+                Log.i("mytag", "AddPostActivity, prepare, LocAdminArea = " + loc.getAdminArea());
                 if (address.getSubAdminArea() != null) {
                     loc.setRegion(address.getSubAdminArea());
-                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getRegion());
+                    Log.i("mytag", "AddPostActivity, prepare, LocRegion = " + loc.getRegion());
                 } else {
                     loc.setRegion(address.getLocality());
-                    Log.i("mytag", "AddPostActivity, donePressed, LocRegion = " + loc.getRegion());
+                    Log.i("mytag", "AddPostActivity, prepare, LocRegion = " + loc.getRegion());
                 }
 
             } catch (IOException e) {
@@ -218,32 +266,125 @@ public class AddPostActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ShortLocation shortLocation) {
             super.onPostExecute(shortLocation);
-            sl = shortLocation;
         }
+    }
+
+    private class InsertTask extends AsyncTask<Void, Void, String> {
+
+        com.google.api.services.drive.Drive mService;
+        private String filePath;
+
+        public InsertTask(com.google.api.services.drive.Drive mService, String path) {
+            this.mService = mService;
+            this.filePath = path;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.i("mytag","AddPostActivity, InsertTask, onPreExecute");
+
+            super.onPreExecute();
+
+            addPhotoButton.setClickable(false);
+            tagText.setEnabled(false);
+            postText.setEnabled(false);
+
+            pBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.i("mytag","AddPostActivity, InsertTask, onPostExecute");
+
+            photoURL = s;
+            pBar.setVisibility(View.GONE);
+            makePostButton.setVisibility(View.VISIBLE);
+
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Log.i("mytag","AddPostActivity, InsertTask, doInBackground");
+
+            return insertPhoto(filePath, mService);
+        }
+
+        /**
+         * inserts photo to google drive
+         *
+         * @param filePath path of the photo
+         * @param mService service to upload
+         * @return url of the inserted file
+         */
+        private String insertPhoto(String filePath, Drive mService) {
+            com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
+            body.setTitle("Title");
+            body.setDescription("Photo");
+
+            Log.i("myTag", "insertTask, filePath: " + filePath);
+
+            java.io.File fileContent = new java.io.File(filePath);
+            FileContent mediaContent = new FileContent(null, fileContent);
+            com.google.api.services.drive.model.File file;
+
+            try {
+                file = mService.files().insert(body, mediaContent).execute();
+
+                Log.i("myTag", "insertTask, downloadURL: " + file.getWebContentLink());
+
+                Permission newPermission = new Permission();
+                newPermission.setType("anyone");
+                newPermission.setRole("reader");
+                mService.permissions().insert(file.getId(), newPermission).execute();
+                String[] res = file.getWebContentLink().split("&");
+                return res[0];
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
+
+    /**
+     * Convert Uri to actual file path.
+     * Can work with "content://" and "file://" Uri types.
+     *
+     * @param uri file Uri
+     * @return file path
+     */
+    private String getFilePathFromUri(Uri uri) {
+        String result = null;
+
+        if (uri.getScheme().equals("file")) {
+            result = uri.getHost() + uri.getPath();
+
+        } else {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                result = cursor.getString(column_index);
+            }
+
+            cursor.close();
+        }
+
+        return result;
     }
 
     /**
      * Upload photo to google Drive
-     * @param uri uri of the photo to upload
-     * @return global uri of the uploaded photo
+     *
+     * @param filePath of the photo to upload
      */
-    private String uploadPhotoToDrive(Uri uri){
+    private void uploadPhotoToDrive(String filePath) {
         GoogleDriveAuth gauth = new GoogleDriveAuth();
         Drive drive = gauth.init(this);
-        InsertTask it = new InsertTask(drive, uri);
+        InsertTask it = new InsertTask(drive, filePath);
         it.execute();
-
-        String photoUrl = "url";
-        try {
-            photoUrl = it.get();
-        } catch (InterruptedException e) {
-            System.out.println("Error " + e);
-        } catch (ExecutionException e) {
-            System.out.println("Error " + e);
-        }
-        Log.i("mytag", "photoUrl " + photoUrl);
-
-        return photoUrl;
     }
 
 }

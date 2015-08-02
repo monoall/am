@@ -9,13 +9,14 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
 
 public class DataSourceManager {
     public static DataSource getSource(Context context){
         AsyncTask checkConn = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                boolean c = isConnectedToServer("http://google.com",5000);
+                boolean c = isConnectedToServer("http://google.com",100);
                 Log.i("mytag","Connection status is: " + c);
 
                 return null;
@@ -23,6 +24,19 @@ public class DataSourceManager {
         };
 
         checkConn.execute();
+
+        try {
+            checkConn.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        if(!checkConn.isCancelled()){
+            checkConn.cancel(true);
+        }
+
         return new LocalDataSource(context);
     }
 

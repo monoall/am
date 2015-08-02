@@ -45,5 +45,6 @@
     <string name="default_location_filed">Location...</string>
     <string name="post">Post</string>
     <string name="today">today</string>
+    <string name="make_post">POST</string>
 
 </resources>
