@@ -3,10 +3,7 @@ package ua.org.javatraining.automessenger.app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
+import android.location.*;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -37,11 +34,12 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class AddPostActivity extends AppCompatActivity {
+public class AddPostActivity extends AppCompatActivity implements LocationListener {
 
     private static final int SELECT_PHOTO = 100;
     private static final java.lang.String PHOTO_URI_VALUE = "photoURI";
 
+    private LocationManager locationManager;
     private ProgressBar pBar;
     private ImageView imageView;
     private String photoURI;
@@ -58,6 +56,8 @@ public class AddPostActivity extends AppCompatActivity {
     private String photoURL;
     private TextView makePostButton;
     private View addPhotoButton;
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -231,6 +231,48 @@ public class AddPostActivity extends AppCompatActivity {
         }
 
         return result;
+    }
+
+    /**
+     * Включение GPS
+     */
+    private void findCoordinates(){
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        // Подключение GPS менеджера локации
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                10000, 10, this);
+    }
+
+    /**
+     * Отмена поиска координат
+     */
+    private void findCoordinatesCancel(){
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        coordinatesReceived(location);
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    private void coordinatesReceived(Location location){
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
     }
 
     /**
