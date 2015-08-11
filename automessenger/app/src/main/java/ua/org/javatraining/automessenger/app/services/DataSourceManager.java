@@ -1,58 +1,69 @@
 package ua.org.javatraining.automessenger.app.services;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
-
 public class DataSourceManager {
-    public static DataSource getSource(Context context){
-        AsyncTask checkConn = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                boolean c = isConnectedToServer("http://google.com",100);
-                Log.i("mytag","Connection status is: " + c);
 
-                return null;
+    private static DataSourceManager instance;
+    private Context context;
+    private boolean connectionStatus;
+
+    public static void init(Context context) {
+        instance = new DataSourceManager(context);
+    }
+
+    public static DataSourceManager getInstance() {
+        if (instance == null) {
+            throw new NullPointerException("First must call DataSourceManager.init()");
+        }
+        return instance;
+    }
+
+    private DataSourceManager(Context context) {
+        this.context = context;
+        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                connectionStatus = intent.getBooleanExtra(ConnectionMonitor.CONNECTION_STATUS, false);
+                Log.i("mytag", "DataSourceManager, mReceiver, onReceive, connectionStatus = " + connectionStatus);
             }
         };
+        LocalBroadcastManager
+                .getInstance(context)
+                .registerReceiver(mReceiver, new IntentFilter(ConnectionMonitor.UPDATE_CONNECTION_STATUS));
+        Log.i("myTag", "DataSourceManager, CONSTRUCTOR");
+    }
 
-        checkConn.execute();
-
-        try {
-            checkConn.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+    public DataSource getPreferedSource(Context context) {
+        if (instance == null) {
+            throw new NullPointerException("First must call DataSourceManager.init()");
         }
-
-        if(!checkConn.isCancelled()){
-            checkConn.cancel(true);
-        }
+        //todo
 
         return new LocalDataSource(context);
     }
 
-    public static DataSource getRemoteSource(Context context){
+    public DataSource getRemoteSource(Context context) {
+        if (instance == null) {
+            throw new NullPointerException("First must call DataSourceManager.init()");
+        }
+        //todo
+
         return new RemoteDataSource(context);
     }
 
-    public static boolean isConnectedToServer(String url, int timeout) {
-        try{
-            URL myUrl = new URL(url);
-            URLConnection connection = myUrl.openConnection();
-            connection.setConnectTimeout(timeout);
-            connection.connect();
-            return true;
-        } catch (Exception e) {
-            return false;
+    public DataSource getLocalSource(Context context) {
+        if (instance == null) {
+            throw new NullPointerException("First must call DataSourceManager.init()");
         }
+        //todo
+
+        return new LocalDataSource(context);
     }
+
 }

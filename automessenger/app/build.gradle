@@ -1,19 +1,23 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         //noinspection GradleDependency
         classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 //noinspection GradleDeprecated
 apply plugin: 'android'
+apply plugin: 'io.fabric'
 
 repositories {
     jcenter()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
@@ -32,7 +36,14 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
-
+    signingConfigs {
+        release {
+            storeFile file("uojtam.jks")
+            storePassword "uojtam"
+            keyAlias "ua.org.javatraining.automessenger"
+            keyPassword "uojtam"
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
@@ -41,6 +52,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -93,6 +105,10 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
+        transitive = true;
+    }
+
 }
 
 apply plugin: 'idea'

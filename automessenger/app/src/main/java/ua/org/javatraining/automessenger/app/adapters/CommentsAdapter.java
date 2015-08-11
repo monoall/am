@@ -167,6 +167,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             imageLoader.displayImage(post.getPhotos().get(0), hh.photo);
+
         } else if (viewHolder instanceof CommentHolder) {
             final CommentHolder cm = (CommentHolder) viewHolder;
             final SuperComment superComment = dataset.get(i - 1);

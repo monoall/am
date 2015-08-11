@@ -98,9 +98,13 @@ public class NearbyFragment
             }
         });
 
+
+
         mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
         initRecyclerView(view);
         ((PostLoaderByLocation) mLoader).registerRefreshLayout(refreshLayout);
+
+
     }
 
     @Override

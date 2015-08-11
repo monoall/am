@@ -33,8 +33,10 @@ public class SearchFragment extends Fragment {
     private List<Tag> dataset;
     private SearchAsyncTask searchTask;
 
+
     public interface CallBacks {
         void showPostsByTag(String tag);
+
         void setDrawerItemState(boolean isHighlighted, int title);
     }
 
@@ -58,21 +60,21 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        source = DataSourceManager.getSource(getActivity());
+        source = DataSourceManager.getInstance().getPreferedSource(getActivity());
         dataset = new ArrayList<Tag>();
 
         initRecyclerView(view);
+        searchTask = new SearchAsyncTask();
 
         searchField = (EditText) view.findViewById(R.id.search_field);
         ImageButton searchButton = (ImageButton) view.findViewById(R.id.go_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchTask = new SearchAsyncTask();
+
                 searchTask.execute(searchField.getText().toString());
             }
         });
-
         ((MainActivity) activity).toolbar.setTitle(R.string.search);
     }
 

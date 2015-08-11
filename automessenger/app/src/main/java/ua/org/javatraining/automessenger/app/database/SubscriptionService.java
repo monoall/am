@@ -1,5 +1,6 @@
 package ua.org.javatraining.automessenger.app.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +15,23 @@ public class SubscriptionService implements DbConstants {
 
     public SubscriptionService(SQLiteAdapter sqLiteAdapter) {
         this.sqLiteAdapter = sqLiteAdapter;
+    }
+
+    public Subscription getSubscribtion(long id){
+        Subscription subscription = null;
+            SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+            @SuppressLint("Recycle")
+            Cursor cursor = sqLiteDatabase
+                    .rawQuery(QUERY_SUBSCRIPTION_BY_ID, new String[]{String.valueOf(id)});
+            if(cursor!= null){
+                cursor.moveToFirst();
+                subscription = new Subscription();
+                subscription.setId(cursor.getLong(cursor.getColumnIndex(ID)));
+                subscription.setTagId(cursor.getString(cursor.getColumnIndex(TAG_NAME)));
+                subscription.setUserId(cursor.getString(cursor.getColumnIndex(USER_NAME)));
+            }
+
+        return subscription;
     }
 
     /**

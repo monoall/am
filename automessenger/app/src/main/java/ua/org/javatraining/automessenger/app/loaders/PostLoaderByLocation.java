@@ -26,13 +26,13 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
     private Geocoder defaultGeocoder;
     private Geocoder engGeocoder;
     private SwipeRefreshLayout refreshLayout;
-    private DataSource source;
     private LocationManager locationManager;
     private boolean isNextPage = false;
     private long lastPostDate = 0;
     private NearbyFragment nf;
     private List<FullPost> data;
     private PostLoaderByLocationObserver postObserver;
+    private Context context;
 
     public void nextPage(boolean state, long date) {
         this.isNextPage = state;
@@ -45,7 +45,7 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
         this.nf = nf;
         defaultGeocoder = new Geocoder(getContext(), Locale.getDefault());
         engGeocoder = new Geocoder(getContext(), Locale.ENGLISH);
-        source = DataSourceManager.getSource(context);
+        this.context = context;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
@@ -78,6 +78,8 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
         List<FullPost> fps = new ArrayList<FullPost>();
         float[] loc = getCurrentLocation();
         Address adrs;
+
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(context);
 
         try {
             adrs = engGeocoder.getFromLocation(loc[0], loc[1], 1).get(0);

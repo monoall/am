@@ -96,10 +96,12 @@ public interface DbConstants {
 
     //Select запросы
     String QUERY_UPLOAD_ITEM_BY_ID = "SELECT * FROM " + UPLOAD_QUEUE_TABLE + " WHERE " + ID + " = ?";
+    String QUERY_UPLOAD_ITEMS = "SELECT * FROM " + UPLOAD_QUEUE_TABLE;
     String QUERY_USER = "SELECT " + USER_NAME + " from " + USER_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_TAG_BY_ID = "SELECT " + TAG_NAME + " from " + TAG_TABLE + " where " + ID + " = ?";
     String QUERY_SEARCH_TAG = "SELECT " + TAG_NAME + " FROM " + TAG_TABLE + " WHERE " + TAG_NAME + " LIKE ?";
     String QUERY_COMMENT_COUNT_BY_POST_ID = "SELECT COUNT(*) FROM " + COMMENT_TABLE + " WHERE " + ID_POST + " = ?";
+    String QUERY_SUBSCRIPTION_BY_ID = "SELECT * FROM " + SUBSCRIPTION_TABLE + " WHERE " + ID + " = ?";
     String QUERY_POST_BY_SUBSCRIPTIONS = "SELECT * FROM " + POST_TABLE + " WHERE " + USER_NAME + " = ? AND " + TAG_NAME + " IN (" +
             " SELECT " + TAG_NAME + " FROM " + SUBSCRIPTION_TABLE + " WHERE " + USER_NAME + " = ? )";
     String QUERY_POST_BY_SUBSCRIPTIONS_NEXT_PAGE = "SELECT * FROM " + POST_TABLE + " WHERE " + USER_NAME + " = ? AND " + TAG_NAME + " IN (" +
@@ -118,6 +120,7 @@ public interface DbConstants {
     String QUERY_POST_BY_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + ID + " = ?";
     String QUERY_ALL_POST_BY_LOCATION = "SELECT " + "*" + " from " + POST_TABLE + " where " + POST_LOCATION + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID_POST + " = ?";
+    String QUERY_COMMENT_BY_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID_NEXT_PAGE = "SELECT * FROM " + COMMENT_TABLE + " where " + ID_POST + " = ? " + " AND " + COMMENT_DATE + " < ?";
     String QUERY_ID_USER_BY_NAME = "SELECT " + "ID" + " from " + USER_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_GRADE_POST_BY_ID_POST = "SELECT " + "*" + " from " + GRADE_POST_TABLE + " where " + ID_POST + " = ?";

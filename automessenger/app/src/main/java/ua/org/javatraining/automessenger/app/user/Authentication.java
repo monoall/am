@@ -8,8 +8,12 @@ import android.content.pm.PackageManager;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 
 public class Authentication extends MultiDexApplication {
+
     public static final String USERNAME = "username";
     public static final int ACCOUNT_REQUEST_CODE = 3141;
     private String user;
@@ -31,6 +35,9 @@ public class Authentication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
+
+        DataSourceManager.init(this);
     }
 
 

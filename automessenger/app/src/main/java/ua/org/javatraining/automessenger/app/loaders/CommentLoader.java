@@ -15,17 +15,18 @@ import java.util.List;
 public class CommentLoader extends AsyncTaskLoader<List<SuperComment>> {
 
     private long postID;
-    DataSource source;
-    CommentLoaderObserver commentObserver;
+    private CommentLoaderObserver commentObserver;
+    private Context context;
 
     public CommentLoader(Context context, long postID) {
         super(context);
         this.postID = postID;
-        source = DataSourceManager.getSource(context);
+        this.context = context;
     }
 
     @Override
     public List<SuperComment> loadInBackground() {
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(context);
         return source.getComments(postID);
     }
 

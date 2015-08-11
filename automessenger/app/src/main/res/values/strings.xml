@@ -46,5 +46,6 @@
     <string name="post">Post</string>
     <string name="today">today</string>
     <string name="make_post">POST</string>
+    <string name="send_feedback">Feedback</string>
 
 </resources>

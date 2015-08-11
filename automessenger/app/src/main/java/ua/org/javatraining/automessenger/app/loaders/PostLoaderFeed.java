@@ -38,7 +38,7 @@ public class PostLoaderFeed extends AsyncTaskLoader<List<FullPost>> {
 
         this.ff = ff;
         geocoder = new Geocoder(getContext(), Locale.getDefault());
-        source = DataSourceManager.getSource(context);
+        source = DataSourceManager.getInstance().getPreferedSource(context);
     }
 
     public void registerRefreshLayout(SwipeRefreshLayout srl) {
@@ -86,8 +86,11 @@ public class PostLoaderFeed extends AsyncTaskLoader<List<FullPost>> {
                 separatorPosition = coordinates.indexOf(" ");
                 latitude = Float.valueOf(coordinates.substring(0, separatorPosition));
                 longitude = Float.valueOf(coordinates.substring(separatorPosition, coordinates.length()));
-                Address address = geocoder.getFromLocation(latitude, longitude, 1).get(0);
-                fp.setPostLocation(address.getCountryName() + ", " + address.getAdminArea() + ", " + address.getLocality());
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                if(!addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    fp.setPostLocation(address.getCountryName() + ", " + address.getAdminArea() + ", " + address.getLocality());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (NullPointerException e){

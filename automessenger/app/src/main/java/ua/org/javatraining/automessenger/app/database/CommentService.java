@@ -41,6 +41,21 @@ public class CommentService implements DbConstants {
         return comment;
     }
 
+    public Comment getCommentById(Long id) {
+        Comment comment = null;
+
+        if (id != null) {
+            SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+            @SuppressLint("Recycle")
+            Cursor cursor = sqLiteDatabase
+                    .rawQuery(QUERY_COMMENT_BY_ID, new String[]{String.valueOf(id)});
+            cursor.moveToFirst();
+            comment = buildComment(cursor);
+        }
+
+        return comment;
+    }
+
     /**
      * Возвращает все комментарии к посту
      *

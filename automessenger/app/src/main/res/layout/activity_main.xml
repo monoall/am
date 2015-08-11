@@ -221,6 +221,13 @@
                     android:layout_height="wrap_content"/>
         </LinearLayout>
 
+        <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@color/grey26"/>
+
         <LinearLayout
                 android:id="@+id/item_choose_account"
                 android:orientation="horizontal"
@@ -242,6 +249,32 @@
                     android:textSize="14sp"
                     android:textColor="@color/nav_draw_content_color"
                     android:text="@string/change_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/item_send_feedback"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:layout_width="fill_parent"
+                android:background="@drawable/item_selected_back"
+                android:layout_height="wrap_content"
+                android:onClick="NDController">
+
+            <ImageView
+                    android:padding="16dp"
+                    android:src="@drawable/ic_feedback_white_24dp"
+                    android:tint="@color/black54"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/change_account"/>
+
+            <TextView
+                    android:padding="16dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/nav_draw_content_color"
+                    android:text="@string/send_feedback"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
         </LinearLayout>

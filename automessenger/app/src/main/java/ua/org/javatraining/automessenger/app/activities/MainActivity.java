@@ -23,7 +23,6 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.api.services.drive.Drive;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -31,10 +30,10 @@ import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.fragments.*;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
+import ua.org.javatraining.automessenger.app.services.ConnectionMonitor;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
-import ua.org.javatraining.automessenger.app.services.GoogleDriveAuth;
-import ua.org.javatraining.automessenger.app.services.InsertTask;
+import ua.org.javatraining.automessenger.app.services.Uploader;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -42,7 +41,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity
         extends
@@ -82,12 +80,14 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, ConnectionMonitor.class));
+        startService(new Intent(this, Uploader.class));
 
         toolbarInit();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
-        source = DataSourceManager.getSource(this);
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(this);
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         setUsername(Authentication.getLastUser(this));
@@ -116,6 +116,13 @@ public class MainActivity
             startService(intent);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, ConnectionMonitor.class));
+        stopService(new Intent(this, Uploader.class));
     }
 
     private void setUsername(String username) {
@@ -197,6 +204,16 @@ public class MainActivity
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                         false, null, null, null, null);
                 startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
+                break;
+            case R.id.item_send_feedback:
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setType("*/*");
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"liketosleeplong@live.ru"});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Automessenger feedback");
+                if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(emailIntent);
+                }
         }
     }
 

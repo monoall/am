@@ -60,7 +60,7 @@ public class PostDetails
         postId = getIntent().getLongExtra("POST_ID", 0);
         submit = (ImageButton) findViewById(R.id.submit);
 
-        source = DataSourceManager.getSource(this);
+        source = DataSourceManager.getInstance().getPreferedSource(this);
 
         addCommentField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -128,6 +128,7 @@ public class PostDetails
         String extraText = fullPost.getText();
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, extraText);
+
         Uri uri = Uri.parse(fullPost.getPhotos().get(0));
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setType("image/*");

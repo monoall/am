@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -81,14 +82,17 @@
             android:exported="false" >
         </service>
         <service
-            android:name=".services.SendToDriveService"
-            android:exported="false" >
-        </service>
-        <service
             android:name=".services.ConnectionMonitor"
             android:enabled="true"
             android:exported="false" >
         </service>
+        <service
+            android:name=".services.Uploader"
+            android:exported="false" >
+        </service>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e40e0dcbaf0e50ef4366c098ae79dd765f648e2e" />
     </application>
 
 </manifest>

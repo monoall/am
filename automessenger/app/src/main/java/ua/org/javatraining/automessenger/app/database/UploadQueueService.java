@@ -7,6 +7,9 @@ import android.util.Log;
 import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.vo.UploadQueueItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UploadQueueService implements DbConstants {
 
     public static final int POST = 1264664243;
@@ -59,123 +62,24 @@ public class UploadQueueService implements DbConstants {
         return id;
     }
 
-
-/*
-    public long insertInQueue(FullPost fullPost) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        long id;
-        sqLiteDatabase.beginTransaction();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CONTENT_TYPE, FULL_POST);
-            cv.put(CONTENT_IDENTIFIER, fullPost.getPostID());
-            id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
-            sqLiteDatabase.setTransactionSuccessful();
-            Log.i("mytag", "UploadQueueService, insertInQueue(FullPost), insert OK, id =  " + id);
-        } finally {
-            sqLiteDatabase.endTransaction();
-            Log.i("mytag", "UploadQueueService, insertInQueue(FullPost), insert !NOT! OK");
-        }
-
-        return id;
-    }
-
-    public long insertInQueue(Comment comment) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        long id;
-        sqLiteDatabase.beginTransaction();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CONTENT_TYPE, COMMENT);
-            cv.put(CONTENT_IDENTIFIER, comment.getId());
-            id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
-            sqLiteDatabase.setTransactionSuccessful();
-            Log.i("mytag", "UploadQueueService, insertInQueue(Comment), insert OK, id =  " + id);
-        } finally {
-            sqLiteDatabase.endTransaction();
-            Log.i("mytag", "UploadQueueService, insertInQueue(Comment), insert !NOT! OK");
-        }
-        return id;
-    }
-
-    public long insertInQueue(GradePost gradePost) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        long id;
-        sqLiteDatabase.beginTransaction();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CONTENT_TYPE, POST_GRADE);
-            cv.put(CONTENT_IDENTIFIER, gradePost.getId());
-            id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
-            sqLiteDatabase.setTransactionSuccessful();
-            Log.i("mytag", "UploadQueueService, insertInQueue(GradePost), insert OK, id =  " + id);
-        } finally {
-            sqLiteDatabase.endTransaction();
-            Log.i("mytag", "UploadQueueService, insertInQueue(GradePost), insert !NOT! OK");
-        }
-        return id;
-    }
-
-    public long insertInQueue(GradeComment gradeComment) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        long id;
-        sqLiteDatabase.beginTransaction();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CONTENT_TYPE, COMMENT_GRADE);
-            cv.put(CONTENT_IDENTIFIER, gradeComment.getId());
-            id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
-            sqLiteDatabase.setTransactionSuccessful();
-            Log.i("mytag", "UploadQueueService, insertInQueue(GradeComment), insert OK, id =  " + id);
-        } finally {
-            sqLiteDatabase.endTransaction();
-            Log.i("mytag", "UploadQueueService, insertInQueue(GradeComment), insert !NOT! OK");
-        }
-        return id;
-    }
-
-    public long insertInQueue(User user) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        long id;
-        sqLiteDatabase.beginTransaction();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CONTENT_TYPE, USER);
-            cv.put(CONTENT_IDENTIFIER, user.getName());
-            id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
-            sqLiteDatabase.setTransactionSuccessful();
-            Log.i("mytag", "UploadQueueService, insertInQueue(User), insert OK, id =  " + id);
-        } finally {
-            sqLiteDatabase.endTransaction();
-            Log.i("mytag", "UploadQueueService, insertInQueue(User), insert !NOT! OK");
-        }
-        return id;
-    }
-
-    public long insertInQueue(Subscription subscription) {
-        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
-        long id;
-        sqLiteDatabase.beginTransaction();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CONTENT_TYPE, SUBSCRIPTION);
-            cv.put(CONTENT_IDENTIFIER, subscription.getId());
-            id = sqLiteDatabase.insert(UPLOAD_QUEUE_TABLE, null, cv);
-            sqLiteDatabase.setTransactionSuccessful();
-            Log.i("mytag", "UploadQueueService, insertInQueue(Subscription), insert OK, id =  " + id);
-        } finally {
-            sqLiteDatabase.endTransaction();
-            Log.i("mytag", "UploadQueueService, insertInQueue(Subscription), insert !NOT! OK");
-        }
-        return id;
-    }
-*/
     public UploadQueueItem getQueueItem(long id) {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
         Cursor cursor = sqLiteDatabase
                 .rawQuery(QUERY_UPLOAD_ITEM_BY_ID, new String[]{Long.toString(id)});
         cursor.moveToFirst();
         return build(cursor);
+    }
+
+    public List<UploadQueueItem> getQueue(){
+        SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase
+                .rawQuery(QUERY_UPLOAD_ITEMS, new String[]{});
+        ArrayList<UploadQueueItem> al = new ArrayList<UploadQueueItem>();
+        for (cursor.moveToLast(); !(cursor.isBeforeFirst()); cursor.moveToPrevious()) {
+            UploadQueueItem item = build(cursor);
+            al.add(item);
+        }
+        return al;
     }
 
     public void deleteQueueItem(long id) {

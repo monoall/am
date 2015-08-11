@@ -19,18 +19,19 @@ public class PostLoaderByTag extends AsyncTaskLoader<List<FullPost>> {
     private Geocoder geocoder;
     private SwipeRefreshLayout refreshLayout;
     private String tagname = null;
-    private DataSource source;
     private boolean isNextPage = false;
     private long lastPostDate = 0;
     private List<FullPost> data;
     private PostByTagLoaderObserver postObserver;
     private PostByTagFragment postByTagFragment;
+    private Context context;
 
     public PostLoaderByTag(Context context, String tag, PostByTagFragment f) {
         super(context);
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         tagname = tag;
-        source = DataSourceManager.getSource(context);
+
+        this.context = context;
         postByTagFragment = f;
     }
 
@@ -95,6 +96,8 @@ public class PostLoaderByTag extends AsyncTaskLoader<List<FullPost>> {
 
     @Override
     public List<FullPost> loadInBackground() {
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(context);
+
         List<FullPost> fps;
 
         if (isNextPage) {

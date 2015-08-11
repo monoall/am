@@ -26,6 +26,7 @@ import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.services.DataSource;
 import ua.org.javatraining.automessenger.app.services.DataSourceManager;
 import ua.org.javatraining.automessenger.app.services.GoogleDriveAuth;
+import ua.org.javatraining.automessenger.app.utils.PhotoUtils;
 import ua.org.javatraining.automessenger.app.utils.ValidationUtils;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.ShortLocation;
@@ -46,7 +47,6 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
     private EditText tagText;
     private EditText postText;
     private ImageLoader imageLoader = ImageLoader.getInstance();
-    private DataSource source;
     private Geocoder geocoder;
     private ShortLocation sl = null;
     private AddressLoader addressLoader;
@@ -56,8 +56,7 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
     private String photoURL;
     private TextView makePostButton;
     private View addPhotoButton;
-    private double latitude;
-    private double longitude;
+    private Location location;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -79,6 +78,8 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
 
+        findCoordinates();
+
         imageView = (ImageView) findViewById(R.id.photo);
         tagText = (EditText) findViewById(R.id.car_number);
         postText = (EditText) findViewById(R.id.post_description);
@@ -86,13 +87,12 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
         makePostButton = (TextView) findViewById(R.id.postButton);
         addPhotoButton = findViewById(R.id.add_photo_button);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             photoURI = getIntent().getStringExtra("photoPath");
-        }else{
+        } else {
             photoURI = savedInstanceState.getString(PHOTO_URI_VALUE);
         }
 
-        source = DataSourceManager.getSource(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_add_post);
@@ -197,6 +197,7 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
                 fPost.setLocRegion(sl.getRegion());
             }
         }
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(this);
         source.addPost(fPost);
 
         onBackPressed();
@@ -222,12 +223,16 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
                 e.printStackTrace();
             }
         }
+
         if (result[0] == 0 && result[1] == 0) {
+
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-            result[0] = (float) location.getLatitude();
-            result[1] = (float) location.getLongitude();
+            if (location != null) {
+                result[0] = (float) location.getLatitude();
+                result[1] = (float) location.getLongitude();
+            }
         }
 
         return result;
@@ -236,17 +241,17 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
     /**
      * Включение GPS
      */
-    private void findCoordinates(){
+    private void findCoordinates() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         // Подключение GPS менеджера локации
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 10000, 10, this);
     }
 
     /**
      * Отмена поиска координат
      */
-    private void findCoordinatesCancel(){
+    private void findCoordinatesCancel() {
         locationManager.removeUpdates(this);
     }
 
@@ -270,9 +275,8 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
 
     }
 
-    private void coordinatesReceived(Location location){
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
+    private void coordinatesReceived(Location location) {
+        this.location = location;
     }
 
     /**
@@ -281,9 +285,8 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
     private class AddressLoader extends AsyncTask<float[], Void, ShortLocation> {
         @Override
         protected ShortLocation doInBackground(float[]... params) {
-            ShortLocation loc = null;
+            ShortLocation loc = new ShortLocation();
             try {
-                loc = new ShortLocation();
                 Address address = geocoder.getFromLocation(params[0][0], params[0][1], 1).get(0);
                 loc.setCountry(address.getCountryName());
                 Log.i("mytag", "AddPostActivity, prepare, LocCountry = " + loc.getCountry());
@@ -299,9 +302,9 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
 
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (RuntimeException e) {
+                return loc;
             }
-
-
             return loc;
         }
 
@@ -323,7 +326,7 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
 
         @Override
         protected void onPreExecute() {
-            Log.i("mytag","AddPostActivity, InsertTask, onPreExecute");
+            Log.i("mytag", "AddPostActivity, InsertTask, onPreExecute");
 
             super.onPreExecute();
 
@@ -336,7 +339,7 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
 
         @Override
         protected void onPostExecute(String s) {
-            Log.i("mytag","AddPostActivity, InsertTask, onPostExecute");
+            Log.i("mytag", "AddPostActivity, InsertTask, onPostExecute");
 
             photoURL = s;
             pBar.setVisibility(View.GONE);
@@ -347,7 +350,8 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
 
         @Override
         protected String doInBackground(Void... voids) {
-            Log.i("mytag","AddPostActivity, InsertTask, doInBackground");
+            Log.i("mytag", "AddPostActivity, InsertTask, doInBackground");
+
 
             return insertPhoto(filePath, mService);
         }
@@ -366,7 +370,8 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
 
             Log.i("myTag", "insertTask, filePath: " + filePath);
 
-            java.io.File fileContent = new java.io.File(filePath);
+
+            java.io.File fileContent = new java.io.File(PhotoUtils.getResizedPhotoFile(getApplicationContext(), filePath));
             FileContent mediaContent = new FileContent(null, fileContent);
             com.google.api.services.drive.model.File file;
 
@@ -429,4 +434,9 @@ public class AddPostActivity extends AppCompatActivity implements LocationListen
         it.execute();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        findCoordinatesCancel();
+    }
 }
