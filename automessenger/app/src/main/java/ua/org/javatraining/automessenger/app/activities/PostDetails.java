@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -125,14 +126,21 @@ public class PostDetails
 
     //Нажата кнопка "share"
     public void actionShare(View view) {
-        String extraText = fullPost.getText();
+        String[] ss  = ((CommentsAdapter) myAdapter).getShareStuff();
+        Log.i("myTag","PostDetails, actionShare, ss[0] = " + ss[0] + ", ss[1] = " + ss[1]);
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, extraText);
-
-        Uri uri = Uri.parse(fullPost.getPhotos().get(0));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, ss[0]);
+        Uri uri = Uri.parse(ss[1]);
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, "Share"));
+    }
+
+    public void viewPicture(View view) {
+        String[] ss  = ((CommentsAdapter) myAdapter).getShareStuff();
+        Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+        viewIntent.setDataAndType(Uri.parse(ss[1]), "image/*");
+        startActivity(Intent.createChooser(viewIntent, "View"));
     }
 
     private void initToolbar() {
@@ -217,5 +225,6 @@ public class PostDetails
     public void onLoaderReset(Loader<List<SuperComment>> loader) {
 
     }
+
 
 }

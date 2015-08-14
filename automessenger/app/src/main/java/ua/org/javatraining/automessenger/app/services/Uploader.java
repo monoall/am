@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import ua.org.javatraining.automessenger.app.database.*;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
+import ua.org.javatraining.automessenger.app.entities.User;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.UploadQueueItem;
 
@@ -80,26 +82,36 @@ public class Uploader extends IntentService {
                     switch (item.getContentType()) {
                         case UploadQueueService.COMMENT:
                             remoteSource.addComment(commentService.getCommentById(Long.getLong(item.getContentIdentifier())));
+                            queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.COMMENT_GRADE:
                             int cGrade = gradeCommentService.getCommentGrade(Long.getLong(item.getContentIdentifier()), Authentication.getLastUser(this)).getGrade();
                             remoteSource.setCurrentUserCommentGrade(Long.getLong(item.getContentIdentifier()) ,cGrade);
+                            queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.POST:
                             remoteSource.addPost(localSource.getPostByID(Long.getLong(item.getContentIdentifier())));
+                            queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.POST_GRADE:
                             int pGrade = gradePostService.getPostGrade(Long.getLong(item.getContentIdentifier()), Authentication.getLastUser(this)).getGrade();
                             remoteSource.setCurrentUserCommentGrade(Long.getLong(item.getContentIdentifier()) ,pGrade);
+                            queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.SUBSCRIPTION:
                             remoteSource.addSubscription(subscriptionService.getSubscribtion(Long.getLong(item.getContentIdentifier())).getTagId());
+                            queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.DELETE_SUBSCRIPTION:
-
+                            Subscription s = new Subscription();
+                            s.setTagId(item.getExtraText1());
+                            s.setUserId(item.getExtraText2());
+                            remoteSource.removeSubscription(s);
+                            queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.USER:
-
+                            remoteSource.setUser(item.getContentIdentifier());
+                            queueService.deleteQueueItem(item.getId());
                             break;
 
                     }

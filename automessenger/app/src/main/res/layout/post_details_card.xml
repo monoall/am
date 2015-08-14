@@ -12,6 +12,7 @@
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:onClick="viewPicture"
             android:contentDescription="@string/photo"/>
     <LinearLayout
             android:id="@+id/data_area"
@@ -83,7 +84,7 @@
         </LinearLayout>
         <View
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
+                android:layout_height="3dp"
                 android:background="@drawable/light_shadow"/>
     </LinearLayout>
 </LinearLayout>

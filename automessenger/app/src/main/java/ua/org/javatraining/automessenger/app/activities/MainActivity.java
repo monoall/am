@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -66,7 +67,8 @@ public class MainActivity
     private DataSource source;
     private LocalBroadcastManager localBroadcastManager;
     private String tag;
-    private Uri photoUri;
+    private TextView usernameField;
+    private ImageButton userListButton;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -82,6 +84,9 @@ public class MainActivity
         setContentView(R.layout.activity_main);
         startService(new Intent(this, ConnectionMonitor.class));
         startService(new Intent(this, Uploader.class));
+
+        usernameField = (TextView) findViewById(R.id.username_field);
+        userListButton = (ImageButton) findViewById(R.id.chose_acc_button);
 
         toolbarInit();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -116,6 +121,13 @@ public class MainActivity
             startService(intent);
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        usernameField.setText(Authentication.getLastUser(this));
     }
 
     @Override
@@ -200,7 +212,7 @@ public class MainActivity
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
                 break;
-            case R.id.item_choose_account:
+            case R.id.chose_acc_button:
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                         false, null, null, null, null);
                 startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
@@ -260,7 +272,7 @@ public class MainActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            photoUri = Uri.fromFile(photoFile);
+            Uri photoUri = Uri.fromFile(photoFile);
             if (photoFile != null) {
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(cameraIntent, TAKE_PHOTO_REQUEST);
@@ -271,6 +283,8 @@ public class MainActivity
     private void initUIL() {
         DisplayImageOptions displayImageOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
+                .cacheOnDisk(true)
+                //.showImageOnLoading(R.drawable.lod)
                 .resetViewBeforeLoading(true)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
