@@ -14,11 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.loaders.PostLoaderByLocation;
 import ua.org.javatraining.automessenger.app.loaders.PostLoaderByLocationObserver;
+import ua.org.javatraining.automessenger.app.services.GPSMonitor;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ public class NearbyFragment
 
     public interface CallBacks {
         void setDrawerItemState(boolean isHighlighted, int title);
+        GPSMonitor getGPSMonitor();
     }
 
     //Spike
@@ -63,7 +64,7 @@ public class NearbyFragment
 
     @Override
     public Loader<List<FullPost>> onCreateLoader(int id, Bundle args) {
-        return new PostLoaderByLocation(getActivity().getApplicationContext(), this);
+        return new PostLoaderByLocation(getActivity().getApplicationContext(), this, activity.getGPSMonitor());
     }
 
     @Override
@@ -87,24 +88,16 @@ public class NearbyFragment
     @Override
     public void onViewCreated(View view, android.os.Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.toolbar.setTitle(R.string.nearby);
         SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mLoader.onContentChanged();
             }
         });
-
-
-
         mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
         initRecyclerView(view);
         ((PostLoaderByLocation) mLoader).registerRefreshLayout(refreshLayout);
-
-
     }
 
     @Override

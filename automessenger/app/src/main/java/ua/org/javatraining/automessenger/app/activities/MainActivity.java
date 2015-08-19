@@ -3,15 +3,16 @@ package ua.org.javatraining.automessenger.app.activities;
 
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -28,13 +29,12 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import ua.org.javatraining.automessenger.app.R;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.fragments.*;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
-import ua.org.javatraining.automessenger.app.services.ConnectionMonitor;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
-import ua.org.javatraining.automessenger.app.services.Uploader;
+import ua.org.javatraining.automessenger.app.services.*;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 
 import java.io.File;
@@ -51,12 +51,15 @@ public class MainActivity
         PostByTagFragment.CallbackInterface,
         FeedFragment.CallBacks,
         SearchFragment.CallBacks,
-        NearbyFragment.CallBacks {
+        NearbyFragment.CallBacks,
+        AboutFragment.CallBacks {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 314159;
 
     private static final int TAKE_PHOTO_REQUEST = 100;
 
+    private GPSMonitor gpsMonitor;
+    private boolean isBound = false;
     public Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private RelativeLayout relativeLayout;
@@ -64,11 +67,9 @@ public class MainActivity
     private int drawerWidth;
     private String photoPath;
     private String username;
-    private DataSource source;
     private LocalBroadcastManager localBroadcastManager;
     private String tag;
     private TextView usernameField;
-    private ImageButton userListButton;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -82,17 +83,20 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         startService(new Intent(this, ConnectionMonitor.class));
         startService(new Intent(this, Uploader.class));
-
-        usernameField = (TextView) findViewById(R.id.username_field);
-        userListButton = (ImageButton) findViewById(R.id.chose_acc_button);
+        startService(new Intent(this, GPSMonitor.class));
 
         toolbarInit();
+
+        usernameField = (TextView) findViewById(R.id.username_field);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
+
         DataSource source = DataSourceManager.getInstance().getPreferedSource(this);
+
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         setUsername(Authentication.getLastUser(this));
@@ -121,6 +125,18 @@ public class MainActivity
             startService(intent);
         }
 
+        Intent intent = new Intent(this, GPSMonitor.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (isBound) {
+            unbindService(mConnection);
+            isBound = false;
+        }
     }
 
     @Override
@@ -135,6 +151,7 @@ public class MainActivity
         super.onDestroy();
         stopService(new Intent(this, ConnectionMonitor.class));
         stopService(new Intent(this, Uploader.class));
+        stopService(new Intent(this, GPSMonitor.class));
     }
 
     private void setUsername(String username) {
@@ -145,6 +162,34 @@ public class MainActivity
     private void toolbarInit() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        toolbar.inflateMenu(R.menu.menu_search);
+
+        SearchView sv = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
+
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                SearchFragment sf = new SearchFragment();
+
+                Bundle args = new Bundle();
+                args.putString(SearchFragment.QUERY, s);
+
+                sf.setArguments(args);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, sf)
+                        .commit();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+
+                return false;
+            }
+        });
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @SuppressLint("RtlHardcoded")
             @Override
@@ -193,24 +238,19 @@ public class MainActivity
         int id = view.getId();
         switch (id) {
             case R.id.feed_item:
-                //Work here
+                imageButton.setVisibility(View.VISIBLE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
                 break;
             case R.id.nearby_item:
-                //Work here
+                imageButton.setVisibility(View.VISIBLE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NearbyFragment()).commit();
                 break;
             case R.id.subscriptions_item:
-                //Work here
+                imageButton.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SubscriptionsFragment()).commit();
-                break;
-            case R.id.search_item:
-                //Work here
-                drawerLayout.closeDrawers();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
                 break;
             case R.id.chose_acc_button:
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
@@ -226,6 +266,11 @@ public class MainActivity
                 if (emailIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(emailIntent);
                 }
+                break;
+            case R.id.item_send_about:
+                imageButton.setVisibility(View.GONE);
+                drawerLayout.closeDrawers();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
         }
     }
 
@@ -282,9 +327,10 @@ public class MainActivity
 
     private void initUIL() {
         DisplayImageOptions displayImageOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
                 .cacheOnDisk(true)
-                //.showImageOnLoading(R.drawable.lod)
+                .cacheInMemory(true)
+                .showImageOnLoading(R.drawable.loading)
+                .showImageOnFail(R.drawable.error)
                 .resetViewBeforeLoading(true)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
@@ -310,7 +356,7 @@ public class MainActivity
             SharedPreferences userSettings = getSharedPreferences(Authentication.USERNAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = userSettings.edit();
             editor.putString(Authentication.USERNAME, accountName);
-            editor.commit();
+            editor.apply();
             app.userAuth(this);
             setUsername(Authentication.getLastUser(this));
         }
@@ -340,18 +386,25 @@ public class MainActivity
             case FeedFragment.FEED_FRAGMENT:
                 rootView = findViewById(R.id.feed_item);
                 iv = (ImageView) findViewById(R.id.feed_icon);
+                toolbar.setTitle(R.string.feed);
                 break;
             case NearbyFragment.NEARBY_FRAGMENT:
                 rootView = findViewById(R.id.nearby_item);
                 iv = (ImageView) findViewById(R.id.nearby_icon);
+                toolbar.setTitle(R.string.nearby);
                 break;
             case SubscriptionsFragment.SUBSCRIPTIONS_FRAGMENT:
                 rootView = findViewById(R.id.subscriptions_item);
                 iv = (ImageView) findViewById(R.id.subscriptions_icon);
+                toolbar.setTitle(R.string.subscriptions);
                 break;
             case SearchFragment.SEARCH_FRAGMENT:
-                rootView = findViewById(R.id.search_item);
-                iv = (ImageView) findViewById(R.id.search_icon);
+                toolbar.setTitle(R.string.search);
+                break;
+            case AboutFragment.ABOUT_FRAGMENT:
+                rootView = findViewById(R.id.item_send_about);
+                iv = (ImageView) findViewById(R.id.about_icon);
+                toolbar.setTitle(R.string.about);
                 break;
         }
 
@@ -364,5 +417,29 @@ public class MainActivity
             }
         }
     }
+
+    @Override
+    public GPSMonitor getGPSMonitor() {
+        return gpsMonitor;
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.i("myTag", "MainActivity, GPS, onServiceConnected");
+
+            GPSMonitor.LocalBinder binder = (GPSMonitor.LocalBinder) service;
+            gpsMonitor = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.i("myTag", "MainActivity, GPS, onServiceDisconnected");
+
+            isBound = false;
+        }
+    };
+
 
 }

@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.app.services;
+package ua.org.javatraining.automessenger.app.dataSourceServices;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import ua.org.javatraining.automessenger.app.services.ConnectionMonitor;
 
 public class DataSourceManager {
 
@@ -19,7 +20,7 @@ public class DataSourceManager {
 
     public static DataSourceManager getInstance() {
         if (instance == null) {
-            throw new NullPointerException("First must call DataSourceManager.init()");
+            throw new IllegalStateException("First must call DataSourceManager.init()");
         }
         return instance;
     }
@@ -41,7 +42,7 @@ public class DataSourceManager {
 
     public DataSource getPreferedSource(Context context) {
         if (instance == null) {
-            throw new NullPointerException("First must call DataSourceManager.init()");
+            throw new IllegalStateException("First must call DataSourceManager.init()");
         }
         //todo
 
@@ -59,7 +60,7 @@ public class DataSourceManager {
 
     public DataSource getLocalSource(Context context) {
         if (instance == null) {
-            throw new NullPointerException("First must call DataSourceManager.init()");
+            throw new IllegalStateException("First must call DataSourceManager.init()");
         }
         //todo
 

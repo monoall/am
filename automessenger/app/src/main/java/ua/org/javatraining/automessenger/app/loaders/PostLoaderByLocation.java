@@ -1,52 +1,46 @@
 package ua.org.javatraining.automessenger.app.loaders;
 
-import android.content.Context;
-import android.content.IntentFilter;
-import android.location.Address;
+import android.content.*;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import ua.org.javatraining.automessenger.app.fragments.NearbyFragment;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
+import ua.org.javatraining.automessenger.app.services.GPSMonitor;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.ShortLocation;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
 
-    private Geocoder defaultGeocoder;
-    private Geocoder engGeocoder;
+    private Geocoder geocoder;
+    private DataSource source;
     private SwipeRefreshLayout refreshLayout;
-    private LocationManager locationManager;
     private boolean isNextPage = false;
     private long lastPostDate = 0;
     private NearbyFragment nf;
     private List<FullPost> data;
     private PostLoaderByLocationObserver postObserver;
-    private Context context;
+    private GPSMonitor gpsMonitor;
 
     public void nextPage(boolean state, long date) {
         this.isNextPage = state;
         this.lastPostDate = date;
     }
 
-    public PostLoaderByLocation(Context context, NearbyFragment nf) {
+    public PostLoaderByLocation(Context context, NearbyFragment nf, GPSMonitor gpsMonitor) {
         super(context);
 
+        this.gpsMonitor = gpsMonitor;
         this.nf = nf;
-        defaultGeocoder = new Geocoder(getContext(), Locale.getDefault());
-        engGeocoder = new Geocoder(getContext(), Locale.ENGLISH);
-        this.context = context;
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+        source = DataSourceManager.getInstance().getPreferedSource(context);
     }
 
     public void registerRefreshLayout(SwipeRefreshLayout srl) {
@@ -76,49 +70,15 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
     @Override
     public List<FullPost> loadInBackground() {
         List<FullPost> fps = new ArrayList<FullPost>();
-        float[] loc = getCurrentLocation();
-        Address adrs;
-
-        DataSource source = DataSourceManager.getInstance().getPreferedSource(context);
-
-        try {
-            adrs = engGeocoder.getFromLocation(loc[0], loc[1], 1).get(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return fps;
-        }
-
-        ShortLocation shortLocation = new ShortLocation();
-        shortLocation.setCountry(adrs.getCountryName());
-        shortLocation.setAdminArea(adrs.getAdminArea());
-        if (adrs.getLocality() == null) {
-            shortLocation.setRegion(adrs.getSubAdminArea());
-        } else {
-            shortLocation.setRegion(adrs.getLocality());
-        }
-
-        if (isNextPage) {
-            fps = source.getPostsByLocation(shortLocation, lastPostDate);
-        } else {
-            fps = source.getPostsByLocation(shortLocation);
-        }
-
-        for (FullPost fp : fps) {
-            float latitude, longitude;
-            int separatorPosition;
-            String coordinates = fp.getPostLocation();
-            separatorPosition = coordinates.indexOf(" ");
-            latitude = Float.valueOf(coordinates.substring(0, separatorPosition));
-            longitude = Float.valueOf(coordinates.substring(separatorPosition, coordinates.length()));
-
-            try {
-                Address address = defaultGeocoder.getFromLocation(latitude, longitude, 1).get(0);
-                fp.setPostLocation(address.getCountryName() + ", " + address.getAdminArea() + ", " + address.getLocality());
-            } catch (IOException e) {
-                e.printStackTrace();
+        ShortLocation shortLocation = gpsMonitor.getShortLocation();
+        if (shortLocation != null) {
+            if (isNextPage) {
+                fps = source.getPostsByLocation(shortLocation, lastPostDate);
+            } else {
+                fps = source.getPostsByLocation(shortLocation);
             }
-        }
 
+        }
         return fps;
     }
 
@@ -152,11 +112,5 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
         }
     }
 
-    private float[] getCurrentLocation() {
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        float[] result = new float[2];
-        result[0] = (float) location.getLatitude();
-        result[1] = (float) location.getLongitude();
-        return result;
-    }
+
 }

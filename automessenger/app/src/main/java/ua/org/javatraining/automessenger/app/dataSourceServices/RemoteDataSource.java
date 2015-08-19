@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.app.services;
+package ua.org.javatraining.automessenger.app.dataSourceServices;
 
 import android.content.Context;
 import ua.org.javatraining.automessenger.app.entities.*;

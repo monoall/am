@@ -2,16 +2,15 @@ package ua.org.javatraining.automessenger.app.loaders;
 
 import android.content.Context;
 import android.content.IntentFilter;
-import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import ua.org.javatraining.automessenger.app.fragments.PostByTagFragment;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
-import java.io.IOException;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -104,22 +103,6 @@ public class PostLoaderByTag extends AsyncTaskLoader<List<FullPost>> {
             fps = source.getPostsByTagName(tagname, lastPostDate);
         } else {
             fps = source.getPostsByTagName(tagname);
-        }
-
-        for (FullPost fp : fps) {
-            float latitude, longitude;
-            int separatorPosition;
-            String coordinates = fp.getPostLocation();
-            separatorPosition = coordinates.indexOf(" ");
-            latitude = Float.valueOf(coordinates.substring(0, separatorPosition));
-            longitude = Float.valueOf(coordinates.substring(separatorPosition, coordinates.length()));
-
-            try {
-                Address address = geocoder.getFromLocation(latitude, longitude, 1).get(0);
-                fp.setPostLocation(address.getCountryName() + ", " + address.getAdminArea() + ", " + address.getLocality());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
         return fps;

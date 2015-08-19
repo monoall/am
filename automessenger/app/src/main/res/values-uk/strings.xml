@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Automessenger</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="add">Додати</string>
+    <string name="add_comment_hint">Комментар</string>
+    <string name="add_photo">Додати фото</string>
+    <string name="button_share">Ділитися</string>
+    <string name="button_subscribe">Підписатися</string>
+    <string name="car_number">Номер автомобіля</string>
+    <string name="change_account">Змінити аккаунт</string>
+    <string name="default_location_filed">Розташування...</string>
+    <string name="description">Опис</string>
+    <string name="done">Готово</string>
+    <string name="fab_add">Додати</string>
+    <string name="fab_camera">Кнопка камери</string>
+    <string name="fab_cancel">Скасувати</string>
+    <string name="fab_pen">Додати пост</string>
+    <string name="feed">Стрічка</string>
+    <string name="make_post">Запостити</string>
+    <string name="nearby">Неподалік</string>
+    <string name="photo">Фото</string>
+    <string name="post">Запис</string>
+    <string name="search">Пошук</string>
+    <string name="send_feedback">Відгук</string>
+    <string name="share">Ділитися</string>
+    <string name="subscribe">Підписатися</string>
+    <string name="subscriptions">Підписки</string>
+    <string name="title_activity_add_post">Додати запис</string>
+    <string name="title_activity_post_details">Деталі</string>
+    <string name="today">сьогодні</string>
+    <string name="validation_error">Невірні данні</string>
+    <string name="date">Дата...</string>
+    <string name="delete">Видалити</string>
+    <string name="delete_upper">ВЫДАЛИТИ</string>
+</resources>

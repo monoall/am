@@ -1,11 +1,6 @@
 package ua.org.javatraining.automessenger.app.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.v7.internal.widget.DrawableUtils;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,17 +10,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.PostDetails;
-import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
-import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
 import ua.org.javatraining.automessenger.app.vo.SuperComment;
-
-import java.io.File;
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -177,8 +167,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             imageLoader.displayImage(post.getPhotos().get(0), hh.photo);
-
-            photoToShare = imageLoader.getDiskCache().get(post.getPhotos().get(0)).getAbsolutePath();
+            try {
+                photoToShare = imageLoader.getDiskCache().get(post.getPhotos().get(0)).getAbsoluteFile().getAbsolutePath();
+            }catch (NullPointerException e){
+                photoToShare = "";
+            }
             textToShare = post.getText();
 
         } else if (viewHolder instanceof CommentHolder) {

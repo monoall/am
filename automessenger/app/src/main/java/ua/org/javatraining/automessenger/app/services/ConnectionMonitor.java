@@ -9,10 +9,11 @@ import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
 public class ConnectionMonitor extends IntentService {
-    private final String URL = "http://google.com"; //todo change
-    public static final String CONNECTION_STATUS = "ua.org.javatraining.automessenger.app.services.DataSourceManager.connectionStatus";
-    public static final String UPDATE_CONNECTION_STATUS = "ua.org.javatraining.automessenger.app.services.DataSourceManager.updateConnectionStatus";
 
+    public final String URL = "http://google.com"; //todo change
+
+    public static final String CONNECTION_STATUS = "ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager.connectionStatus";
+    public static final String UPDATE_CONNECTION_STATUS = "ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager.updateConnectionStatus";
 
     public ConnectionMonitor() {
         super("ConnectionMonitor");
@@ -33,6 +34,7 @@ public class ConnectionMonitor extends IntentService {
     private void doWork(String url){
         Intent intent = new Intent(UPDATE_CONNECTION_STATUS);
 
+        //noinspection InfiniteLoopStatement
         while (true) {
             try {
                 URL myUrl = new URL(url);
@@ -54,5 +56,4 @@ public class ConnectionMonitor extends IntentService {
             }
         }
     }
-
 }

@@ -6,8 +6,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.vo.SuperComment;
 
 import java.util.List;

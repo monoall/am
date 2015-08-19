@@ -7,9 +7,9 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
 import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entities.Subscription;
-import ua.org.javatraining.automessenger.app.entities.User;
 import ua.org.javatraining.automessenger.app.user.Authentication;
 import ua.org.javatraining.automessenger.app.vo.UploadQueueItem;
 

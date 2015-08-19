@@ -10,7 +10,7 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 
 public class Authentication extends MultiDexApplication {
 

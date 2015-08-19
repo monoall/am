@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -25,8 +24,8 @@ import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.entities.Subscription;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
@@ -126,20 +125,23 @@ public class PostDetails
 
     //Нажата кнопка "share"
     public void actionShare(View view) {
-        String[] ss  = ((CommentsAdapter) myAdapter).getShareStuff();
-        Log.i("myTag","PostDetails, actionShare, ss[0] = " + ss[0] + ", ss[1] = " + ss[1]);
+        String[] ss = ((CommentsAdapter) myAdapter).getShareStuff();
+
+        Log.i("myTag", "PostDetails, actionShare, ss[0] = " + ss[0] + ", ss[1] = " + ss[1]);
+
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, ss[0]);
-        Uri uri = Uri.parse(ss[1]);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://ua.org.javatrainig.automessanger.PhotoProvider/" + ss[1]));
         shareIntent.setType("image/*");
+
         startActivity(Intent.createChooser(shareIntent, "Share"));
     }
 
     public void viewPicture(View view) {
-        String[] ss  = ((CommentsAdapter) myAdapter).getShareStuff();
+        String[] ss = ((CommentsAdapter) myAdapter).getShareStuff();
         Intent viewIntent = new Intent(Intent.ACTION_VIEW);
-        viewIntent.setDataAndType(Uri.parse(ss[1]), "image/*");
+        Log.i("myTag","PostDetails, viewPicture, path = " + ss[1]);
+        viewIntent.setDataAndType(Uri.parse("content://ua.org.javatrainig.automessanger.PhotoProvider/" + ss[1]), "image/*");
         startActivity(Intent.createChooser(viewIntent, "View"));
     }
 
@@ -149,7 +151,7 @@ public class PostDetails
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
         toolbar.setTitle(fullPost.getTag());
         if (subscription != null) {
-            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_star_rate_white_24dp);
+            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_star_white_24dp);
         }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,7 +184,7 @@ public class PostDetails
             if (!(subscription.getId() >= 1)) {
                 subscription = null;
             } else {
-                item.setIcon(R.drawable.ic_star_rate_white_24dp);
+                item.setIcon(R.drawable.ic_star_white_24dp);
             }
 
 
@@ -225,6 +227,5 @@ public class PostDetails
     public void onLoaderReset(Loader<List<SuperComment>> loader) {
 
     }
-
 
 }

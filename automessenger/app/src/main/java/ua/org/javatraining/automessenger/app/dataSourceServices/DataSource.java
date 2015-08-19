@@ -1,4 +1,4 @@
-package ua.org.javatraining.automessenger.app.services;
+package ua.org.javatraining.automessenger.app.dataSourceServices;
 
 import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.vo.*;
