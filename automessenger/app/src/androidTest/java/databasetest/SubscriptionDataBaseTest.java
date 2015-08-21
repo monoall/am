@@ -37,8 +37,8 @@ public class SubscriptionDataBaseTest extends DBITest implements DbConstants {
     @Test
     public void testInsertSubscription(){
         Subscription subscription = new Subscription();
-        subscription.setNameTag("BE 123");
-        subscription.setNameUser("User");
+        subscription.setTagId("BE 123");
+        subscription.setUserId("User");
         subscriptionService.insertSubscription(subscription);
         Cursor c = db.query(SUBSCRIPTION_TABLE, null,
                 USER_NAME + " = ?", new String[]{"User"}, null, null, null);
@@ -61,8 +61,8 @@ public class SubscriptionDataBaseTest extends DBITest implements DbConstants {
     @Test
     public void testDeleteSubscription(){
         Subscription subscription = new Subscription();
-        subscription.setNameTag("BE 0102");
-        subscription.setNameUser("John");
+        subscription.setTagId("BE 0102");
+        subscription.setUserId("John");
         subscriptionService.deleteSubscription(subscription);
         Cursor c = db.query(SUBSCRIPTION_TABLE, null,
                 USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{"John", "BE 0102"}, null, null, null);

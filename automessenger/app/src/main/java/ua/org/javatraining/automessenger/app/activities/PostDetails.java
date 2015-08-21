@@ -24,8 +24,8 @@ import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
 import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.entities.Subscription;
 import ua.org.javatraining.automessenger.app.loaders.CommentLoader;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
@@ -60,7 +60,7 @@ public class PostDetails
         postId = getIntent().getLongExtra("POST_ID", 0);
         submit = (ImageButton) findViewById(R.id.submit);
 
-        source = DataSourceManager.getSource(this);
+        source = DataSourceManager.getInstance().getPreferedSource(this);
 
         addCommentField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -87,7 +87,7 @@ public class PostDetails
         List<Subscription> subs = source.getSubscriptions();
 
         for (Subscription s : subs) {
-            if (s.getNameTag().equals(fullPost.getTag())) {
+            if (s.getTagId().equals(fullPost.getTag())) {
                 subscription = s;
                 status = true;
                 break;
@@ -125,13 +125,24 @@ public class PostDetails
 
     //Нажата кнопка "share"
     public void actionShare(View view) {
-        String extraText = fullPost.getText();
+        String[] ss = ((CommentsAdapter) myAdapter).getShareStuff();
+
+        Log.i("myTag", "PostDetails, actionShare, ss[0] = " + ss[0] + ", ss[1] = " + ss[1]);
+
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, extraText);
-        Uri uri = Uri.parse(fullPost.getPhotos().get(0));
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, ss[0]);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://ua.org.javatrainig.automessanger.PhotoProvider/" + ss[1]));
         shareIntent.setType("image/*");
+
         startActivity(Intent.createChooser(shareIntent, "Share"));
+    }
+
+    public void viewPicture(View view) {
+        String[] ss = ((CommentsAdapter) myAdapter).getShareStuff();
+        Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+        Log.i("myTag","PostDetails, viewPicture, path = " + ss[1]);
+        viewIntent.setDataAndType(Uri.parse("content://ua.org.javatrainig.automessanger.PhotoProvider/" + ss[1]), "image/*");
+        startActivity(Intent.createChooser(viewIntent, "View"));
     }
 
     private void initToolbar() {
@@ -140,7 +151,7 @@ public class PostDetails
         toolbar.setNavigationIcon(R.drawable.ic_arrow_left_white_24dp);
         toolbar.setTitle(fullPost.getTag());
         if (subscription != null) {
-            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_star_rate_white_24dp);
+            toolbar.getMenu().getItem(0).setIcon(R.drawable.ic_star_white_24dp);
         }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +184,7 @@ public class PostDetails
             if (!(subscription.getId() >= 1)) {
                 subscription = null;
             } else {
-                item.setIcon(R.drawable.ic_star_rate_white_24dp);
+                item.setIcon(R.drawable.ic_star_white_24dp);
             }
 
 
@@ -190,7 +201,7 @@ public class PostDetails
             Comment commentObj = new Comment();
             commentObj.setCommentDate(System.currentTimeMillis());
             commentObj.setCommentText(comment);
-            commentObj.setIdPost(postId);
+            commentObj.setPostId(postId);
             long id = source.addComment(commentObj);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(addCommentField.getWindowToken(), 0);

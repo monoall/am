@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Automessenger</string>
+    <string name="action_settings">Настройки</string>
+    <string name="add">Добавить</string>
+    <string name="add_comment_hint">Комментарий</string>
+    <string name="add_photo">Добавить фото</string>
+    <string name="button_share">Поделится</string>
+    <string name="button_subscribe">Подписатся</string>
+    <string name="car_number">Номер авто</string>
+    <string name="change_account">Изменить аккаунт</string>
+    <string name="default_location_filed">Расположение…</string>
+    <string name="description">Описание</string>
+    <string name="done">Готово</string>
+    <string name="fab_add">Добавить</string>
+    <string name="fab_camera">Кнопка камеры</string>
+    <string name="fab_cancel">Отменить</string>
+    <string name="fab_pen">Добавить пост</string>
+    <string name="feed">Лента</string>
+    <string name="make_post">Запостить</string>
+    <string name="nearby">Рядом</string>
+    <string name="photo">Фото</string>
+    <string name="post">Запись</string>
+    <string name="search">Поиск</string>
+    <string name="send_feedback">Отзыв</string>
+    <string name="share">Поделится</string>
+    <string name="subscribe">Подписатся</string>
+    <string name="subscriptions">Подписки</string>
+    <string name="title_activity_add_post">Добавить запись</string>
+    <string name="title_activity_post_details">Детали</string>
+    <string name="today">сегодня</string>
+    <string name="validation_error">Неправильные данные</string>
+    <string name="date">Дата…</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_upper">УДАЛИТЬ</string>
+</resources>

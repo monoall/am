@@ -6,8 +6,8 @@ import android.content.IntentFilter;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.vo.SuperComment;
 
 import java.util.List;
@@ -15,17 +15,18 @@ import java.util.List;
 public class CommentLoader extends AsyncTaskLoader<List<SuperComment>> {
 
     private long postID;
-    DataSource source;
-    CommentLoaderObserver commentObserver;
+    private CommentLoaderObserver commentObserver;
+    private Context context;
 
     public CommentLoader(Context context, long postID) {
         super(context);
         this.postID = postID;
-        source = DataSourceManager.getSource(context);
+        this.context = context;
     }
 
     @Override
     public List<SuperComment> loadInBackground() {
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(context);
         return source.getComments(postID);
     }
 

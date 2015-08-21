@@ -12,13 +12,10 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.PostDetails;
-import ua.org.javatraining.automessenger.app.entities.Comment;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
-import ua.org.javatraining.automessenger.app.vo.CommentGrades;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
 import ua.org.javatraining.automessenger.app.vo.SuperComment;
-
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -30,6 +27,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private PostGrades postGrades;
     private PostDetails outerActivity;
     private ImageLoader imageLoader = ImageLoader.getInstance();
+
+    private String textToShare;
+    private String photoToShare;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
@@ -167,6 +167,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             imageLoader.displayImage(post.getPhotos().get(0), hh.photo);
+            try {
+                photoToShare = imageLoader.getDiskCache().get(post.getPhotos().get(0)).getAbsoluteFile().getAbsolutePath();
+            }catch (NullPointerException e){
+                photoToShare = "";
+            }
+            textToShare = post.getText();
+
         } else if (viewHolder instanceof CommentHolder) {
             final CommentHolder cm = (CommentHolder) viewHolder;
             final SuperComment superComment = dataset.get(i - 1);
@@ -241,5 +248,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tempListItem.setVisibility(View.VISIBLE);
         }
         listItem = tempListItem;
+    }
+
+    public String[] getShareStuff() {
+        return new String[]{textToShare, photoToShare};
     }
 }

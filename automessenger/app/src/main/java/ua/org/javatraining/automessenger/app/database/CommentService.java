@@ -30,14 +30,29 @@ public class CommentService implements DbConstants {
             ContentValues cv = new ContentValues();
             cv.put(COMMENT_DATE, comment.getCommentDate());
             cv.put(COMMENT_TEXT, comment.getCommentText());
-            cv.put(USER_NAME, comment.getNameUser());
-            cv.put(ID_POST, comment.getIdPost());
+            cv.put(USER_NAME, comment.getUserId());
+            cv.put(ID_POST, comment.getPostId());
             id = sqLiteDatabase.insert(COMMENT_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         } finally {
             sqLiteDatabase.endTransaction();
         }
         comment.setId(id);
+        return comment;
+    }
+
+    public Comment getCommentById(Long id) {
+        Comment comment = null;
+
+        if (id != null) {
+            SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+            @SuppressLint("Recycle")
+            Cursor cursor = sqLiteDatabase
+                    .rawQuery(QUERY_COMMENT_BY_ID, new String[]{String.valueOf(id)});
+            cursor.moveToFirst();
+            comment = buildComment(cursor);
+        }
+
         return comment;
     }
 
@@ -115,8 +130,8 @@ public class CommentService implements DbConstants {
         com.setId(c.getLong(c.getColumnIndex(ID)));
         com.setCommentDate(c.getLong(c.getColumnIndex(COMMENT_DATE)));
         com.setCommentText(c.getString(c.getColumnIndex(COMMENT_TEXT)));
-        com.setNameUser(c.getString(c.getColumnIndex(USER_NAME)));
-        com.setIdPost(c.getLong(c.getColumnIndex(ID_POST)));
+        com.setUserId(c.getString(c.getColumnIndex(USER_NAME)));
+        com.setPostId(c.getLong(c.getColumnIndex(ID_POST)));
         return com;
     }
 

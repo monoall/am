@@ -37,8 +37,8 @@ public class GradeCommentTableTest extends DBITest implements DbConstants {
     @Test
     public void testInsertGradeComment(){
         GradeComment gradeComment = new GradeComment();
-        gradeComment.setNameUser("User");
-        gradeComment.setIdComment(1);
+        gradeComment.setUserId("User");
+        gradeComment.setCommentId(1);
         gradeComment.setGrade(1);
         gradeCommentService.insertGradeComment(gradeComment);
         Cursor c = db.query(GRADE_COMMENT_TABLE, null,
@@ -51,8 +51,8 @@ public class GradeCommentTableTest extends DBITest implements DbConstants {
     @Test
     public void testUpdateIncreasingGradeComment(){
         GradeComment gradeComment = new GradeComment();
-        gradeComment.setNameUser("John");
-        gradeComment.setIdComment(1);
+        gradeComment.setUserId("John");
+        gradeComment.setCommentId(1);
         gradeComment.setGrade(1);
         gradeComment.increaseGrade();
         gradeCommentService.updateGradeComment(gradeComment);
@@ -66,8 +66,8 @@ public class GradeCommentTableTest extends DBITest implements DbConstants {
     @Test
     public void testUpdateDecreasingGradeComment(){
         GradeComment gradeComment = new GradeComment();
-        gradeComment.setNameUser("John");
-        gradeComment.setIdComment(1);
+        gradeComment.setUserId("John");
+        gradeComment.setCommentId(1);
         gradeComment.setGrade(1);
         gradeComment.decreaseGrade();
         gradeCommentService.updateGradeComment(gradeComment);

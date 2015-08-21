@@ -37,7 +37,7 @@ public class GrandPostTableTest extends DBITest implements DbConstants {
     @Test
     public void testInsertGrade(){
         GradePost gradePost = new GradePost();
-        gradePost.setNameUser("User");
+        gradePost.setUserId("User");
         gradePost.setIdPost(1);
         gradePost.setGrade(1);
         gradePostService.insertGradePost(gradePost);
@@ -51,7 +51,7 @@ public class GrandPostTableTest extends DBITest implements DbConstants {
     @Test
     public void testUpdateIncreasingGradePost(){
         GradePost gradePost = new GradePost();
-        gradePost.setNameUser("John");
+        gradePost.setUserId("John");
         gradePost.setIdPost(1);
         gradePost.setGrade(1);
         gradePost.increaseGrade();
@@ -66,7 +66,7 @@ public class GrandPostTableTest extends DBITest implements DbConstants {
     @Test
     public void testUpdateDecreasingGradePost(){
         GradePost gradePost = new GradePost();
-        gradePost.setNameUser("John");
+        gradePost.setUserId("John");
         gradePost.setIdPost(1);
         gradePost.setGrade(1);
         gradePost.decreaseGrade();

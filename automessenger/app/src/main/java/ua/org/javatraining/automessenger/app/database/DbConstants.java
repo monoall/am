@@ -4,6 +4,7 @@ public interface DbConstants {
     String MYDATABASE_NAME = "autoMessenger";
     int MYDATABASE_VERSION = 1;
     //Запросы создания таблиц
+    String UPLOAD_QUEUE_CREATE = "CREATE TABLE IF NOT EXISTS UPLOAD_QUEUE ( ID INTEGER PRIMARY KEY NOT NULL UNIQUE, CONTENT_TYPE INTEGER NULL DEFAULT NULL, CONTENT_IDENTIFIER TEXT, EXTRA_TEXT1 TEXT, EXTRA_TEXT2 TEXT);";
     String USER_CREATE = "create table IF NOT EXISTS USER (USER_NAME text primary key not null unique);";
     String TAG_CREATE = "create table IF NOT EXISTS TAG (TAG_NAME text primary key);";
     String SUBSCRIPTION_CREATE = "create table IF NOT EXISTS SUBSCRIPTION (ID integer primary key not null unique, USER_NAME text, TAG_NAME text, CONSTRAINT fk_subscription_user_parent FOREIGN KEY (USER_NAME) REFERENCES user (USER_NAME) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT fk_subscription_tag_parent FOREIGN KEY (TAG_NAME) REFERENCES tag (TAG_NAME) ON DELETE CASCADE ON UPDATE CASCADE);";
@@ -56,9 +57,16 @@ public interface DbConstants {
             "\t  ON UPDATE CASCADE)";
     //Константы для таблиц
     String ID = "ID";
+
+    String CONTENT_TYPE = "CONTENT_TYPE";
+    String CONTENT_IDENTIFIER = "CONTENT_IDENTIFIER";
+    String EXTRA_TEXT_1 = "EXTRA_TEXT1";
+    String EXTRA_TEXT_2 = "EXTRA_TEXT2";
+
     String USER_TABLE = "USER";
     String USER_NAME = "USER_NAME";
 
+    String UPLOAD_QUEUE_TABLE = "UPLOAD_QUEUE";
     String TAG_TABLE = "TAG";
     String TAG_NAME = "TAG_NAME";
 
@@ -87,10 +95,13 @@ public interface DbConstants {
     String LINK = "LINK";
 
     //Select запросы
+    String QUERY_UPLOAD_ITEM_BY_ID = "SELECT * FROM " + UPLOAD_QUEUE_TABLE + " WHERE " + ID + " = ?";
+    String QUERY_UPLOAD_ITEMS = "SELECT * FROM " + UPLOAD_QUEUE_TABLE;
     String QUERY_USER = "SELECT " + USER_NAME + " from " + USER_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_TAG_BY_ID = "SELECT " + TAG_NAME + " from " + TAG_TABLE + " where " + ID + " = ?";
     String QUERY_SEARCH_TAG = "SELECT " + TAG_NAME + " FROM " + TAG_TABLE + " WHERE " + TAG_NAME + " LIKE ?";
     String QUERY_COMMENT_COUNT_BY_POST_ID = "SELECT COUNT(*) FROM " + COMMENT_TABLE + " WHERE " + ID_POST + " = ?";
+    String QUERY_SUBSCRIPTION_BY_ID = "SELECT * FROM " + SUBSCRIPTION_TABLE + " WHERE " + ID + " = ?";
     String QUERY_POST_BY_SUBSCRIPTIONS = "SELECT * FROM " + POST_TABLE + " WHERE " + USER_NAME + " = ? AND " + TAG_NAME + " IN (" +
             " SELECT " + TAG_NAME + " FROM " + SUBSCRIPTION_TABLE + " WHERE " + USER_NAME + " = ? )";
     String QUERY_POST_BY_SUBSCRIPTIONS_NEXT_PAGE = "SELECT * FROM " + POST_TABLE + " WHERE " + USER_NAME + " = ? AND " + TAG_NAME + " IN (" +
@@ -109,6 +120,7 @@ public interface DbConstants {
     String QUERY_POST_BY_ID = "SELECT " + "*" + " from " + POST_TABLE + " where " + ID + " = ?";
     String QUERY_ALL_POST_BY_LOCATION = "SELECT " + "*" + " from " + POST_TABLE + " where " + POST_LOCATION + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID_POST + " = ?";
+    String QUERY_COMMENT_BY_ID = "SELECT " + "*" + " from " + COMMENT_TABLE + " where " + ID + " = ?";
     String QUERY_ALL_COMMENTS_BY_POST_ID_NEXT_PAGE = "SELECT * FROM " + COMMENT_TABLE + " where " + ID_POST + " = ? " + " AND " + COMMENT_DATE + " < ?";
     String QUERY_ID_USER_BY_NAME = "SELECT " + "ID" + " from " + USER_TABLE + " where " + USER_NAME + " = ?";
     String QUERY_GRADE_POST_BY_ID_POST = "SELECT " + "*" + " from " + GRADE_POST_TABLE + " where " + ID_POST + " = ?";

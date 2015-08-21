@@ -10,14 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import ua.org.javatraining.automessenger.app.R;
-import ua.org.javatraining.automessenger.app.activities.MainActivity;
 import ua.org.javatraining.automessenger.app.adapters.TagAdapter;
+import ua.org.javatraining.automessenger.app.entities.Subscription;
 import ua.org.javatraining.automessenger.app.entities.Tag;
-import ua.org.javatraining.automessenger.app.services.DataSource;
-import ua.org.javatraining.automessenger.app.services.DataSourceManager;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
+import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
+import ua.org.javatraining.automessenger.app.vo.ExtTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +24,17 @@ import java.util.List;
 public class SearchFragment extends Fragment {
 
     public static final int SEARCH_FRAGMENT = 4646468;
+    public static final String QUERY = "ua.org.javatraining.automessenger.app.fragments.SearchFragment.query";
 
     private CallBacks activity;
-    private EditText searchField;
     private RecyclerView.Adapter myAdapter;
     private DataSource source;
-    private List<Tag> dataset;
+    private List<ExtTag> dataset;
     private SearchAsyncTask searchTask;
 
     public interface CallBacks {
         void showPostsByTag(String tag);
+
         void setDrawerItemState(boolean isHighlighted, int title);
     }
 
@@ -58,22 +58,17 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        source = DataSourceManager.getSource(getActivity());
-        dataset = new ArrayList<Tag>();
+        source = DataSourceManager.getInstance().getPreferedSource(getActivity());
+        dataset = new ArrayList<ExtTag>();
 
         initRecyclerView(view);
+        searchTask = new SearchAsyncTask();
 
-        searchField = (EditText) view.findViewById(R.id.search_field);
-        ImageButton searchButton = (ImageButton) view.findViewById(R.id.go_search);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchTask = new SearchAsyncTask();
-                searchTask.execute(searchField.getText().toString());
-            }
-        });
+        String request = getArguments().getString(QUERY);
 
-        ((MainActivity) activity).toolbar.setTitle(R.string.search);
+        if (request != null) {
+            searchTask.execute(request);
+        }
     }
 
     @Override
@@ -99,18 +94,38 @@ public class SearchFragment extends Fragment {
         activity.setDrawerItemState(true, SEARCH_FRAGMENT);
     }
 
-    private class SearchAsyncTask extends AsyncTask<String, Void, List<Tag>> {
+    private class SearchAsyncTask extends AsyncTask<String, Void, List<ExtTag>> {
 
         @Override
-        protected List<Tag> doInBackground(String... params) {
+        protected List<ExtTag> doInBackground(String... params) {
             Log.i("mytag", "SearchAsyncTask,  doInBackground(), param: " + params[0]);
-            return source.findSomeTags(params[0]);
+
+            List<Tag> tags = source.findSomeTags(params[0]);
+            List<Subscription> subs = source.getSubscriptions();
+
+            List<ExtTag> result = new ArrayList<ExtTag>();
+
+            for (Tag t : tags) {
+                boolean isSubscribed = false;
+
+                for (Subscription s : subs) {
+                    if (s.getTagId().equals(t.getTagName())) {
+                        isSubscribed = true;
+                        break;
+                    }
+                }
+
+                result.add(new ExtTag(t.getTagName(), isSubscribed));
+            }
+
+            return result;
         }
 
         @Override
-        protected void onPostExecute(List<Tag> tags) {
+        protected void onPostExecute(List<ExtTag> tags) {
             super.onPostExecute(tags);
             Log.i("mytag", "SearchAsyncTask,  onPostExecute(), tags size: " + tags.size());
+
             dataset.clear();
             dataset.addAll(tags);
             myAdapter.notifyDataSetChanged();
@@ -121,7 +136,7 @@ public class SearchFragment extends Fragment {
         RecyclerView myRV = (RecyclerView) v.findViewById(R.id.list);
         RecyclerView.LayoutManager myLM = new LinearLayoutManager(getActivity().getApplicationContext());
         myRV.setLayoutManager(myLM);
-        myAdapter = new TagAdapter(dataset, this);
+        myAdapter = new TagAdapter(getActivity(), dataset, this);
         myRV.setAdapter(myAdapter);
     }
 

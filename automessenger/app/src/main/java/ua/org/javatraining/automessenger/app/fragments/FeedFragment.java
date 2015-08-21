@@ -87,17 +87,13 @@ public class FeedFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.toolbar.setTitle(R.string.feed);
         SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mLoader.onContentChanged();
             }
         });
-
         mLoader = getActivity().getSupportLoaderManager().initLoader(POST_LOADER_ID, null, this);
         initRecyclerView(view);
         ((PostLoaderFeed) mLoader).registerRefreshLayout(refreshLayout);

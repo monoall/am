@@ -1,19 +1,23 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         //noinspection GradleDependency
         classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 //noinspection GradleDeprecated
 apply plugin: 'android'
+apply plugin: 'io.fabric'
 
 repositories {
     jcenter()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
@@ -32,7 +36,14 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
-
+    signingConfigs {
+        release {
+            storeFile file("uojtam.jks")
+            storePassword "uojtam"
+            keyAlias "ua.org.javatraining.automessenger"
+            keyPassword "uojtam"
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
@@ -41,6 +52,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -51,18 +63,12 @@ android {
     }
 }
 
-//apply plugin: 'robolectric'
-//
-//robolectric {
-//    include '**/robolectric/**/*Test.class'
-//}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:support-v4:22.2.1'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.google.android.gms:play-services-identity:7.5.0'
     compile 'org.mockito:mockito-all:1.9.5'
@@ -70,9 +76,11 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.20.0'
     compile 'com.google.api-client:google-api-client-android:1.20.0'
     compile 'com.google.api-client:google-api-client-gson:1.20.0'
+    compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.apis:google-api-services-drive:v2-rev170-1.20.0'
     compile 'org.mockito:mockito-all:1.9.5'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.2'
+    compile 'com.mcxiaoke.volley:library:1.0.17'
 
     androidTestCompile 'org.hamcrest:hamcrest-core:1.3'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
@@ -97,6 +105,10 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
+        transitive = true;
+    }
+
 }
 
 apply plugin: 'idea'

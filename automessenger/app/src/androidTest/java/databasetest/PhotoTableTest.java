@@ -38,7 +38,7 @@ public class PhotoTableTest extends DBITest implements DbConstants {
     public void testInsertPhoto(){
         Photo photo = new Photo();
         photo.setPhotoLink("link");
-        photo.setIdPost(2);
+        photo.setPostId(2);
         photoService.insertPhoto(photo);
         Cursor c = db.query(PHOTO_TABLE, null,
                 ID_POST + " = ?", new String[]{String.valueOf(2)}, null, null, null);

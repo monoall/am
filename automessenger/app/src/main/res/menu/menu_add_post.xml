@@ -6,5 +6,5 @@
             android:title="@string/post"
             android:icon="@drawable/ic_done_white_24dp"
             app:showAsAction="always"
-            android:onClick="donePressed"/>
+            android:onClick="prepare"/>
 </menu>

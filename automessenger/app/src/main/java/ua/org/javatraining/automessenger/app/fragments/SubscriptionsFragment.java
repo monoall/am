@@ -1,6 +1,7 @@
 package ua.org.javatraining.automessenger.app.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -56,8 +57,6 @@ public class SubscriptionsFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.toolbar.setTitle(R.string.subscriptions);
         SQLiteAdapter sqLiteAdapter = SQLiteAdapter.initInstance(getActivity());
         subscriptionService = new SubscriptionService(sqLiteAdapter);
         data = new ArrayList<Subscription>();
@@ -120,4 +119,5 @@ public class SubscriptionsFragment
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<List<Subscription>> loader) {
     }
+
 }

@@ -251,17 +251,17 @@ public class DataBaseTest {
         comment.setCommentDate(120214);
         comment.setCommentText("Comment1");
         comment.setIdUser(1);
-        comment.setIdPost(2);
+        comment.setPostId(2);
         Comment comment2 = new Comment();
         comment2.setCommentDate(120215);
         comment2.setCommentText("Comment2");
         comment2.setIdUser(2);
-        comment2.setIdPost(2);
+        comment2.setPostId(2);
         Comment comment3 = new Comment();
         comment3.setCommentDate(120215);
         comment3.setCommentText("Comment3");
         comment3.setIdUser(1);
-        comment3.setIdPost(1);
+        comment3.setPostId(1);
         commentService.insertComment(comment);
         commentService.insertComment(comment2);
         commentService.insertComment(comment3);
@@ -277,17 +277,17 @@ public class DataBaseTest {
         comment.setCommentDate(120214);
         comment.setCommentText("Comment1");
         comment.setIdUser(1);
-        comment.setIdPost(2);
+        comment.setPostId(2);
         Comment comment2 = new Comment();
         comment2.setCommentDate(120215);
         comment2.setCommentText("Comment2");
         comment2.setIdUser(2);
-        comment2.setIdPost(2);
+        comment2.setPostId(2);
         Comment comment3 = new Comment();
         comment3.setCommentDate(120215);
         comment3.setCommentText("Comment3");
         comment3.setIdUser(1);
-        comment3.setIdPost(1);
+        comment3.setPostId(1);
         commentService.insertComment(comment);
         commentService.insertComment(comment2);
         commentService.insertComment(comment3);
@@ -301,11 +301,11 @@ public class DataBaseTest {
     @Test
     public void testInsertGradeComment(){
         GradeComment gradeComment = new GradeComment();
-        gradeComment.setIdComment(1);
+        gradeComment.setCommentId(1);
         gradeComment.setIdUser(2);
         gradeComment.increaseGrade();
         GradeComment gradeComment2 = new GradeComment();
-        gradeComment2.setIdComment(2);
+        gradeComment2.setCommentId(2);
         gradeComment2.setIdUser(2);
         gradeComment2.increaseGrade();
         gradeComment2.increaseGrade();
@@ -320,7 +320,7 @@ public class DataBaseTest {
     //not compile
     public void testUpdateGradeComment(){
         GradeComment gradeComment = new GradeComment();
-        gradeComment.setIdComment(1);
+        gradeComment.setCommentId(1);
         gradeComment.setIdUser(2);
         gradeComment.increaseGrade();
         gradeCommentService.insertGradeComment(gradeComment);
@@ -335,11 +335,11 @@ public class DataBaseTest {
     @Test
     public void testInsertGradePost(){
         GradePost gradePost = new GradePost();
-        gradePost.setIdPost(1);
+        gradePost.setPostId(1);
         gradePost.setIdUser(2);
         gradePost.increaseGrade();
         GradePost gradePost2 = new GradePost();
-        gradePost2.setIdPost(1);
+        gradePost2.setPostId(1);
         gradePost2.setIdUser(2);
         gradePost.increaseGrade();
         gradePostService.insertGradePost(gradePost);
@@ -351,7 +351,7 @@ public class DataBaseTest {
     @Test
     public void testUpdateGradePost(){
         GradePost gradePost = new GradePost();
-        gradePost.setIdPost(1);
+        gradePost.setPostId(1);
         gradePost.setIdUser(2);
         gradePost.increaseGrade();
         gradePostService.insertGradePost(gradePost);

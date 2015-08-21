@@ -1,5 +1,6 @@
 package ua.org.javatraining.automessenger.app.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,23 @@ public class SubscriptionService implements DbConstants {
         this.sqLiteAdapter = sqLiteAdapter;
     }
 
+    public Subscription getSubscribtion(long id){
+        Subscription subscription = null;
+            SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getReadableDatabase();
+            @SuppressLint("Recycle")
+            Cursor cursor = sqLiteDatabase
+                    .rawQuery(QUERY_SUBSCRIPTION_BY_ID, new String[]{String.valueOf(id)});
+            if(cursor!= null){
+                cursor.moveToFirst();
+                subscription = new Subscription();
+                subscription.setId(cursor.getLong(cursor.getColumnIndex(ID)));
+                subscription.setTagId(cursor.getString(cursor.getColumnIndex(TAG_NAME)));
+                subscription.setUserId(cursor.getString(cursor.getColumnIndex(USER_NAME)));
+            }
+
+        return subscription;
+    }
+
     /**
      * Вставить подписку
      * @param subscription объект subscription
@@ -27,8 +45,8 @@ public class SubscriptionService implements DbConstants {
         sqLiteDatabase.beginTransaction();
         try{
             ContentValues cv = new ContentValues();
-            cv.put(USER_NAME, subscription.getNameUser());
-            cv.put(TAG_NAME, subscription.getNameTag());
+            cv.put(USER_NAME, subscription.getUserId());
+            cv.put(TAG_NAME, subscription.getTagId());
             id = sqLiteDatabase.insert(SUBSCRIPTION_TABLE, null, cv);
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
@@ -52,8 +70,8 @@ public class SubscriptionService implements DbConstants {
         ArrayList<Subscription> al = new ArrayList<Subscription>();
         for (cursor.moveToFirst(); !(cursor.isAfterLast()); cursor.moveToNext()) {
             Subscription subscription = new Subscription();
-            subscription.setNameUser(cursor.getString(indexUser));
-            subscription.setNameTag(cursor.getString(indexTag));
+            subscription.setUserId(cursor.getString(indexUser));
+            subscription.setTagId(cursor.getString(indexTag));
             al.add(subscription);
         }
         return al;
@@ -68,7 +86,7 @@ public class SubscriptionService implements DbConstants {
         SQLiteDatabase sqLiteDatabase = sqLiteAdapter.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         try{
-            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{subscription.getNameUser(), subscription.getNameTag()});
+            sqLiteDatabase.delete(SUBSCRIPTION_TABLE, USER_NAME + " = ? AND " + TAG_NAME + " = ?", new String[]{subscription.getUserId(), subscription.getTagId()});
             sqLiteDatabase.setTransactionSuccessful();
         }finally {
             sqLiteDatabase.endTransaction();
