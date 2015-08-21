@@ -7,7 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import ua.org.javatraining.automessenger.backend.config.TestDataBaseConfig;
-import ua.org.javatraining.automessenger.backend.test.util.UserUtil;
+import ua.org.javatraining.automessenger.backend.repository.UserRepository;
 
 import javax.annotation.Resource;
 
@@ -19,14 +19,14 @@ import javax.annotation.Resource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestDataBaseConfig.class)
 @WebAppConfiguration
-public class BankServiceTest {
+public class UserServiceTest {
 
 //    @Resource
 //    private EntityManagerFactory emf;
 //    protected EntityManager em;
 
     @Resource
-    private UserService userService;
+    private UserRepository userService;
 
     @Before
     public void setUp() throws Exception {
@@ -34,7 +34,7 @@ public class BankServiceTest {
     }
 
     @Test
-    public void testSaveBank() throws Exception {
-        userService.addUser(UserUtil.createBank());
+    public void testSaveUser() throws Exception {
+        //userService.addUser(UserUtil.createUser());
     }
 }

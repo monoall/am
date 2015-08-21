@@ -7,6 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "photo")
+@NamedQuery(name = "Photo.findByPostId",
+        query = "SELECT p FROM Photo p WHERE p.postId = ?1")
 public class Photo {
 
     @Id
@@ -21,12 +23,15 @@ public class Photo {
     @ManyToOne(fetch = FetchType.LAZY)
     private Post postId;
 
+    private String photoLink;
+
     public Photo() {
     }
 
-    public Photo(User userId, Post postId) {
+    public Photo(User userId, Post postId, String photoLink) {
         this.userId = userId;
         this.postId = postId;
+        this.photoLink = photoLink;
     }
 
     public Long getId() {
@@ -53,12 +58,21 @@ public class Photo {
         this.postId = postId;
     }
 
+    public String getPhotoLink() {
+        return photoLink;
+    }
+
+    public void setPhotoLink(String photoLink) {
+        this.photoLink = photoLink;
+    }
+
     @Override
     public String toString() {
         return "Photo{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", postId=" + postId +
+                ", photoLink='" + photoLink + '\'' +
                 '}';
     }
 
@@ -71,7 +85,8 @@ public class Photo {
 
         if (!id.equals(photo.id)) return false;
         if (userId != null ? !userId.equals(photo.userId) : photo.userId != null) return false;
-        return !(postId != null ? !postId.equals(photo.postId) : photo.postId != null);
+        if (postId != null ? !postId.equals(photo.postId) : photo.postId != null) return false;
+        return !(photoLink != null ? !photoLink.equals(photo.photoLink) : photo.photoLink != null);
 
     }
 
@@ -80,6 +95,7 @@ public class Photo {
         int result = id.hashCode();
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (postId != null ? postId.hashCode() : 0);
+        result = 31 * result + (photoLink != null ? photoLink.hashCode() : 0);
         return result;
     }
 }
