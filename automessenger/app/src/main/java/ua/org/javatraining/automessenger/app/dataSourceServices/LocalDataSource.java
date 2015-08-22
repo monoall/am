@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entities.*;
-import ua.org.javatraining.automessenger.app.user.Authentication;
+import ua.org.javatraining.automessenger.app.App;
 import ua.org.javatraining.automessenger.app.vo.*;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public List<FullPost> getPostsByAuthor() {
-        List<Post> posts = postService.getPostsByAuthor(Authentication.getLastUser(context));
+        List<Post> posts = postService.getPostsByAuthor(App.getLastUser(context));
         List<FullPost> fPosts = null;
 
         if (posts != null) {
@@ -90,7 +90,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public List<FullPost> getPostsFromSubscriptions() {
-        List<Post> posts = postService.getPostsFromSubscribes(Authentication.getLastUser(context));
+        List<Post> posts = postService.getPostsFromSubscribes(App.getLastUser(context));
         List<FullPost> fPosts = null;
 
         if (posts != null) {
@@ -114,7 +114,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public List<FullPost> getPostsFromSubscriptions(long timestamp) {
-        List<Post> posts = postService.getPostsFromSubscribesNextPage(Authentication.getLastUser(context), timestamp);
+        List<Post> posts = postService.getPostsFromSubscribesNextPage(App.getLastUser(context), timestamp);
         List<FullPost> fPosts = new ArrayList<FullPost>();
 
         if (posts != null) {
@@ -259,7 +259,7 @@ public class LocalDataSource implements DataSource {
     public long addPost(FullPost fullPost) {
         Post post = new Post();
         Photo photo = new Photo();
-        fullPost.setAuthor(Authentication.getLastUser(context));
+        fullPost.setAuthor(App.getLastUser(context));
 
         fullPost.separate(post, photo);
         if (tagService.getTag(post.getTagName()) == null) {
@@ -288,7 +288,7 @@ public class LocalDataSource implements DataSource {
             SuperComment sc = new SuperComment(c);
             int grade = 0;
             sc.setUserGrade(0);
-            String username = Authentication.getLastUser(context);
+            String username = App.getLastUser(context);
             ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
 
             for (GradeComment gc : cGrades) {
@@ -315,7 +315,7 @@ public class LocalDataSource implements DataSource {
             SuperComment sc = new SuperComment(c);
             int grade = 0;
             sc.setUserGrade(0);
-            String username = Authentication.getLastUser(context);
+            String username = App.getLastUser(context);
             ArrayList<GradeComment> cGrades = gradeCommentService.getCommentGrades(c.getId());
 
             for (GradeComment gc : cGrades) {
@@ -336,7 +336,7 @@ public class LocalDataSource implements DataSource {
     @Override
     public long addComment(Comment comment) {
         if (comment != null) {
-            comment.setUserId(Authentication.getLastUser(context));
+            comment.setUserId(App.getLastUser(context));
             queueService.insertInQueue(comment);
             return commentService.insertComment(comment).getId();
         }
@@ -346,7 +346,7 @@ public class LocalDataSource implements DataSource {
     @Override
     public List<Subscription> getSubscriptions() {
         User user = new User();
-        user.setName(Authentication.getLastUser(context));
+        user.setName(App.getLastUser(context));
 
         return subscriptionService.getSubscriptionsList(user);
     }
@@ -354,7 +354,7 @@ public class LocalDataSource implements DataSource {
     @Override
     public Subscription addSubscription(String tag) {
         Subscription subscription = new Subscription();
-        subscription.setUserId(Authentication.getLastUser(context));
+        subscription.setUserId(App.getLastUser(context));
         subscription.setTagId(tag);
         queueService.insertInQueue(subscription);
         return subscriptionService.insertSubscription(subscription);
@@ -370,7 +370,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public PostGrades getPostGrades(long postID) {
-        String userName = Authentication.getLastUser(context);
+        String userName = App.getLastUser(context);
         List<GradePost> gPosts = gradePostService.getPostGrades(postID);
 
         PostGrades grades = new PostGrades();
@@ -396,7 +396,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public GradePost getCurrentUserPostGrade(long postID) {
-        return gradePostService.getPostGrade(postID, Authentication.getLastUser(context));
+        return gradePostService.getPostGrade(postID, App.getLastUser(context));
     }
 
     @Override
@@ -409,7 +409,7 @@ public class LocalDataSource implements DataSource {
             grade = 1;
 
         GradePost newGradePost = new GradePost();
-        newGradePost.setUserId(Authentication.getLastUser(context));
+        newGradePost.setUserId(App.getLastUser(context));
         newGradePost.setGrade(grade);
         newGradePost.setIdPost((int) postID);
 
@@ -424,7 +424,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public CommentGrades getCommentGrades(long commentID) {
-        String userName = Authentication.getLastUser(context);
+        String userName = App.getLastUser(context);
         ArrayList<GradeComment> gCoomments = gradeCommentService.getCommentGrades(commentID);
         CommentGrades grades = new CommentGrades();
         grades.setCommentID(commentID);
@@ -446,7 +446,7 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public GradeComment getCurrentUserCommentGrade(long commentID) {
-        return gradeCommentService.getCommentGrade(commentID, Authentication.getLastUser(context));
+        return gradeCommentService.getCommentGrade(commentID, App.getLastUser(context));
     }
 
     @Override
@@ -459,7 +459,7 @@ public class LocalDataSource implements DataSource {
             grade = 1;
 
         GradeComment newGradeComment = new GradeComment();
-        newGradeComment.setUserId(Authentication.getLastUser(context));
+        newGradeComment.setUserId(App.getLastUser(context));
         newGradeComment.setGrade(grade);
         newGradeComment.setCommentId((int) commentID);
 

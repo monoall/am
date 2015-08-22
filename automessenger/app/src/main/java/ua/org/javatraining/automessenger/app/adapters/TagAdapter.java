@@ -12,7 +12,7 @@ import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
 import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.entities.Subscription;
 import ua.org.javatraining.automessenger.app.fragments.SearchFragment;
-import ua.org.javatraining.automessenger.app.user.Authentication;
+import ua.org.javatraining.automessenger.app.App;
 import ua.org.javatraining.automessenger.app.vo.ExtTag;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
                 if(dataset.get(pos).isSubscribed()){
                     Subscription s = new Subscription();
                     s.setTagId(dataset.get(pos).getTagName());
-                    s.setUserId(Authentication.getLastUser(context));
+                    s.setUserId(App.getLastUser(context));
                     source.removeSubscription(s);
                     dataset.get(pos).setIsSubscribed(false);
                     holder.star.setImageResource(R.drawable.ic_star_outline_white_24dp);

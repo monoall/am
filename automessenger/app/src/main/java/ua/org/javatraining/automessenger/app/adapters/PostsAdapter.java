@@ -4,24 +4,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.support.v4.util.ArrayMap;
-import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.PostDetails;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
-
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,7 +30,6 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_ITEM = 0;
 
     private List<FullPost> dataset;
-    private ImageLoader imageLoader = ImageLoader.getInstance();
     private Context context;
     private Map<Long, String> addresses = new ArrayMap<Long, String>();
 
@@ -53,7 +50,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private ImageView photo;
+        private SimpleDraweeView photo;
         private TextView tag;
         private TextView description;
         private TextView date;
@@ -66,7 +63,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             location = (TextView) itemView.findViewById(R.id.location_filed);
             frame = itemView.findViewById(R.id.cardview);
-            photo = (ImageView) itemView.findViewById(R.id.card_image_view);
+            photo = (SimpleDraweeView) itemView.findViewById(R.id.card_image_view);
             tag = (TextView) itemView.findViewById(R.id.text_tag);
             description = (TextView) itemView.findViewById(R.id.text_description);
             date = (TextView) itemView.findViewById(R.id.text_date);
@@ -103,7 +100,6 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (addresses.containsKey(fullPost.getPostID())) {
                 itemHolder.location.setText(addresses.get(fullPost.getPostID()));
             } else {
-                //itemHolder.location.setText(fullPost.getPostLocation());
                 AddressLoader al = new AddressLoader(itemHolder.location, fullPost.getPostID());
                 al.execute(fullPost.getPostLocation());
             }
@@ -112,10 +108,7 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemHolder.date.setText(DateFormatUtil.toReadable(context, fullPost.getDate()));
             itemHolder.tag.setText(fullPost.getTag());
             itemHolder.commentNumber.setText(Integer.toString(fullPost.getCommentCount()));
-            Log.i("mytag", "onBindViewHolder, loc1 = " + fullPost.getLocCountry());
-            Log.i("mytag", "onBindViewHolder, loc2 = " + fullPost.getLocAdminArea());
-            Log.i("mytag", "onBindViewHolder, loc3 = " + fullPost.getLocRegion());
-            imageLoader.displayImage(fullPost.getPhotos().get(0), itemHolder.photo);
+            itemHolder.photo.setImageURI(Uri.parse(fullPost.getPhotos().get(0)));
 
             itemHolder.frame.setOnClickListener(new View.OnClickListener() {
                 @Override

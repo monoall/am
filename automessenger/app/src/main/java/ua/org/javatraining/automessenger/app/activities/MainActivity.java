@@ -35,7 +35,7 @@ import ua.org.javatraining.automessenger.app.fragments.*;
 import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.services.*;
-import ua.org.javatraining.automessenger.app.user.Authentication;
+import ua.org.javatraining.automessenger.app.App;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +70,7 @@ public class MainActivity
     private LocalBroadcastManager localBroadcastManager;
     private String tag;
     private TextView usernameField;
+    private SearchView searchView;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -94,79 +95,8 @@ public class MainActivity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayout = (RelativeLayout) findViewById(R.id.fab_pressed);
         imageButton = (ImageButton) findViewById(R.id.fab_add);
-
-        DataSource source = DataSourceManager.getInstance().getPreferedSource(this);
-
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-
-        setUsername(Authentication.getLastUser(this));
-
-        source.setUser(username);
-
-        if (savedInstanceState == null) {
-            initUIL();
-            drawerWidth = getNavDrawWidth();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
-        } else {
-            tag = savedInstanceState.getString("tag");
-            drawerWidth = savedInstanceState.getInt("drawerWidth");
-        }
-
-        findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
-
-        String lastUser = Authentication.getLastUser(this);
-        if (lastUser.equals("")) {
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
-                    false, null, null, null, null);
-            startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
-        }
-        if (checkPlayServices()) {
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
-
-        Intent intent = new Intent(this, GPSMonitor.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if (isBound) {
-            unbindService(mConnection);
-            isBound = false;
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        usernameField.setText(Authentication.getLastUser(this));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(new Intent(this, ConnectionMonitor.class));
-        stopService(new Intent(this, Uploader.class));
-        stopService(new Intent(this, GPSMonitor.class));
-    }
-
-    private void setUsername(String username) {
-        this.username = username;
-        localBroadcastManager.sendBroadcast(new Intent(FeedPostLoaderObserver.POST_UPDATED_INTENT));
-    }
-
-    private void toolbarInit() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-        toolbar.inflateMenu(R.menu.menu_search);
-
-        SearchView sv = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
-
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView =  (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 SearchFragment sf = new SearchFragment();
@@ -189,7 +119,79 @@ public class MainActivity
                 return false;
             }
         });
+        searchView.setVisibility(View.GONE);
+        DataSource source = DataSourceManager.getInstance().getPreferedSource(this);
 
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
+        setUsername(App.getLastUser(this));
+
+        source.setUser(username);
+
+        if (savedInstanceState == null) {
+            initUIL();
+            drawerWidth = getNavDrawWidth();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
+        } else {
+            if (gpsMonitor == null){
+                gpsMonitor = App.getGpsMonitor();
+            }
+            tag = savedInstanceState.getString("tag");
+            drawerWidth = savedInstanceState.getInt("drawerWidth");
+        }
+
+        findViewById(R.id.drawer).getLayoutParams().width = drawerWidth;
+
+        String lastUser = App.getLastUser(this);
+        if (lastUser.equals("")) {
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+                    false, null, null, null, null);
+            startActivityForResult(intent, App.ACCOUNT_REQUEST_CODE);
+        }
+        if (checkPlayServices()) {
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+
+        Intent intent = new Intent(this, GPSMonitor.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        App.setGpsMonitor(gpsMonitor);
+        if (isBound) {
+            unbindService(mConnection);
+            isBound = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        usernameField.setText(App.getLastUser(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, ConnectionMonitor.class));
+        stopService(new Intent(this, Uploader.class));
+        stopService(new Intent(this, GPSMonitor.class));
+    }
+
+    private void setUsername(String username) {
+        this.username = username;
+        localBroadcastManager.sendBroadcast(new Intent(FeedPostLoaderObserver.POST_UPDATED_INTENT));
+    }
+
+    private void toolbarInit() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        toolbar.inflateMenu(R.menu.menu_search);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @SuppressLint("RtlHardcoded")
             @Override
@@ -236,18 +238,22 @@ public class MainActivity
     public void NDController(View view) {
         getSupportFragmentManager().popBackStack();
         int id = view.getId();
+        searchView.setIconified(true);
         switch (id) {
             case R.id.feed_item:
+                searchView.setVisibility(View.GONE);
                 imageButton.setVisibility(View.VISIBLE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FeedFragment()).commit();
                 break;
             case R.id.nearby_item:
+                searchView.setVisibility(View.GONE);
                 imageButton.setVisibility(View.VISIBLE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NearbyFragment()).commit();
                 break;
             case R.id.subscriptions_item:
+                searchView.setVisibility(View.VISIBLE);
                 imageButton.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SubscriptionsFragment()).commit();
@@ -255,7 +261,7 @@ public class MainActivity
             case R.id.chose_acc_button:
                 Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
                         false, null, null, null, null);
-                startActivityForResult(intent, Authentication.ACCOUNT_REQUEST_CODE);
+                startActivityForResult(intent, App.ACCOUNT_REQUEST_CODE);
                 break;
             case R.id.item_send_feedback:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
@@ -268,6 +274,7 @@ public class MainActivity
                 }
                 break;
             case R.id.item_send_about:
+                searchView.setVisibility(View.GONE);
                 imageButton.setVisibility(View.GONE);
                 drawerLayout.closeDrawers();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
@@ -335,6 +342,9 @@ public class MainActivity
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
                 .defaultDisplayImageOptions(displayImageOptions)
+                .threadPoolSize(6)
+                .memoryCacheSize(10 * 1024 * 1024)
+                .diskCacheSize(100 * 1024 * 1024)
                 .build();
         ImageLoader.getInstance().init(config);
     }
@@ -349,16 +359,16 @@ public class MainActivity
             intent.putExtra("username", username);
             startActivity(intent);
         }
-        if (requestCode == Authentication.ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == App.ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            Authentication app = ((Authentication) getApplicationContext());
+            App app = ((App) getApplicationContext());
             app.setUser(accountName);
-            SharedPreferences userSettings = getSharedPreferences(Authentication.USERNAME, MODE_PRIVATE);
+            SharedPreferences userSettings = getSharedPreferences(App.USERNAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = userSettings.edit();
-            editor.putString(Authentication.USERNAME, accountName);
+            editor.putString(App.USERNAME, accountName);
             editor.apply();
             app.userAuth(this);
-            setUsername(Authentication.getLastUser(this));
+            setUsername(App.getLastUser(this));
         }
     }
 

@@ -1,7 +1,6 @@
 package ua.org.javatraining.automessenger.app.loaders;
 
 import android.content.*;
-import android.location.Geocoder;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,14 +11,11 @@ import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManage
 import ua.org.javatraining.automessenger.app.services.GPSMonitor;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.ShortLocation;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
 
-    private Geocoder geocoder;
     private DataSource source;
     private SwipeRefreshLayout refreshLayout;
     private boolean isNextPage = false;
@@ -39,7 +35,6 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
 
         this.gpsMonitor = gpsMonitor;
         this.nf = nf;
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
         source = DataSourceManager.getInstance().getPreferedSource(context);
     }
 
@@ -70,6 +65,7 @@ public class PostLoaderByLocation extends AsyncTaskLoader<List<FullPost>> {
     @Override
     public List<FullPost> loadInBackground() {
         List<FullPost> fps = new ArrayList<FullPost>();
+        //todo NullPointerException
         ShortLocation shortLocation = gpsMonitor.getShortLocation();
         if (shortLocation != null) {
             if (isNextPage) {

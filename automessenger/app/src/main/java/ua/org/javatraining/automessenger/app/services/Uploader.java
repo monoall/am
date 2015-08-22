@@ -10,7 +10,7 @@ import android.util.Log;
 import ua.org.javatraining.automessenger.app.dataSourceServices.DataSource;
 import ua.org.javatraining.automessenger.app.database.*;
 import ua.org.javatraining.automessenger.app.entities.Subscription;
-import ua.org.javatraining.automessenger.app.user.Authentication;
+import ua.org.javatraining.automessenger.app.App;
 import ua.org.javatraining.automessenger.app.vo.UploadQueueItem;
 
 import java.util.List;
@@ -85,7 +85,7 @@ public class Uploader extends IntentService {
                             queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.COMMENT_GRADE:
-                            int cGrade = gradeCommentService.getCommentGrade(Long.getLong(item.getContentIdentifier()), Authentication.getLastUser(this)).getGrade();
+                            int cGrade = gradeCommentService.getCommentGrade(Long.getLong(item.getContentIdentifier()), App.getLastUser(this)).getGrade();
                             remoteSource.setCurrentUserCommentGrade(Long.getLong(item.getContentIdentifier()) ,cGrade);
                             queueService.deleteQueueItem(item.getId());
                             break;
@@ -94,7 +94,7 @@ public class Uploader extends IntentService {
                             queueService.deleteQueueItem(item.getId());
                             break;
                         case UploadQueueService.POST_GRADE:
-                            int pGrade = gradePostService.getPostGrade(Long.getLong(item.getContentIdentifier()), Authentication.getLastUser(this)).getGrade();
+                            int pGrade = gradePostService.getPostGrade(Long.getLong(item.getContentIdentifier()), App.getLastUser(this)).getGrade();
                             remoteSource.setCurrentUserCommentGrade(Long.getLong(item.getContentIdentifier()) ,pGrade);
                             queueService.deleteQueueItem(item.getId());
                             break;

@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import ua.org.javatraining.automessenger.app.App;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.adapters.PostsAdapter;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;

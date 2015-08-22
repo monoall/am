@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.adapters;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,13 +12,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.activities.PostDetails;
 import ua.org.javatraining.automessenger.app.utils.DateFormatUtil;
 import ua.org.javatraining.automessenger.app.vo.FullPost;
 import ua.org.javatraining.automessenger.app.vo.PostGrades;
 import ua.org.javatraining.automessenger.app.vo.SuperComment;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -27,7 +32,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private PostGrades postGrades;
     private PostDetails outerActivity;
     private ImageLoader imageLoader = ImageLoader.getInstance();
-
+    private String location = "";
     private String textToShare;
     private String photoToShare;
 
@@ -75,6 +80,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView descriptionField;
         public TextView dateField;
         public ImageView photo;
+        public TextView locationField;
         public TextView gradeNumber;
         public ImageButton thumbsUp;
         public ImageButton thumbsDown;
@@ -82,6 +88,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public HeaderHolder(View itemView) {
             super(itemView);
 
+            locationField = (TextView) itemView.findViewById(R.id.location_filed);
             gradeNumber = (TextView) itemView.findViewById(R.id.grade_number);
             thumbsDown = (ImageButton) itemView.findViewById(R.id.down_button);
             thumbsUp = (ImageButton) itemView.findViewById(R.id.up_button);
@@ -165,6 +172,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
                 }
             });
+
+            if (!location.equals("")) {
+                hh.locationField.setText(location);
+            } else {
+                AddressLoader al = new AddressLoader(hh.locationField, post.getPostID());
+                al.execute(post.getPostLocation());
+            }
 
             imageLoader.displayImage(post.getPhotos().get(0), hh.photo);
             try {
@@ -252,5 +266,66 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public String[] getShareStuff() {
         return new String[]{textToShare, photoToShare};
+    }
+
+    private class AddressLoader extends AsyncTask<String, Void, String> {
+
+        private TextView textView;
+        private long postId;
+        private boolean status = false;
+
+        public AddressLoader(TextView textView, long postId) {
+            this.textView = textView;
+            this.postId = postId;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            float latitude, longitude;
+            int separatorPosition;
+
+            String txt = strings[0];
+            Log.i("myTag", "PostAdapter, AddressLoader, doInBackground, str = " + txt);
+
+            String result = "";
+
+            try {
+                separatorPosition = txt.indexOf(" ");
+                latitude = Float.valueOf(txt.substring(0, separatorPosition));
+                longitude = Float.valueOf(txt.substring(separatorPosition, txt.length()));
+
+                Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
+
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+                if (!addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    result = address.getCountryName() + ", " + address.getAdminArea() + ", " + address.getLocality();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                return strings[0];
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+
+                return strings[0];
+            }
+
+            status = true;
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (status) {
+                location = s;
+            }
+
+            textView.setText(s);
+        }
     }
 }

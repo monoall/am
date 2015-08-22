@@ -48,6 +48,8 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
         final int pos = position;
 
         holder.text.setText(dataset.get(position).getTagId());
+        holder.deleteText.setVisibility(View.GONE);
+        holder.deleteButton.setVisibility(View.VISIBLE);
 
         //Define action for delete button
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {

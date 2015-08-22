@@ -18,10 +18,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.Permission;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.services.GPSMonitor;
@@ -44,12 +44,11 @@ public class AddPostActivity extends AppCompatActivity {
     private boolean isBound = false;
 
     private ProgressBar pBar;
-    private ImageView imageView;
+    private SimpleDraweeView imageView;
     private View addPhotoButton;
     private EditText tagText;
     private EditText postText;
 
-    private ImageLoader imageLoader = ImageLoader.getInstance();
     private Geocoder geocoder;
     private AddressLoader addressLoader;
     private InsertTask insertTask;
@@ -74,7 +73,7 @@ public class AddPostActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
 
         if (photoURI != null) {
-            imageLoader.displayImage(photoURI, imageView);
+            imageView.setImageURI(Uri.parse("content://" + photoURI));
         }
     }
 
@@ -83,7 +82,7 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
 
-        imageView = (ImageView) findViewById(R.id.photo);
+        imageView = (SimpleDraweeView) findViewById(R.id.photo);
         tagText = (EditText) findViewById(R.id.car_number);
         postText = (EditText) findViewById(R.id.post_description);
         pBar = (ProgressBar) findViewById(R.id.marker_progress);
@@ -146,8 +145,9 @@ public class AddPostActivity extends AppCompatActivity {
             case SELECT_PHOTO:
                 if (resultCode == RESULT_OK) {
                     photoURI = imageReturnedIntent.getData().toString();
-                    Log.i("", photoURI);
-                    imageLoader.displayImage(photoURI, imageView);
+                    Log.i("myTag", photoURI);
+
+                    imageView.setImageURI(Uri.parse(photoURI));
                 }
         }
     }
@@ -224,6 +224,8 @@ public class AddPostActivity extends AppCompatActivity {
                 exif.getLatLong(result);
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (IllegalArgumentException e){
+                e.printStackTrace();
             }
         }
 
@@ -266,7 +268,7 @@ public class AddPostActivity extends AppCompatActivity {
         }
 
         DataSourceManager.getInstance().getPreferedSource(this).addPost(fPost);
-
+        DataSourceManager.getInstance().getPreferedSource(this).addSubscription(tag);
         onBackPressed();
     }
 
@@ -358,7 +360,6 @@ public class AddPostActivity extends AppCompatActivity {
 
             Log.i("myTag", "insertTask, filePath: " + filePath);
 
-
             java.io.File fileContent = new java.io.File(PhotoUtils.getResizedPhotoFile(getApplicationContext(), filePath));
             FileContent mediaContent = new FileContent(null, fileContent);
             com.google.api.services.drive.model.File file;
@@ -376,8 +377,8 @@ public class AddPostActivity extends AppCompatActivity {
                 return res[0];
             } catch (IOException e) {
                 e.printStackTrace();
+                return filePath;
             }
-            return null;
         }
 
     }

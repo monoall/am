@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.adapters.CommentsAdapter;
