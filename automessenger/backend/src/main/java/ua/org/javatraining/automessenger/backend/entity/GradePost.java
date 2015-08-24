@@ -7,18 +7,18 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "grade_post")
+@Table(name = "grade_posts")
 public class GradePost {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @JoinColumn(name = "comment_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Comment commentId;
 
-    @JoinColumn(name = "username_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
     private User userId;
 
     public GradePost() {

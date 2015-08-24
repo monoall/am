@@ -2,14 +2,15 @@ package ua.org.javatraining.automessenger.backend.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by fisher on 26.07.15.
  */
 @Entity
-@Table(name = "post")
+@Table(name = "posts")
 public class Post {
-//    LOC_COUNTRY text, LOC_ADMIN_AREA text, LOC_REGION text,
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,7 +25,7 @@ public class Post {
     private String postLocation;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User userId;
 
     @Column(name = "tag_name")
@@ -38,6 +39,9 @@ public class Post {
 
     @Column(name = "loc_region")
     private String locationRegion;
+
+    @OneToMany(mappedBy = "postId")
+    private Set<Photo> photos;
 
 
     public Post() {
@@ -121,6 +125,14 @@ public class Post {
 
     public void setLocationRegion(String locationRegion) {
         this.locationRegion = locationRegion;
+    }
+
+    public Set<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(Set<Photo> photos) {
+        this.photos = photos;
     }
 
     @Override

@@ -6,9 +6,7 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "photo")
-@NamedQuery(name = "Photo.findByPostId",
-        query = "SELECT p FROM Photo p WHERE p.postId = ?1")
+@Table(name = "photos")
 public class Photo {
 
     @Id
@@ -16,11 +14,11 @@ public class Photo {
     private Long id;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User userId;
 
     @JoinColumn(name = "post_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Post postId;
 
     private String photoLink;
