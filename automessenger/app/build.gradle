@@ -1,23 +1,23 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
+//        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         //noinspection GradleDependency
         classpath 'com.android.tools.build:gradle:1.0.0'
-        classpath 'io.fabric.tools:gradle:1.+'
+//        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 //noinspection GradleDeprecated
 apply plugin: 'android'
-apply plugin: 'io.fabric'
+//apply plugin: 'io.fabric'
 
 repositories {
     jcenter()
-    maven { url 'https://maven.fabric.io/public' }
+//    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
@@ -65,10 +65,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.1'
+//    compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.1'
+//    compile 'com.android.support:support-v4:22.2.1'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.google.android.gms:play-services-identity:7.5.0'
     compile 'org.mockito:mockito-all:1.9.5'
@@ -105,9 +105,9 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
-        transitive = true;
-    }
+//    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
+//        transitive = true;
+//    }
 
 }
 
