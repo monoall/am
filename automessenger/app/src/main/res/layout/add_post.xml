@@ -31,12 +31,11 @@
                     android:textColor="@color/black54"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-            <com.facebook.drawee.view.SimpleDraweeView
+            <ImageView
+                    android:scaleType="centerCrop"
                     android:id="@+id/photo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    fresco:actualImageScaleType="focusCrop"
-                    fresco:viewAspectRatio="1.77"
+                    android:layout_height="250dp"
                     android:contentDescription="@string/photo"/>
             <ProgressBar
                     android:layout_gravity="center"
@@ -47,29 +46,36 @@
                     style="?android:attr/progressBarStyle"
                     android:layout_height="wrap_content"/>
         </FrameLayout>
-
-        <EditText
-                android:id="@+id/car_number"
-                android:hint="@string/car_number"
-                android:layout_margin="16dp"
+        <android.support.design.widget.TextInputLayout
+                android:id="@+id/tag_input_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapCharacters"
-                android:textColor="@color/black54"
-                android:lines="1"
-                android:singleLine="true"
-                tools:ignore="TextFields" android:text="111"/>
-
-        <EditText
-                android:id="@+id/post_description"
-                android:hint="@string/description"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:textColor="@color/black54"
-                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content">
+            <EditText
+                    android:id="@+id/car_number"
+                    android:hint="@string/car_number"
+                    android:layout_margin="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapCharacters"
+                    android:textColor="@color/black54"
+                    android:lines="1"
+                    android:singleLine="true"
+                    tools:ignore="TextFields" android:text="111"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:text="test"/>
-
+                android:layout_height="wrap_content">
+            <EditText
+                    android:id="@+id/post_description"
+                    android:hint="@string/description"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:textColor="@color/black54"
+                    android:layout_marginBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:text="test"/>
+        </android.support.design.widget.TextInputLayout>
     </LinearLayout>
     <include layout="@layout/shadow"
              android:layout_below="@id/toolbar"

@@ -1,6 +1,8 @@
 package ua.org.javatraining.automessenger.app.dataSourceServices;
 
 import android.content.Context;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 import ua.org.javatraining.automessenger.app.entities.*;
 import ua.org.javatraining.automessenger.app.vo.*;
 
@@ -8,11 +10,24 @@ import java.util.List;
 
 public class RemoteDataSource implements DataSource {
 
+    private Context context;
+
     public RemoteDataSource(Context context) {
+        this.context = context;
     }
 
     @Override
     public void setUser(String username) {
+
+        User user = new User();
+        user.setName(username);
+
+        final String url = "http://backend-automessenger.rhcloud.com/user";
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        restTemplate.postForObject(url, user, User.class);
+
+
     }
 
     @Override

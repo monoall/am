@@ -1,6 +1,5 @@
 package ua.org.javatraining.automessenger.app.activities;
 
-
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.*;
@@ -36,7 +35,6 @@ import ua.org.javatraining.automessenger.app.gcm.RegistrationIntentService;
 import ua.org.javatraining.automessenger.app.loaders.FeedPostLoaderObserver;
 import ua.org.javatraining.automessenger.app.services.*;
 import ua.org.javatraining.automessenger.app.App;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -108,6 +106,7 @@ public class MainActivity
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, sf)
+                        .addToBackStack(null)
                         .commit();
 
                 return false;

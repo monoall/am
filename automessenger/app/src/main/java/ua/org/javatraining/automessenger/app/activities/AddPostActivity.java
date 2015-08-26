@@ -22,6 +22,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.Permission;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import ua.org.javatraining.automessenger.app.R;
 import ua.org.javatraining.automessenger.app.dataSourceServices.DataSourceManager;
 import ua.org.javatraining.automessenger.app.services.GPSMonitor;
@@ -44,11 +45,12 @@ public class AddPostActivity extends AppCompatActivity {
     private boolean isBound = false;
 
     private ProgressBar pBar;
-    private SimpleDraweeView imageView;
+    private ImageView imageView;
     private View addPhotoButton;
     private EditText tagText;
     private EditText postText;
 
+    private ImageLoader imageLoader;
     private Geocoder geocoder;
     private AddressLoader addressLoader;
     private InsertTask insertTask;
@@ -73,7 +75,8 @@ public class AddPostActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
 
         if (photoURI != null) {
-            imageView.setImageURI(Uri.parse("content://" + photoURI));
+            //imageView.setImageURI(Uri.parse("content://" + photoURI));
+            imageLoader.displayImage(photoURI, imageView);
         }
     }
 
@@ -82,12 +85,13 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_post);
 
-        imageView = (SimpleDraweeView) findViewById(R.id.photo);
+        imageView = (ImageView) findViewById(R.id.photo);
         tagText = (EditText) findViewById(R.id.car_number);
         postText = (EditText) findViewById(R.id.post_description);
         pBar = (ProgressBar) findViewById(R.id.marker_progress);
         addPhotoButton = findViewById(R.id.add_photo_button);
 
+        imageLoader = ImageLoader.getInstance();
         geocoder = new Geocoder(this, Locale.ENGLISH);
 
         if (savedInstanceState == null) {
@@ -147,7 +151,8 @@ public class AddPostActivity extends AppCompatActivity {
                     photoURI = imageReturnedIntent.getData().toString();
                     Log.i("myTag", photoURI);
 
-                    imageView.setImageURI(Uri.parse(photoURI));
+                    //imageView.setImageURI(Uri.parse(photoURI));
+                    imageLoader.displayImage(photoURI, imageView);
                 }
         }
     }
