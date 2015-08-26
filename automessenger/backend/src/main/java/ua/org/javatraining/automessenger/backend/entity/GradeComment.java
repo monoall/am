@@ -6,7 +6,7 @@ import javax.persistence.*;
  * Created by fisher on 28.07.15.
  */
 @Entity
-@Table(name = "grade_comment")
+@Table(name = "grade_comments")
 public class GradeComment {
 
     @Id
@@ -14,11 +14,11 @@ public class GradeComment {
     private Long id;
 
     @JoinColumn(name = "comment_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Comment commentId;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User userId;
 
     public GradeComment() {

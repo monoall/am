@@ -1,11 +1,12 @@
 package ua.org.javatraining.automessenger.backend.entity;
 
 import javax.persistence.*;
+
 /**
  * Created by fisher on 26.07.15.
  */
 @Entity
-@Table(name = "tag")
+@Table(name = "tags")
 public class Tag {
 
     @Id

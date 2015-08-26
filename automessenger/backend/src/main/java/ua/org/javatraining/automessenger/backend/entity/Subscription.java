@@ -6,7 +6,7 @@ import javax.persistence.*;
  * Created by fisher on 26.07.15.
  */
 @Entity
-@Table(name = "subscription")
+@Table(name = "subscriptions")
 public class Subscription {
 
     @Id
@@ -14,11 +14,11 @@ public class Subscription {
     private Long id;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User userId;
 
     @JoinColumn(name = "tag_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Tag tagId;
 
     public Subscription() {
